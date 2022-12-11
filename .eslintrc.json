@@ -12,6 +12,7 @@
     "prettier"
   ],
   "rules": {
-    "unicorn/prevent-abbreviations": "off"
+    "unicorn/prevent-abbreviations": "off",
+    "@typescript-eslint/no-unused-vars": "error"
   }
 }
