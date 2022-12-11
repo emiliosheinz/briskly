@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { router, publicProcedure } from '../trpc'
+import { router, publicProcedure } from '~/server/trpc/trpc'
 
 export const exampleRouter = router({
   hello: publicProcedure
