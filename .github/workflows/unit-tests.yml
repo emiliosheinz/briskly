@@ -1,5 +1,5 @@
 name: Run Unit Tests
-run-name: ✅ Running application unit tests
+run-name: ✅ Running unit tests
 on:  
   push:
   pull_request:
@@ -9,4 +9,7 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
+      - run: yarn
+        name: Install dependencies
       - run: yarn test
+        name: Run unit tests
