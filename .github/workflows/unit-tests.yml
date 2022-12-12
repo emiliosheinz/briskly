@@ -6,7 +6,7 @@ on:
     branches:
       - master
 jobs:
-  Explore-GitHub-Actions:
+  Unit-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
