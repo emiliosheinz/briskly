@@ -1,0 +1,28 @@
+name: Lint
+run-name: ${{ github.event.head_commit.message }}
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      
+      - name: Set up node 
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: 'Create .env file'
+        run: echo "${{ secrets.DOT_ENV_FILE }}" > .env
+
+      - run: yarn
+        name: Install dependencies
+
+      - run: yarn lint
+        name: Run linter
