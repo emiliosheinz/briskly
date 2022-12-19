@@ -21,6 +21,11 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  theme: {
+    colorScheme: 'light',
+    brandColor: '#0F172A',
+    logo: '/images/logo.png',
+  },
 }
 
 export default NextAuth(authOptions)
