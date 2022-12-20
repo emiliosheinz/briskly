@@ -21,7 +21,7 @@ export const publicProcedure = t.procedure
  * Reusable middleware to ensure
  * users are logged in
  */
-const isAuthed = t.middleware(({ ctx, next }) => {
+const isAuthenticated = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' })
   }
@@ -36,4 +36,4 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 /**
  * Protected procedure
  **/
-export const protectedProcedure = t.procedure.use(isAuthed)
+export const protectedProcedure = t.procedure.use(isAuthenticated)
