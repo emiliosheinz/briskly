@@ -23,7 +23,7 @@ export function Header() {
 
   return (
     <header className='relative bg-primary-50'>
-      <div className='mx-auto max-w-7xl px-4 sm:px-6'>
+      <div className='mx-auto max-w-full px-4 sm:px-6'>
         <div className='flex items-center justify-between border-b-2 border-primary-200 py-6 md:justify-start md:space-x-10'>
           <div className='flex justify-start lg:w-0 lg:flex-1'>
             <Link href='/'>
