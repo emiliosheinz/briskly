@@ -13,7 +13,7 @@ export function Header() {
   function renderAuthButton() {
     return (
       <button
-        className='hover:text-gray-900 whitespace-nowrap text-base font-medium text-primary-900'
+        className='whitespace-nowrap text-base font-medium text-primary-900'
         onClick={onClick}
       >
         {label}
