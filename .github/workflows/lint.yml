@@ -2,10 +2,13 @@ name: Lint
 
 on:  
   push:
+    branches:
+      - develop
   pull_request:
     branches:
       - master
-      
+      - develop
+
 jobs:
   Lint:
     runs-on: ubuntu-latest
