@@ -2,10 +2,13 @@ name: Type Check
 
 on:  
   push:
+    branches:
+      - develop
   pull_request:
     branches:
       - master
-      
+      - develop
+
 jobs:
   Type-Check:
     runs-on: ubuntu-latest
