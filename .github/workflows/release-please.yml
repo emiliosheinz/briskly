@@ -3,7 +3,7 @@ name: Release Please
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   release-please:
@@ -13,6 +13,8 @@ jobs:
         with:
           release-type: node
           package-name: release-please-action
+          default-branch: develop
+          pull-request-title-pattern: 'chore: :bookmark: release version ${version}'
           changelog-types: '[
               {"type":"feat","section":"Features","hidden":false},
               {"type":"fix","section":"Bug Fixes","hidden":false},
