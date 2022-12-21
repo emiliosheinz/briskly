@@ -23,6 +23,6 @@ jobs:
               {"type":"build","section":"Build","hidden":false},
               {"type":"ci","section":"CI/CD","hidden":false},
               {"type":"style","section":"Style","hidden":false},
-              {"type":"test","section":"Tests","hidden":false}
-              {"type":"revert","section":"Reverts","hidden":false},
+              {"type":"test","section":"Tests","hidden":false},
+              {"type":"revert","section":"Reverts","hidden":false}
             ]'
