@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/emiliosheinz/briskly/compare/v1.0.0...v1.0.1) (2022-12-21)
+
+
+### CI/CD
+
+* :construction_worker: adds default branch and pull request title to release-please ([874e143](https://github.com/emiliosheinz/briskly/commit/874e143722a71f714437cc007cabdf58dc7adfcf))
+
 ## 1.0.0 (2022-12-21)
 
 
