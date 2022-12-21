@@ -1,5 +1,5 @@
 name: Unit Tests
-run-name: ${{ github.event.head_commit.message }}
+
 on:  
   push:
   pull_request:
