@@ -1,3 +1,3 @@
 # Briskly
 
-TODO emiliosheinz: Add project Readme
+TODO emiliosheinz: Add project Readme and documentation
