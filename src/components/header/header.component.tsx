@@ -7,7 +7,7 @@ export function Header() {
   const { data: sessionData } = useSession()
 
   const onClick = sessionData ? () => signOut() : () => signIn()
-  const label = sessionData ? 'Sign out' : 'Sign in'
+  const label = sessionData ? 'Sair' : 'Login'
 
   function renderAuthButton() {
     return (
