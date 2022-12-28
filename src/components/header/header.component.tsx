@@ -29,7 +29,6 @@ export function Header() {
           <div className='flex justify-start lg:w-0 lg:flex-1'>
             <Link href='/'>
               <span className='sr-only'>Briskly</span>
-              {/* TODO emiliosheinz: Change image component to use custom component */}
               <Image
                 src='/images/logo.png'
                 width={48}
