@@ -15,6 +15,7 @@ export function BaseImage(props: ImageProps) {
   return (
     <NextImage
       placeholder='blur'
+      data-testid='image-component'
       blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer)}`}
       {...props}
     />
