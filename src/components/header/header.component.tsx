@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 // TODO emiliosheinz: Create unit tests for Header component
-// TODO emiliosheinz: Create Storybook documentation for Header component
 export function Header() {
   const { data: sessionData } = useSession()
 
