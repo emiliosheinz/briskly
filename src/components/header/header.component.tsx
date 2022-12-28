@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
-import Image from 'next/image'
 import Link from 'next/link'
+
+import { Image } from '~/components/image'
 
 // TODO emiliosheinz: Create unit tests for Header component
 // TODO emiliosheinz: Create Storybook documentation for Header component
@@ -28,12 +29,10 @@ export function Header() {
           <div className='flex justify-start lg:w-0 lg:flex-1'>
             <Link href='/'>
               <span className='sr-only'>Briskly</span>
-              {/* TODO emiliosheinz: Change image component to use custom component */}
               <Image
-                className='h-8 w-auto sm:h-10'
                 src='/images/logo.png'
-                width={80}
-                height={80}
+                width={48}
+                height={48}
                 alt='Briskly logo'
               />
             </Link>
