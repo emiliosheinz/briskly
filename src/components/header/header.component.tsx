@@ -31,7 +31,7 @@ export function Header() {
               <Image
                 src='/images/logo.png'
                 width={48}
-                height={48}
+                height={42}
                 alt='Briskly logo'
               />
             </Link>
