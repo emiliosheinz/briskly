@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Auth Button Component should be properly rendered 1`] = `
+<DocumentFragment>
+  <button
+    class="bg-transparent w-full rounded border py-2 px-4 font-semibold text-error-700 border-error-700"
+    data-testid="auth-button"
+  >
+    Sair
+  </button>
+</DocumentFragment>
+`;
