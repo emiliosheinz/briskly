@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "build:tests:css": "npx tailwindcss -i ./src/styles/tailwind.css -o ./src/utils/tests/tailwind.css --postcss postcss.config.cjs -c tailwind.config.cjs",
+    "test": "yarn build:tests:css && jest",
+    "test:watch": "yarn build:tests:css && jest --watch",
     "build": "next build",
     "vercel-build": "prisma generate && prisma migrate deploy && yarn build",
     "dev": "next dev",
