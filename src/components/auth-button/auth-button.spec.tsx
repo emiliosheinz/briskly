@@ -1,6 +1,6 @@
-import { fireEvent, render } from '@testing-library/react'
 import { signIn, signOut } from 'next-auth/react'
 
+import { fireEvent, render, screen } from '~/utils/tests/react-testing-library'
 import { withNextAuth } from '~/utils/tests/with-next-auth'
 
 import { AuthButton } from './auth-button.component'
@@ -27,27 +27,27 @@ describe('Auth Button Component', () => {
   })
 
   it('should render Sair when user is authenticated', () => {
-    const component = render(withNextAuth(<AuthButton />, 'authenticated'))
+    render(withNextAuth(<AuthButton />, 'authenticated'))
 
-    expect(component.getByText('Sair')).toBeInTheDocument()
+    expect(screen.getByText('Sair')).toBeInTheDocument()
   })
 
   it('should render Login when user is unauthenticated', () => {
-    const component = render(withNextAuth(<AuthButton />, 'unauthenticated'))
+    render(withNextAuth(<AuthButton />, 'unauthenticated'))
 
-    expect(component.getByText('Login')).toBeInTheDocument()
+    expect(screen.getByText('Login')).toBeInTheDocument()
   })
 
   it('should render Login when auth status is Loading', () => {
-    const component = render(withNextAuth(<AuthButton />, 'loading'))
+    render(withNextAuth(<AuthButton />, 'loading'))
 
-    expect(component.getByText('Login')).toBeInTheDocument()
+    expect(screen.getByText('Login')).toBeInTheDocument()
   })
 
   it('should call signOut when user is authenticated and button gets pressed', () => {
-    const component = render(withNextAuth(<AuthButton />, 'authenticated'))
+    render(withNextAuth(<AuthButton />, 'authenticated'))
 
-    const button = component.getByTestId('auth-button')
+    const button = screen.getByTestId('auth-button')
     fireEvent.click(button)
 
     expect(signOut).toHaveBeenCalledTimes(1)
@@ -55,9 +55,9 @@ describe('Auth Button Component', () => {
   })
 
   it('should call signIn when user is unauthenticated and button gets pressed', () => {
-    const component = render(withNextAuth(<AuthButton />, 'unauthenticated'))
+    render(withNextAuth(<AuthButton />, 'unauthenticated'))
 
-    const button = component.getByTestId('auth-button')
+    const button = screen.getByTestId('auth-button')
     fireEvent.click(button)
 
     expect(signOut).toHaveBeenCalledTimes(0)

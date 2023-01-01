@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { render, screen } from '@testing-library/react'
+
+import { render, screen } from '~/utils/tests/react-testing-library'
 
 import { Image } from './image.component'
 
