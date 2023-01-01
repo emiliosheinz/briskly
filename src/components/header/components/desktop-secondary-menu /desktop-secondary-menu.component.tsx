@@ -11,7 +11,7 @@ import { DESKTOP_MENU_OPTIONS } from '../../header.constants'
 export function DesktopSecondaryMenu() {
   return (
     <Popover as='div' className='relative hidden md:block'>
-      <Popover.Button className='inline-flex items-center justify-center bg-primary-50 text-primary-900'>
+      <Popover.Button className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'>
         <UserCircleIcon
           className='h-8 w-8 text-primary-900'
           aria-hidden='true'

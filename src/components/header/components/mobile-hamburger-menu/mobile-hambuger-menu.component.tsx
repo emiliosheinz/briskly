@@ -17,7 +17,7 @@ export function MobileHamburgerMenu() {
 
         return (
           <>
-            <Popover.Button className='inline-flex items-center justify-center bg-primary-50 text-primary-900'>
+            <Popover.Button className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'>
               <span className='sr-only'>{`${srOnlyPrefix} menu`}</span>
               <Icon className='h-8 w-8' aria-hidden='true' />
             </Popover.Button>
