@@ -17,7 +17,7 @@ export function MobileHamburgerMenu() {
 
         return (
           <>
-            <Popover.Button className='inline-flex items-center justify-center rounded-md bg-primary-50 p-2 text-primary-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-400 '>
+            <Popover.Button className='inline-flex items-center justify-center bg-primary-50 text-primary-900'>
               <span className='sr-only'>{`${srOnlyPrefix} menu`}</span>
               <Icon className='h-8 w-8' aria-hidden='true' />
             </Popover.Button>
@@ -31,13 +31,13 @@ export function MobileHamburgerMenu() {
               leaveTo='opacity-0 -translate-y-5'
             >
               <Popover.Panel className='absolute inset-x-0 mt-4 transform bg-primary-50'>
-                <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg '>
+                <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg'>
                   <nav className='flex flex-col items-start justify-start gap-5'>
                     {MOBILE_MENU_OPTIONS.map(option => (
                       <Link
                         href={option.href}
                         key={option.label}
-                        className='flex items-center space-x-1'
+                        className='flex items-center space-x-1 text-primary-900'
                       >
                         <>
                           <option.icon className='h-6 w-6' />

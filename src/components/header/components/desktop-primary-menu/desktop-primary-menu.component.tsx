@@ -9,7 +9,7 @@ export function DesktopPrimaryMenu() {
         <Link
           href={option.href}
           key={option.label}
-          className='flex items-center space-x-1 whitespace-nowrap'
+          className='flex items-center space-x-1 whitespace-nowrap text-primary-900'
         >
           {option.label}
         </Link>
