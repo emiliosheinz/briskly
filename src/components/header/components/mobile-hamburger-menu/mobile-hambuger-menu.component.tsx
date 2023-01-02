@@ -10,14 +10,17 @@ import { MOBILE_MENU_OPTIONS } from '../../header.constants'
 
 export function MobileHamburgerMenu() {
   return (
-    <Popover as='div' className='-my-2 -mr-2 md:hidden'>
+    <Popover data-testid='mobile-hamburger-menu' as='div' className='md:hidden'>
       {({ open: isOpen }) => {
         const Icon = isOpen ? XMarkIcon : Bars3Icon
-        const srOnlyPrefix = isOpen ? 'Open' : 'Close'
+        const srOnlyPrefix = isOpen ? 'Close' : 'Open'
 
         return (
           <>
-            <Popover.Button className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'>
+            <Popover.Button
+              data-testid='popover-button'
+              className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'
+            >
               <span className='sr-only'>{`${srOnlyPrefix} menu`}</span>
               <Icon className='h-8 w-8' aria-hidden='true' />
             </Popover.Button>
@@ -30,7 +33,10 @@ export function MobileHamburgerMenu() {
               leaveFrom='opacity-100 translate-y-0'
               leaveTo='opacity-0 -translate-y-5'
             >
-              <Popover.Panel className='absolute inset-x-0 mt-4 transform bg-primary-50'>
+              <Popover.Panel
+                data-testid='popover-panel'
+                className='absolute inset-x-0 mt-4 transform bg-primary-50'
+              >
                 <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg'>
                   <nav className='flex flex-col items-start justify-start gap-5'>
                     {MOBILE_MENU_OPTIONS.map(option => (
