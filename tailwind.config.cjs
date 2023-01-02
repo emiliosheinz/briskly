@@ -6,13 +6,16 @@ module.exports = {
     colors: {
       primary: {
         900: '#0F172A',
+        800: '#1E293B',
         400: '#94A3B8',
         200: '#E2E8F0',
+        100: '#F1F5F9',
         50: '#F8FAFC',
       },
       error: {
         700: '#B91C1C',
         300: '#FCA5A5',
+        50: '#fef2f2',
       },
       success: {
         700: '#15803D',
