@@ -6,7 +6,7 @@ import fs from 'node:fs'
 
 /**
  * TODO emiliosheinz: Implement media query evaluation.
- *  Related Issue: https://stackoverflow.com/questions/64281467/react-testing-library-rtl-test-a-responsive-design
+ *  - Related Issue: https://stackoverflow.com/questions/64281467/react-testing-library-rtl-test-a-responsive-design
  */
 const customRender = (ui: ReactElement, options?: RenderOptions) => {
   const view = render(ui, options)
