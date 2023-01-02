@@ -8,7 +8,7 @@ type AuthState =
 
 type MockedAuthStates = 'loading' | 'unauthenticated' | 'authenticated'
 
-export const AUTH_STATES: Record<MockedAuthStates, AuthState> = {
+const AUTH_STATES: Record<MockedAuthStates, AuthState> = {
   loading: {
     data: null,
     status: 'loading',
