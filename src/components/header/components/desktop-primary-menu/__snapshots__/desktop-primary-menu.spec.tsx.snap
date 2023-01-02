@@ -10,12 +10,6 @@ exports[`Header DesktopPrimaryMenu Component should be correctly rendered 1`] = 
       class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
       href="#"
     >
-      Para Revisar
-    </a>
-    <a
-      class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
-      href="#"
-    >
       Mais Votados
     </a>
     <a
@@ -23,12 +17,6 @@ exports[`Header DesktopPrimaryMenu Component should be correctly rendered 1`] = 
       href="#"
     >
       Mais Recentes
-    </a>
-    <a
-      class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
-      href="#"
-    >
-      Para Você
     </a>
     <a
       class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
