@@ -12,7 +12,7 @@ const customRender = (ui: ReactElement, options?: RenderOptions) => {
   const view = render(ui, options)
 
   const style = document.createElement('style')
-  style.innerHTML = fs.readFileSync('src/utils/tests/tailwind.css', 'utf8')
+  style.innerHTML = fs.readFileSync('temp/tailwind.css', 'utf8')
   document.head.append(style)
 
   return view
