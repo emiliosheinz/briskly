@@ -5,7 +5,7 @@ import { type AppType } from 'next/app'
 
 import { trpc } from '~/utils/trpc'
 
-import '~/styles/globals.css'
+import '~/styles/tailwind.css'
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

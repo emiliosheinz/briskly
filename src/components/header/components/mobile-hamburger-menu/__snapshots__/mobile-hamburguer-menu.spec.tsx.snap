@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header MobileHamburgerMenu Component Authenticated should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="md:hidden"
+    data-headlessui-state=""
+    data-testid="mobile-hamburger-menu"
+  >
+    <button
+      aria-expanded="false"
+      class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+      data-headlessui-state=""
+      data-testid="popover-button"
+      id="headlessui-popover-button-:r0:"
+      type="button"
+    >
+      <span
+        class="sr-only"
+      >
+        Open menu
+      </span>
+      <svg
+        aria-hidden="true"
+        class="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Header MobileHamburgerMenu Component Unauthenticated should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="md:hidden"
+    data-headlessui-state=""
+    data-testid="mobile-hamburger-menu"
+  >
+    <button
+      aria-expanded="false"
+      class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+      data-headlessui-state=""
+      data-testid="popover-button"
+      id="headlessui-popover-button-:rg:"
+      type="button"
+    >
+      <span
+        class="sr-only"
+      >
+        Open menu
+      </span>
+      <svg
+        aria-hidden="true"
+        class="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+</DocumentFragment>
+`;

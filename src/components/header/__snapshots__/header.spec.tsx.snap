@@ -1,0 +1,332 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header Component Authenticated should be correctly rendered 1`] = `
+<DocumentFragment>
+  <header
+    class="border-b-2 border-primary-200 bg-primary-50"
+  >
+    <div
+      class="mx-auto flex max-w-7xl items-center justify-between p-4 md:space-x-10"
+    >
+      <div
+        class="flex items-center justify-start"
+      >
+        <a
+          data-testid="home-anchor"
+          href="/"
+        >
+          <span
+            class="sr-only"
+          >
+            Briskly
+          </span>
+          <img
+            alt="Briskly logo"
+            data-nimg="1"
+            data-testid="image-component"
+            decoding="async"
+            height="35"
+            loading="lazy"
+            src="/_next/image?url=%2Fimages%2Flogo.png&w=96&q=75"
+            srcset="/_next/image?url=%2Fimages%2Flogo.png&w=48&q=75 1x, /_next/image?url=%2Fimages%2Flogo.png&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </a>
+        <div
+          class="mx-5 hidden gap-6 md:flex lg:mx-10 lg:gap-8"
+          data-testid="desktop-primary-menu"
+        >
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Votados
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Recentes
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Criar Deck
+          </a>
+        </div>
+      </div>
+      <div
+        class="md:hidden"
+        data-headlessui-state=""
+        data-testid="mobile-hamburger-menu"
+      >
+        <button
+          aria-expanded="false"
+          class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+          data-headlessui-state=""
+          data-testid="popover-button"
+          id="headlessui-popover-button-:r6:"
+          type="button"
+        >
+          <span
+            class="sr-only"
+          >
+            Open menu
+          </span>
+          <svg
+            aria-hidden="true"
+            class="h-8 w-8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="relative hidden md:block"
+        data-headlessui-state=""
+        data-testid="desktop-secondary-menu"
+      >
+        <button
+          aria-expanded="false"
+          class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+          data-headlessui-state=""
+          data-testid="popover-button"
+          id="headlessui-popover-button-:r8:"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="h-8 w-8 text-primary-900"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+</DocumentFragment>
+`;
+
+exports[`Header Component Loading Authentication should be correctly rendered 1`] = `
+<DocumentFragment>
+  <header
+    class="border-b-2 border-primary-200 bg-primary-50"
+  >
+    <div
+      class="mx-auto flex max-w-7xl items-center justify-between p-4 md:space-x-10"
+    >
+      <div
+        class="flex items-center justify-start"
+      >
+        <a
+          data-testid="home-anchor"
+          href="/"
+        >
+          <span
+            class="sr-only"
+          >
+            Briskly
+          </span>
+          <img
+            alt="Briskly logo"
+            data-nimg="1"
+            data-testid="image-component"
+            decoding="async"
+            height="35"
+            loading="lazy"
+            src="/_next/image?url=%2Fimages%2Flogo.png&w=96&q=75"
+            srcset="/_next/image?url=%2Fimages%2Flogo.png&w=48&q=75 1x, /_next/image?url=%2Fimages%2Flogo.png&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </a>
+        <div
+          class="mx-5 hidden gap-6 md:flex lg:mx-10 lg:gap-8"
+          data-testid="desktop-primary-menu"
+        >
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Votados
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Recentes
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Criar Deck
+          </a>
+        </div>
+      </div>
+      <div
+        class="md:hidden"
+        data-headlessui-state=""
+        data-testid="mobile-hamburger-menu"
+      >
+        <button
+          aria-expanded="false"
+          class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+          data-headlessui-state=""
+          data-testid="popover-button"
+          id="headlessui-popover-button-:r0:"
+          type="button"
+        >
+          <span
+            class="sr-only"
+          >
+            Open menu
+          </span>
+          <svg
+            aria-hidden="true"
+            class="h-8 w-8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+</DocumentFragment>
+`;
+
+exports[`Header Component Unauthenticated should be correctly rendered 1`] = `
+<DocumentFragment>
+  <header
+    class="border-b-2 border-primary-200 bg-primary-50"
+  >
+    <div
+      class="mx-auto flex max-w-7xl items-center justify-between p-4 md:space-x-10"
+    >
+      <div
+        class="flex items-center justify-start"
+      >
+        <a
+          data-testid="home-anchor"
+          href="/"
+        >
+          <span
+            class="sr-only"
+          >
+            Briskly
+          </span>
+          <img
+            alt="Briskly logo"
+            data-nimg="1"
+            data-testid="image-component"
+            decoding="async"
+            height="35"
+            loading="lazy"
+            src="/_next/image?url=%2Fimages%2Flogo.png&w=96&q=75"
+            srcset="/_next/image?url=%2Fimages%2Flogo.png&w=48&q=75 1x, /_next/image?url=%2Fimages%2Flogo.png&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </a>
+        <div
+          class="mx-5 hidden gap-6 md:flex lg:mx-10 lg:gap-8"
+          data-testid="desktop-primary-menu"
+        >
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Votados
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Mais Recentes
+          </a>
+          <a
+            class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
+            href="#"
+          >
+            Criar Deck
+          </a>
+        </div>
+      </div>
+      <div
+        class="md:hidden"
+        data-headlessui-state=""
+        data-testid="mobile-hamburger-menu"
+      >
+        <button
+          aria-expanded="false"
+          class="inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900"
+          data-headlessui-state=""
+          data-testid="popover-button"
+          id="headlessui-popover-button-:ri:"
+          type="button"
+        >
+          <span
+            class="sr-only"
+          >
+            Open menu
+          </span>
+          <svg
+            aria-hidden="true"
+            class="h-8 w-8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="hidden w-32 md:block"
+      >
+        <button
+          class="bg-transparent w-full rounded border py-2 px-4 font-semibold text-primary-900 border-primary-900"
+          data-testid="auth-button"
+        >
+          Login
+        </button>
+      </div>
+    </div>
+  </header>
+</DocumentFragment>
+`;

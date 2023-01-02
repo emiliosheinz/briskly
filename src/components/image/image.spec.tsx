@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { render, screen } from '@testing-library/react'
+
+import { render, screen } from '~/utils/tests/react-testing-library'
 
 import { Image } from './image.component'
 
@@ -27,5 +28,29 @@ describe('Image Component', () => {
       'color: transparent; background-size: cover; background-position: 50% 50%; background-repeat: no-repeat;'
 
     expect(actualStyle).toEqual(blurStyle)
+  })
+
+  it('should not render blur placeholder when image width is smaller then 40', () => {
+    const src = makeImageUrl()
+
+    render(<Image src={src} alt={defaultAlt} height={40} width={39} />)
+    const component = screen.getByTestId('image-component')
+
+    const actualStyle = component.getAttribute('style')
+    const defaultStyle = 'color: transparent;'
+
+    expect(actualStyle).toEqual(defaultStyle)
+  })
+
+  it('should not render blur placeholder when image height is smaller then 40', () => {
+    const src = makeImageUrl()
+
+    render(<Image src={src} alt={defaultAlt} height={39} width={40} />)
+    const component = screen.getByTestId('image-component')
+
+    const actualStyle = component.getAttribute('style')
+    const defaultStyle = 'color: transparent;'
+
+    expect(actualStyle).toEqual(defaultStyle)
   })
 })
