@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 
 import { Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 import { AuthButton } from '~/components/auth-button'
@@ -9,6 +10,26 @@ import { AuthButton } from '~/components/auth-button'
 import { MOBILE_MENU_OPTIONS } from '../../header.constants'
 
 export function MobileHamburgerMenu() {
+  const { data: session } = useSession()
+
+  const renderMenuOptions = () =>
+    MOBILE_MENU_OPTIONS.map(option => {
+      if (option.isAuthRequired && !session) return null
+
+      return (
+        <Link
+          href={option.href}
+          key={option.label}
+          className='flex items-center space-x-1 text-primary-900'
+        >
+          <>
+            <option.icon className='h-6 w-6' />
+            <span>{option.label}</span>
+          </>
+        </Link>
+      )
+    })
+
   return (
     <Popover data-testid='mobile-hamburger-menu' as='div' className='md:hidden'>
       {({ open: isOpen }) => {
@@ -39,18 +60,7 @@ export function MobileHamburgerMenu() {
               >
                 <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg'>
                   <nav className='flex flex-col items-start justify-start gap-5'>
-                    {MOBILE_MENU_OPTIONS.map(option => (
-                      <Link
-                        href={option.href}
-                        key={option.label}
-                        className='flex items-center space-x-1 text-primary-900'
-                      >
-                        <>
-                          <option.icon className='h-6 w-6' />
-                          <span>{option.label}</span>
-                        </>
-                      </Link>
-                    ))}
+                    {renderMenuOptions()}
                     <AuthButton />
                   </nav>
                 </div>
