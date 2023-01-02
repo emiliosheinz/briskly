@@ -41,9 +41,12 @@ export function DesktopSecondaryMenu() {
             <Link
               href={option.href}
               key={option.label}
-              className='flex items-center space-x-1 whitespace-nowrap text-primary-900'
+              className='flex items-center gap-2 whitespace-nowrap text-primary-900'
             >
-              {option.label}
+              <>
+                <option.icon className='h-6 w-6' />
+                {option.label}
+              </>
             </Link>
           ))}
           <AuthButton />
