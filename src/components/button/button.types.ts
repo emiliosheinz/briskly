@@ -5,7 +5,8 @@ export type ButtonVariants = 'primary' | 'secondary' | 'bad'
 export type ButtonProps = {
   variant?: ButtonVariants
   fullWidth?: boolean
+  isLoading?: boolean
 } & Omit<
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
-  'className'
+  'className' | 'aria-disabled'
 >
