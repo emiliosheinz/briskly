@@ -20,7 +20,7 @@ exports[`Header DesktopPrimaryMenu Component should be correctly rendered 1`] = 
     </a>
     <a
       class="flex items-center space-x-1 whitespace-nowrap text-primary-900"
-      href="#"
+      href="/decks/new"
     >
       Criar Deck
     </a>
