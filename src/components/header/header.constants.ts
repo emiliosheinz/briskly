@@ -8,6 +8,8 @@ import {
   WrenchIcon,
 } from '@heroicons/react/24/outline'
 
+import { routes } from '~/utils/navigation'
+
 const MENU_OPTIONS = [
   {
     label: 'Para Revisar',
@@ -36,7 +38,7 @@ const MENU_OPTIONS = [
   {
     label: 'Criar Deck',
     icon: PlusCircleIcon,
-    href: '#',
+    href: routes.createNewDeck(),
     isAuthRequired: false,
   },
   {
