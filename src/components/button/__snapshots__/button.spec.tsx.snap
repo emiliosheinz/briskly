@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Component Bad should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+  >
+    <button
+      class="flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50 bg-primary-50 enabled:hover:bg-error-50 text-error-700 ring-error-700"
+      data-testid="briskly-custom-button"
+    >
+      Default Label
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Button Component Primary should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+  >
+    <button
+      class="flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50 bg-primary-900 enabled:hover:bg-primary-800 text-primary-50 ring-primary-900"
+      data-testid="briskly-custom-button"
+    >
+      Default Label
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Button Component Secondary should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="relative"
+  >
+    <button
+      class="flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50 bg-primary-50 enabled:hover:bg-primary-100 text-primary-900 ring-primary-900"
+      data-testid="briskly-custom-button"
+    >
+      Default Label
+    </button>
+  </div>
+</DocumentFragment>
+`;

@@ -2,11 +2,15 @@
 
 exports[`Auth Button Component should be properly rendered 1`] = `
 <DocumentFragment>
-  <button
-    class="bg-transparent w-full rounded border py-2 px-4 font-semibold text-error-700 border-error-700"
-    data-testid="auth-button"
+  <div
+    class="relative"
   >
-    Sair
-  </button>
+    <button
+      class="flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50 bg-primary-50 enabled:hover:bg-error-50 text-error-700 ring-error-700 w-full justify-center"
+      data-testid="auth-button"
+    >
+      Sair
+    </button>
+  </div>
 </DocumentFragment>
 `;
