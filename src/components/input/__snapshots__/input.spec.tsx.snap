@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input Component should be correctly rendered 1`] = `
+<DocumentFragment>
+  <div
+    class="w-full max-w-xs"
+  >
+    <label
+      class="block text-sm font-medium capitalize text-primary-800"
+      for="mock"
+    >
+      Label
+    </label>
+    <div
+      class="mt-1 rounded-md shadow-sm"
+    >
+      <input
+        class="block w-full rounded-md border-primary-500 bg-primary-50 pl-6 pr-10 text-base text-primary-900 focus:border-primary-900 focus:ring-primary-900"
+        data-testid="briskly-custom-input"
+        id="mock"
+        type="text"
+      />
+    </div>
+    <p
+      class="mt-1 h-5 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize text-error-700"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Input Component should be correctly rendered when disabled 1`] = `
+<DocumentFragment>
+  <div
+    aria-disabled="true"
+    class="w-full max-w-xs opacity-50"
+  >
+    <label
+      class="block text-sm font-medium capitalize text-primary-800"
+      for="mock"
+    >
+      Label
+    </label>
+    <div
+      class="mt-1 rounded-md shadow-sm"
+    >
+      <input
+        class="block w-full rounded-md border-primary-500 bg-primary-50 pl-6 pr-10 text-base text-primary-900 focus:border-primary-900 focus:ring-primary-900"
+        data-testid="briskly-custom-input"
+        disabled=""
+        id="mock"
+        type="text"
+      />
+    </div>
+    <p
+      class="mt-1 h-5 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize text-error-700"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Input Component should be correctly rendered when hasError 1`] = `
+<DocumentFragment>
+  <div
+    class="w-full max-w-xs"
+  >
+    <label
+      class="block text-sm font-medium capitalize text-primary-800"
+      for="mock"
+    >
+      Label
+    </label>
+    <div
+      class="mt-1 rounded-md shadow-sm"
+    >
+      <input
+        class="block w-full rounded-md border-primary-500 bg-primary-50 pl-6 pr-10 text-base text-primary-900 focus:border-primary-900 focus:ring-primary-900 border-error-700 focus:border-error-700 focus:ring-error-700"
+        data-testid="briskly-custom-input"
+        id="mock"
+        type="text"
+      />
+    </div>
+    <p
+      class="mt-1 h-5 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize text-error-700"
+    >
+      Mocked Error
+    </p>
+  </div>
+</DocumentFragment>
+`;

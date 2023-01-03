@@ -8,12 +8,14 @@ module.exports = {
         900: '#0F172A',
         800: '#1E293B',
         400: '#94A3B8',
+        500: '#64748b',
         200: '#E2E8F0',
         100: '#F1F5F9',
         50: '#F8FAFC',
       },
       error: {
         700: '#B91C1C',
+        500: '#ef4444',
         300: '#FCA5A5',
         50: '#fef2f2',
       },
@@ -27,5 +29,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }
