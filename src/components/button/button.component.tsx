@@ -38,24 +38,15 @@ export function Button(props: ButtonProps) {
         data-testid='button-loader'
         className='absolute bottom-0 left-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1 opacity-90'
       >
-        <span
-          className={classNames(
-            'inline-flex h-4 w-4 animate-bounce rounded-full animation-delay-400',
-            variantBasedBackground[variant],
-          )}
-        />
-        <span
-          className={classNames(
-            'inline-flex h-4 w-4 animate-bounce rounded-full animation-delay-200',
-            variantBasedBackground[variant],
-          )}
-        />
-        <span
-          className={classNames(
-            'inline-flex h-4 w-4 animate-bounce rounded-full',
-            variantBasedBackground[variant],
-          )}
-        />
+        {Array.from({ length: 3 }).map((_, index) => (
+          <span
+            key={index}
+            className={classNames(
+              'inline-flex h-4 w-4 animate-bounce rounded-full',
+              variantBasedBackground[variant],
+            )}
+          />
+        ))}
         <span className='sr-only'>Loading...</span>
       </div>
     )
