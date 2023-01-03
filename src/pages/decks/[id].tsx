@@ -4,8 +4,6 @@ import Head from 'next/head'
 
 import { Button } from '~/components/button'
 import { Header } from '~/components/header'
-import { getServerAuthSession } from '~/server/common/get-server-auth-session'
-import { getNextAuthUrl } from '~/utils/runtime'
 
 const NEW_DECK_ID = 'new'
 
@@ -14,17 +12,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
     return {
       redirect: {
         destination: '/',
-        permanent: false,
-      },
-    }
-  }
-
-  const session = await getServerAuthSession(context)
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: getNextAuthUrl({ path: context.resolvedUrl }),
         permanent: false,
       },
     }
