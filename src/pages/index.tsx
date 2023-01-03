@@ -4,6 +4,7 @@ import Head from 'next/head'
 
 import { Button } from '~/components/button'
 import { Header } from '~/components/header'
+import { Input } from '~/components/input'
 
 const Home: NextPage = () => {
   return (
@@ -14,36 +15,9 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Header />
-      <main className='flex min-h-screen flex-col items-center justify-center gap-5 bg-primary-50'>
-        <div className='flex flex-wrap gap-3'>
-          <Button>Primary Button</Button>
-          <Button isLoading>Primary Button</Button>
-          <Button disabled>Primary Button</Button>
-        </div>
-        <div className='flex flex-wrap gap-3'>
-          <Button variant='secondary'>Secondary button</Button>
-          <Button variant='secondary' isLoading>
-            Secondary button
-          </Button>
-          <Button variant='secondary' disabled>
-            Secondary button
-          </Button>
-        </div>
-        <div className='flex flex-wrap gap-3'>
-          <Button variant='bad'>Error Button</Button>
-          <Button variant='bad' isLoading>
-            Error Button
-          </Button>
-          <Button variant='bad' disabled>
-            Error Button
-          </Button>
-        </div>
-        {/* <Button variant='secondary' isLoading>
-          Secondary button
-        </Button>
-        <Button variant='bad' isLoading>
-          Error Button
-        </Button> */}
+      <main className='flex min-h-screen flex-col items-center justify-center gap-2 bg-primary-50 p-2'>
+        <h1>Home Page</h1>
+        <h2>Under Development</h2>
       </main>
     </>
   )
