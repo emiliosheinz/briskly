@@ -1,4 +1,5 @@
 import { render, screen } from '~/utils/tests/react-testing-library'
+
 import { Input } from './input.component'
 
 describe('Input Component', () => {
