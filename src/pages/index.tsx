@@ -18,6 +18,8 @@ const Home: NextPage = () => {
       <main className='flex min-h-screen flex-col items-center justify-center gap-2 bg-primary-50 p-2'>
         <h1>Home Page</h1>
         <h2>Under Development</h2>
+        <Input label='Label' id='test-input' />
+        <Button>Botão de Teste</Button>
       </main>
     </>
   )
