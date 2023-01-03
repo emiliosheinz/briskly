@@ -320,7 +320,7 @@ exports[`Header Component Unauthenticated should be correctly rendered 1`] = `
         class="hidden w-32 md:block"
       >
         <div
-          class="relative"
+          class="relative w-full"
         >
           <button
             class="flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50 bg-primary-50 enabled:hover:bg-primary-100 text-primary-900 ring-primary-900 w-full justify-center"

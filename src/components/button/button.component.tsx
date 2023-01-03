@@ -53,7 +53,7 @@ export function Button(props: ButtonProps) {
   }
 
   return (
-    <div className='relative'>
+    <div className={classNames('relative', fullWidth ? 'w-full' : '')}>
       <button
         disabled={isDisabled}
         aria-disabled={isDisabled}
