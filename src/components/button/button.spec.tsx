@@ -52,6 +52,50 @@ describe('Button Component', () => {
 
       expect(button).toHaveClass(fullWidthClassNames)
     })
+
+    it('should render loader when isLoading is true', () => {
+      render(
+        <Button variant='primary' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const loader = screen.getByTestId('button-loader')
+
+      expect(loader).toBeInTheDocument()
+    })
+
+    it('should not render loader when isLoading is false', () => {
+      render(<Button variant='primary'>Default Label</Button>)
+
+      const loader = screen.queryByTestId('button-loader')
+
+      expect(loader).not.toBeInTheDocument()
+    })
+
+    it('should disable the button when isLoading is true', () => {
+      render(
+        <Button variant='primary' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
+    })
+
+    it('should disable the button when disabled is true', () => {
+      render(
+        <Button variant='primary' disabled>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
+    })
   })
 
   describe('Secondary', () => {
@@ -92,6 +136,50 @@ describe('Button Component', () => {
 
       expect(button).toHaveClass(fullWidthClassNames)
     })
+
+    it('should render loader when isLoading is true', () => {
+      render(
+        <Button variant='secondary' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const loader = screen.getByTestId('button-loader')
+
+      expect(loader).toBeInTheDocument()
+    })
+
+    it('should not render loader when isLoading is false', () => {
+      render(<Button variant='secondary'>Default Label</Button>)
+
+      const loader = screen.queryByTestId('button-loader')
+
+      expect(loader).not.toBeInTheDocument()
+    })
+
+    it('should disable the button when isLoading is true', () => {
+      render(
+        <Button variant='secondary' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
+    })
+
+    it('should disable the button when disabled is true', () => {
+      render(
+        <Button variant='secondary' disabled>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
+    })
   })
 
   describe('Bad', () => {
@@ -129,6 +217,50 @@ describe('Button Component', () => {
       const button = screen.getByTestId('briskly-custom-button')
 
       expect(button).toHaveClass(fullWidthClassNames)
+    })
+
+    it('should render loader when isLoading is true', () => {
+      render(
+        <Button variant='bad' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const loader = screen.getByTestId('button-loader')
+
+      expect(loader).toBeInTheDocument()
+    })
+
+    it('should not render loader when isLoading is false', () => {
+      render(<Button variant='bad'>Default Label</Button>)
+
+      const loader = screen.queryByTestId('button-loader')
+
+      expect(loader).not.toBeInTheDocument()
+    })
+
+    it('should disable the button when isLoading is true', () => {
+      render(
+        <Button variant='bad' isLoading>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
+    })
+
+    it('should disable the button when disabled is true', () => {
+      render(
+        <Button variant='bad' disabled>
+          Default Label
+        </Button>,
+      )
+
+      const button = screen.getByTestId('briskly-custom-button')
+
+      expect(button).toBeDisabled()
     })
   })
 })
