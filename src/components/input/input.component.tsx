@@ -1,9 +1,11 @@
 import React from 'react'
+
 import { classNames } from '~/utils/css'
-import { InputProps } from './input.types'
+
+import type { InputProps } from './input.types'
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (props, ref) => {
+  function Input(props, ref) {
     const { label, error, id, disabled, ...otherProps } = props
 
     const errorClassNames = error
