@@ -6,6 +6,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (props, ref) => {
     const { label, error, id, disabled, ...otherProps } = props
 
+    const errorClassNames = error
+      ? 'border-error-700 focus:border-error-700 focus:ring-error-700'
+      : ''
+
     return (
       <div
         aria-disabled={disabled}
@@ -23,11 +27,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type='text'
             disabled={disabled}
+            data-testid='briskly-custom-input'
             className={classNames(
               'block w-full rounded-md border-primary-500 bg-primary-50 pl-6 pr-10 text-base text-primary-900 focus:border-primary-900 focus:ring-primary-900',
-              error
-                ? 'border-error-700 focus:border-error-700 focus:ring-error-700'
-                : '',
+              errorClassNames,
             )}
             {...otherProps}
           />
