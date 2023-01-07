@@ -8,7 +8,7 @@ type AuthState =
 
 type MockedAuthStates = 'loading' | 'unauthenticated' | 'authenticated'
 
-const AUTH_STATES: Record<MockedAuthStates, AuthState> = {
+export const AUTH_STATES: Record<MockedAuthStates, AuthState> = {
   loading: {
     data: null,
     status: 'loading',
@@ -33,7 +33,7 @@ const AUTH_STATES: Record<MockedAuthStates, AuthState> = {
 
 export const withNextAuth = (
   children: React.ReactNode,
-  session: MockedAuthStates,
+  session: keyof typeof AUTH_STATES,
 ) => {
   return (
     <SessionContext.Provider value={AUTH_STATES[session]}>
