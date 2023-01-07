@@ -6,7 +6,7 @@ exports[`Header Component Authenticated should be correctly rendered 1`] = `
     class="border-b-2 border-primary-200 bg-primary-50"
   >
     <div
-      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:space-x-10"
+      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 md:space-x-10 md:px-5"
     >
       <div
         class="flex items-center justify-start"
@@ -133,7 +133,7 @@ exports[`Header Component Loading Authentication should be correctly rendered 1`
     class="border-b-2 border-primary-200 bg-primary-50"
   >
     <div
-      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:space-x-10"
+      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 md:space-x-10 md:px-5"
     >
       <div
         class="flex items-center justify-start"
@@ -230,7 +230,7 @@ exports[`Header Component Unauthenticated should be correctly rendered 1`] = `
     class="border-b-2 border-primary-200 bg-primary-50"
   >
     <div
-      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:space-x-10"
+      class="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 md:space-x-10 md:px-5"
     >
       <div
         class="flex items-center justify-start"

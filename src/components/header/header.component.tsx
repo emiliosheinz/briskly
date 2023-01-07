@@ -33,7 +33,7 @@ export function Header() {
 
   return (
     <header className='border-b-2 border-primary-200 bg-primary-50'>
-      <div className='mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:space-x-10'>
+      <div className='mx-auto flex h-20 max-w-7xl items-center justify-between px-3 md:space-x-10 md:px-5'>
         <div className='flex items-center justify-start'>
           <Link href='/' data-testid='home-anchor'>
             <span className='sr-only'>Briskly</span>
