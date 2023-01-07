@@ -27,20 +27,25 @@ const makeCreateNewDeckInput = (): inferProcedureInput<
 
 describe('API Decks Router', () => {
   it('should create a new deck when authenticated', async () => {
-    const { caller, prisma } = await createTRPCCallerMock({
+    const { caller, prisma, session } = await createTRPCCallerMock({
       session: 'authenticated',
     })
 
     const deck = makeNewDeck()
     prisma.deck.create.mockResolvedValue(deck)
 
-    const createDeck = caller.decks.createNewDeck(makeCreateNewDeckInput())
+    const input = makeCreateNewDeckInput()
+    const createDeck = caller.decks.createNewDeck(input)
+    const expectedPrismaCreateInput = {
+      data: { ...input, ownerId: session?.user?.id },
+    }
 
     await expect(createDeck).resolves.toEqual(deck)
+    expect(prisma.deck.create).toBeCalledWith(expectedPrismaCreateInput)
   })
 
   it('should throw an error when unauthenticated', async () => {
-    const { caller } = await createTRPCCallerMock({
+    const { caller, prisma } = await createTRPCCallerMock({
       session: 'unauthenticated',
     })
 
@@ -48,5 +53,6 @@ describe('API Decks Router', () => {
     const unauthorizedError = new TRPCError({ code: 'UNAUTHORIZED' })
 
     await expect(createDeck).rejects.toEqual(unauthorizedError)
+    expect(prisma.deck.create).not.toHaveBeenCalled()
   })
 })

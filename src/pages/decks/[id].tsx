@@ -4,6 +4,7 @@ import Head from 'next/head'
 
 import { Button } from '~/components/button'
 import type { WithAuthentication } from '~/types/auth'
+import { api } from '~/utils/api'
 
 const NEW_DECK_ID = 'new'
 
@@ -22,6 +23,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
   }
 }
 const DecksCrud: WithAuthentication<NextPage> = () => {
+  const createNewDeckMutation = api.decks.createNewDeck.useMutation()
+
   return (
     <>
       <Head>
@@ -45,7 +48,16 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
         <div className='h-10 w-full bg-primary-200'></div>
         <footer className='flex justify-end gap-5'>
           <Button variant='bad'>Cancelar</Button>
-          <Button>Salvar</Button>
+          <Button
+            onClick={() => {
+              createNewDeckMutation.mutate({
+                title: 'Novo Deck de teste',
+                description: 'Este é um novo deck de teste',
+              })
+            }}
+          >
+            Salvar
+          </Button>
         </footer>
       </div>
     </>
