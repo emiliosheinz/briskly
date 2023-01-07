@@ -1,5 +1,6 @@
 import { classNames } from '~/utils/css'
 
+import { Loader } from '../loader'
 import type { ButtonProps, ButtonVariants } from './button.types'
 
 export const variantBasedClassNames: Record<ButtonVariants, string> = {
@@ -27,27 +28,12 @@ export function Button(props: ButtonProps) {
   const renderLoader = () => {
     if (!isLoading) return null
 
-    const variantBasedBackground: Record<ButtonVariants, string> = {
-      primary: 'bg-primary-50',
-      secondary: 'bg-primary-900',
-      bad: 'bg-error-700',
-    }
-
     return (
       <div
         data-testid='button-loader'
-        className='absolute bottom-0 left-1/2 flex -translate-x-1/2 -translate-y-1/2 gap-1 opacity-90'
+        className='absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2'
       >
-        {Array.from({ length: 3 }).map((_, index) => (
-          <span
-            key={index}
-            className={classNames(
-              'inline-flex h-4 w-4 animate-bounce rounded-full',
-              variantBasedBackground[variant],
-            )}
-          />
-        ))}
-        <span className='sr-only'>Loading...</span>
+        <Loader variant={variant} />
       </div>
     )
   }
