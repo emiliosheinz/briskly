@@ -15,11 +15,11 @@ jest.mock('next-auth/react', () => {
   }
 })
 
-describe('Auth Button Component', () => {
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
+afterEach(() => {
+  jest.resetAllMocks()
+})
 
+describe('Auth Button Component', () => {
   it('should be properly rendered', () => {
     const component = render(withNextAuth(<AuthButton />, 'authenticated'))
 
