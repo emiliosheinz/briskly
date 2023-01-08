@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:tests:css": "npx tailwindcss -i ./src/styles/tailwind.css -o ./temp/tailwind.css --postcss postcss.config.cjs -c tailwind.config.cjs",
-    "test": "yarn build:tests:css && jest",
-    "test:watch": "yarn build:tests:css && jest --watch",
     "build": "next build",
     "vercel-build": "prisma generate && prisma migrate deploy && yarn build",
     "dev": "next dev",
@@ -40,9 +37,6 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
-    "@faker-js/faker": "^7.6.0",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
     "@types/node": "^18.0.0",
     "@types/prettier": "^2.7.1",
     "@types/react": "^18.0.14",
@@ -58,8 +52,6 @@
     "eslint-plugin-unicorn": "^45.0.1",
     "husky": "^8.0.2",
     "jest": "^29.3.1",
-    "jest-environment-jsdom": "^29.3.1",
-    "jest-mock-extended": "^3.0.1",
     "postcss": "^8.4.14",
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13",
