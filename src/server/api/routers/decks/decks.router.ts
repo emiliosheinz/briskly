@@ -8,13 +8,12 @@ export const decksRouter = createTRPCRouter({
       z.object({
         title: z.string(),
         description: z.string(),
+        image: z.string(),
       }),
     )
     .mutation(({ input, ctx }) => {
-      const deck = ctx.prisma.deck.create({
+      return ctx.prisma.deck.create({
         data: { ...input, ownerId: ctx.session.user.id },
       })
-
-      return deck
     }),
 })
