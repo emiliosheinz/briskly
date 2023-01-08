@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { Toaster } from 'react-hot-toast'
 
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
@@ -44,6 +45,7 @@ const MyApp: AppType<{ session: Session | null }> = props => {
         </main>
         <Analytics />
       </SessionProvider>
+      <Toaster />
       <FullScreenLoader />
     </JotaiProvider>
   )
