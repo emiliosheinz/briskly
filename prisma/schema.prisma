@@ -64,6 +64,6 @@ model Deck {
   description String
   visibility  Visibility @default(Public)
   ownerId     String
-  image       String?    @unique
+  image       String     @unique
   user        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
