@@ -1,4 +1,5 @@
 import { decksRouter } from './routers/decks'
+import { filesRouter } from './routers/files'
 import { createTRPCRouter } from './trpc'
 
 /**
@@ -8,6 +9,7 @@ import { createTRPCRouter } from './trpc'
  */
 export const appRouter = createTRPCRouter({
   decks: decksRouter,
+  files: filesRouter,
 })
 
 export type AppRouter = typeof appRouter
