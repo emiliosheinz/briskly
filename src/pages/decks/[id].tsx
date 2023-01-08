@@ -4,6 +4,7 @@ import { useSetAtom } from 'jotai'
 import type { GetServerSideProps } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 import { Button } from '~/components/button'
 import { ImageUploader } from '~/components/image-uploader'
@@ -12,6 +13,8 @@ import { TextArea } from '~/components/text-area'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
+import { routes } from '~/utils/navigation'
+import { notify } from '~/utils/toast'
 
 const NEW_DECK_ID = 'new'
 
@@ -38,6 +41,7 @@ type FormValues = {
 
 const DecksCrud: WithAuthentication<NextPage> = () => {
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
+  const router = useRouter()
   const createNewDeckMutation = api.decks.createNewDeck.useMutation()
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
@@ -51,23 +55,32 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true)
 
-    const uploadConfig = await getFileUploadConfigMutation.mutateAsync()
+    try {
+      const uploadConfig = await getFileUploadConfigMutation.mutateAsync()
 
-    const fileUpload = fetch(uploadConfig.uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: values.image[0],
-    })
+      const fileUpload = fetch(uploadConfig.uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: values.image[0],
+      })
 
-    const createDeck = createNewDeckMutation.mutateAsync({
-      ...values,
-      image: uploadConfig.fileName,
-    })
+      const createDeck = createNewDeckMutation.mutateAsync({
+        ...values,
+        image: uploadConfig.fileName,
+      })
 
-    await Promise.all([fileUpload, createDeck])
-    setIsLoading(false)
+      await Promise.all([fileUpload, createDeck])
+
+      notify.success('Deck criado com sucesso!')
+      // TODO emiliosheinz: redirect to deck detail
+      router.replace(routes.home())
+    } catch {
+      notify.error('Erro ao criar o Deck!')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
