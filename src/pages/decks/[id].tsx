@@ -129,7 +129,11 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
         <div className='h-10 w-full bg-primary-200'></div>
 
         <footer className='flex justify-end gap-5'>
-          <Button variant='bad' type='button'>
+          <Button
+            variant='bad'
+            type='button'
+            onClick={() => router.replace(routes.home())}
+          >
             Cancelar
           </Button>
           <Button type='submit'>Salvar</Button>
