@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { DocumentPlusIcon } from '@heroicons/react/24/outline'
 
 import { useFilePreview } from '~/hooks/use-file-preview'
+import { classNames } from '~/utils/css'
 
 import { Image } from '../image/image.component'
 import type { ImageUploaderProps } from './image-uploader.types'
@@ -11,7 +12,7 @@ export const ImageUploader = React.forwardRef<
   HTMLInputElement,
   ImageUploaderProps
 >(function ImageUploader(props, ref) {
-  const { id, onChange, ...otherProps } = props
+  const { id, onChange, error, ...otherProps } = props
 
   const [image, setImage] = useState<File>()
   const previewImage = useFilePreview(image)
@@ -53,22 +54,32 @@ export const ImageUploader = React.forwardRef<
   }
 
   return (
-    <label
-      htmlFor={id}
-      className='relative flex aspect-square cursor-pointer flex-col items-center justify-center overflow-hidden rounded-md p-5 ring-1 ring-primary-500 hover:ring-2 hover:ring-primary-900 sm:aspect-auto sm:w-1/3'
-    >
-      {renderIconAndImageTypes()}
-      {renderPreviewImage()}
-      <input
-        id={id}
-        ref={ref}
-        type='file'
-        className='hidden'
-        onChange={customOnChange}
-        data-testid='img-uploader-input'
-        accept='image/png, image/jpeg, image/jpg'
-        {...otherProps}
-      />
-    </label>
+    <div className='flex w-full flex-col'>
+      <label
+        htmlFor={id}
+        className={classNames(
+          'relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-md p-5 ring-1 hover:ring-2',
+          error
+            ? 'hover:ring-primary-700 ring-error-500'
+            : 'ring-primary-500 hover:ring-primary-900',
+        )}
+      >
+        {renderIconAndImageTypes()}
+        {renderPreviewImage()}
+        <input
+          id={id}
+          ref={ref}
+          type='file'
+          className='hidden'
+          onChange={customOnChange}
+          data-testid='img-uploader-input'
+          accept='image/png, image/jpeg, image/jpg'
+          {...otherProps}
+        />
+      </label>
+      <p className='mt-1 h-5 overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize text-error-700'>
+        {error}
+      </p>
+    </div>
   )
 })
