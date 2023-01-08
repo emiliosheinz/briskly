@@ -20,7 +20,10 @@ export const ImageUploader = React.forwardRef<
     if (!!previewImage) return null
 
     return (
-      <div className='flex flex-col items-center justify-center gap-2'>
+      <div
+        data-testid='img-uploader-icon-and-image-types'
+        className='flex flex-col items-center justify-center gap-2'
+      >
         <DocumentPlusIcon className='h-10 w-10' />
         <p className='text-center text-xs'>
           PNG, JPG, JPEG
@@ -34,7 +37,13 @@ export const ImageUploader = React.forwardRef<
     if (!previewImage) return null
 
     return (
-      <Image fill alt='Alt' src={previewImage} style={{ objectFit: 'cover' }} />
+      <Image
+        fill
+        data-testid='img-uploader-preview-image'
+        alt='Preview image'
+        src={previewImage}
+        style={{ objectFit: 'cover' }}
+      />
     )
   }
 
@@ -54,9 +63,10 @@ export const ImageUploader = React.forwardRef<
         id={id}
         ref={ref}
         type='file'
-        accept='image/png, image/jpeg, image/jpg'
         className='hidden'
         onChange={customOnChange}
+        data-testid='img-uploader-input'
+        accept='image/png, image/jpeg, image/jpg'
         {...otherProps}
       />
     </label>
