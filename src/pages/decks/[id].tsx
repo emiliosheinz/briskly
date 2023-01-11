@@ -13,6 +13,7 @@ import { TextArea } from '~/components/text-area'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
+import { compress } from '~/utils/image'
 import { routes } from '~/utils/navigation'
 import { notify } from '~/utils/toast'
 
@@ -39,6 +40,18 @@ type FormValues = {
   image: FileList
 }
 
+const uploadImageWithoutAwait = (uploadUrl: string, image?: File) => {
+  if (!image) return
+
+  fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    body: image,
+  })
+}
+
 const DecksCrud: WithAuthentication<NextPage> = () => {
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
   const router = useRouter()
@@ -56,28 +69,21 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
     setIsLoading(true)
 
     try {
-      const uploadConfig = await getFileUploadConfigMutation.mutateAsync()
+      const [uploadConfig, image] = await Promise.all([
+        getFileUploadConfigMutation.mutateAsync(),
+        compress(values.image[0]),
+      ])
 
-      const fileUpload = fetch(uploadConfig.uploadUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        body: values.image[0],
-      })
-
-      const createDeck = createNewDeckMutation.mutateAsync({
+      await createNewDeckMutation.mutateAsync({
         ...values,
         image: uploadConfig.fileName,
       })
 
-      await Promise.all([fileUpload, createDeck])
-
+      uploadImageWithoutAwait(uploadConfig.uploadUrl, image)
       notify.success('Deck criado com sucesso!')
-      // TODO emiliosheinz: redirect to deck detail
       router.replace(routes.home())
     } catch {
-      notify.error('Erro ao criar o Deck!')
+      notify.error('Erro ao criar o Deck! Tente novamente mais tarde.')
     } finally {
       setIsLoading(false)
     }

@@ -4,6 +4,7 @@ import { DocumentPlusIcon } from '@heroicons/react/24/outline'
 
 import { useFilePreview } from '~/hooks/use-file-preview'
 import { classNames } from '~/utils/css'
+import { compress } from '~/utils/image'
 
 import { Image } from '../image/image.component'
 import type { ImageUploaderProps } from './image-uploader.types'
@@ -48,8 +49,9 @@ export const ImageUploader = React.forwardRef<
     )
   }
 
-  const customOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImage(e.target.files?.[0])
+  const customOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const result = await compress(e.target.files?.[0])
+    setImage(result)
     onChange?.(e)
   }
 
