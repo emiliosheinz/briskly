@@ -59,11 +59,37 @@ enum Visibility {
 }
 
 model Deck {
-  id          String     @id @default(cuid())
+  id          String      @id @default(cuid())
   title       String
   description String
-  visibility  Visibility @default(Public)
+  visibility  Visibility  @default(Public)
   ownerId     String
-  image       String     @unique
-  user        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  image       String      @unique
+  user        User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  DeckTopic   DeckTopic[]
+  Card        Card[]
+}
+
+model DeckTopic {
+  deckId  String
+  deck    Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([deckId, topicId])
+}
+
+model Topic {
+  id          String      @id @default(cuid())
+  title       String      @unique
+  description String?
+  DeckTopic   DeckTopic[]
+}
+
+model Card {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  deckId   String
+  deck     Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
 }
