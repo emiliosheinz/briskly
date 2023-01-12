@@ -13,7 +13,7 @@ export const decksRouter = createTRPCRouter({
     )
     .mutation(({ input, ctx }) => {
       return ctx.prisma.deck.create({
-        data: { ...input, ownerId: ctx.session.user.id },
+        data: { ...input, ownerId: ctx.session.user.id, topic },
       })
     }),
 })
