@@ -41,7 +41,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Deck          Deck[]
+  decks         Deck[]
 }
 
 model VerificationToken {
@@ -66,8 +66,8 @@ model Deck {
   ownerId     String
   image       String      @unique
   user        User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  DeckTopic   DeckTopic[]
-  Card        Card[]
+  topic       DeckTopic[]
+  cards       Card[]
 }
 
 model DeckTopic {
@@ -83,7 +83,7 @@ model Topic {
   id          String      @id @default(cuid())
   title       String      @unique
   description String?
-  DeckTopic   DeckTopic[]
+  decks       DeckTopic[]
 }
 
 model Card {
