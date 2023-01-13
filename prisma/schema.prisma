@@ -71,10 +71,9 @@ model Deck {
 }
 
 model Topic {
-  id          String  @id @default(cuid())
-  title       String  @unique
-  description String?
-  decks       Deck[]
+  id    String @id @default(cuid())
+  title String @unique
+  decks Deck[]
 }
 
 model Card {
