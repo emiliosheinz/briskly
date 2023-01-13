@@ -56,7 +56,7 @@ export function MobileHamburgerMenu() {
             >
               <Popover.Panel
                 data-testid='popover-panel'
-                className='absolute inset-x-0 z-50 mt-4 transform bg-primary-50'
+                className='absolute inset-x-0 z-30 mt-4 transform bg-primary-50'
               >
                 <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg'>
                   <nav className='flex flex-col items-start justify-start gap-5'>

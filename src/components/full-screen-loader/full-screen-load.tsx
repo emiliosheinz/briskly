@@ -19,7 +19,7 @@ export function FullScreenLoader() {
       leaveTo='opacity-0'
       show={isLoading}
     >
-      <div className='fixed top-0 bottom-0 flex w-full items-center justify-center transition-all'>
+      <div className='fixed top-0 bottom-0 z-50 flex w-full items-center justify-center transition-all'>
         <span className='absolute h-full w-full bg-black-900 opacity-50' />
         <Loader />
       </div>
