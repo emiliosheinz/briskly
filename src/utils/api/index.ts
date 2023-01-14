@@ -1,4 +1,4 @@
-import { httpBatchLink, loggerLink } from '@trpc/client'
+import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
 import superjson from 'superjson'
@@ -6,6 +6,7 @@ import superjson from 'superjson'
 import type { AppRouter } from '~/server/api/root'
 
 import { isServerSide } from '../runtime'
+import { notify } from '../toast'
 
 const getBaseUrl = () => {
   if (!isServerSide()) return '' // browser should use relative path
@@ -42,3 +43,28 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  * @example type HelloOutput = RouterOutputs['example']['hello']
  **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>
+
+function isTRPCClientError(
+  error: unknown,
+): error is TRPCClientError<AppRouter> {
+  return error instanceof TRPCClientError
+}
+
+function handleTRPCClientError(error: TRPCClientError<AppRouter>) {
+  const errors = JSON.parse(error.message)
+
+  for (const { message } of errors) {
+    notify.error(message)
+  }
+}
+
+export function handleApiClientSideError({ error }: { error: unknown }) {
+  if (isServerSide()) return
+
+  try {
+    if (isTRPCClientError(error)) handleTRPCClientError(error)
+    else throw error
+  } catch {
+    notify.error('Ocorreu um erro inesperado! Tente novamente mais tarde.')
+  }
+}
