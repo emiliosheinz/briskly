@@ -62,7 +62,7 @@ export const ImageUploader = React.forwardRef<
         className={classNames(
           'relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-md p-5 ring-1 hover:ring-2',
           error
-            ? 'hover:ring-primary-700 ring-error-500'
+            ? 'hover:ring-primary-700 ring-error-700'
             : 'ring-primary-500 hover:ring-primary-900',
         )}
       >
