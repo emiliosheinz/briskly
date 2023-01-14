@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { MAX_TOPICS_PER_DECK } from '~/constants'
 
+import { CardSchema } from './card'
 import { TopicSchema } from './topic'
 
 export const DeckSchema = z.object({
@@ -31,4 +32,7 @@ export const DeckSchema = z.object({
       message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK}`,
     })
     .optional(),
+  cards: z
+    .array(CardSchema)
+    .min(1, { message: 'Um deck deve ter ao menos 1 Card' }),
 })
