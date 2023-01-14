@@ -37,7 +37,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
             {...otherProps}
           />
         </div>
-        <p className='mt-1 h-5 overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize text-error-700'>
+        <p className='mt-1 h-5 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-error-700'>
           {error}
         </p>
       </div>
