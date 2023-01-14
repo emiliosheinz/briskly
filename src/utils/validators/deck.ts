@@ -10,13 +10,15 @@ export const DeckSchema = z.object({
       required_error: 'O título do Deck é obrigatório',
       invalid_type_error: 'Título do Deck inválido',
     })
-    .min(1, { message: 'O título do Deck é obrigatório' }),
+    .min(1, { message: 'O título do Deck é obrigatório' })
+    .max(50, { message: 'O título não pode ter mais que 50 caracteres' }),
   description: z
     .string({
       required_error: 'A descrição do Deck é obrigatória',
       invalid_type_error: 'Descrição do Deck inválida',
     })
-    .min(1, { message: 'A descrição do Deck é obrigatória' }),
+    .min(1, { message: 'A descrição do Deck é obrigatória' })
+    .max(250, { message: 'A descrição não pode ter mais que 250 caracteres' }),
   image: z
     .string({
       required_error: 'A imagem do Deck é obrigatória',
