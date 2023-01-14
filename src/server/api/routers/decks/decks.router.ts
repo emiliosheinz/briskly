@@ -4,7 +4,7 @@ import { DeckSchema } from '~/utils/validators/deck'
 export const decksRouter = createTRPCRouter({
   createNewDeck: protectedProcedure
     .input(DeckSchema)
-    .mutation(({ input: { topics, ...input }, ctx }) => {
+    .mutation(({ input: { topics, cards, ...input }, ctx }) => {
       return ctx.prisma.deck.create({
         data: {
           ...input,
@@ -19,6 +19,7 @@ export const decksRouter = createTRPCRouter({
               }
             }),
           },
+          cards: { create: cards },
         },
       })
     }),
