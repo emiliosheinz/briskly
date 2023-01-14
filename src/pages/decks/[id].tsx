@@ -14,7 +14,9 @@ import { Button } from '~/components/button'
 import { ImageUploader } from '~/components/image-uploader'
 import { Input } from '~/components/input'
 import { Modal } from '~/components/modal'
+import { Pill } from '~/components/pill'
 import { TextArea } from '~/components/text-area'
+import { MAX_TOPICS_PER_DECK } from '~/constants'
 import type { WithAuthentication } from '~/types/auth'
 import { api, handleApiClientSideError } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
@@ -69,6 +71,7 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
   const createNewDeckMutation = api.decks.createNewDeck.useMutation()
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
+
   const [isCreatingTopic, setIsCreatingTopic] = useState(false)
   const [topics, setTopics] = useState<Array<string>>([])
 
@@ -79,6 +82,36 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
   } = useForm<FormValues>({
     resolver: zodResolver(DeckFormSchema),
   })
+
+  const removeTopic = (topic: string) =>
+    setTopics(topics => topics.filter(t => t !== topic))
+
+  const addTopic = (topic: string) =>
+    setTopics(topics => [
+      ...topics.filter(t => t !== topic),
+      topic.toLowerCase(),
+    ])
+
+  const renderTopicsSection = () => {
+    return (
+      <>
+        <h2 className='text-xl font-semibold'>Tópicos</h2>
+        <div className='flex w-full flex-wrap gap-4'>
+          {topics.map(topic => (
+            <Pill key={topic} isDeletable onClick={() => removeTopic(topic)}>
+              {topic}
+            </Pill>
+          ))}
+          <Pill
+            isDisabled={topics.length >= MAX_TOPICS_PER_DECK}
+            onClick={() => setIsCreatingTopic(true)}
+          >
+            <PlusCircleIcon className='w-6, h-6' />
+          </Pill>
+        </div>
+      </>
+    )
+  }
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true)
@@ -141,17 +174,7 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
             />
           </div>
         </div>
-        <h2 className='text-xl font-semibold'>Tópicos</h2>
-        <div className='w-full'>
-          {topics.map(topic => topic)}
-          <Button
-            variant='secondary'
-            type='button'
-            onClick={() => setIsCreatingTopic(true)}
-          >
-            <PlusCircleIcon className='w-5, h-5' />
-          </Button>
-        </div>
+        {renderTopicsSection()}
         <h2 className='text-xl font-semibold'>Cards</h2>
         <div className='h-60 w-full bg-primary-200'></div>
         <h2 className='text-xl font-semibold'>Visibilidade</h2>
@@ -173,9 +196,7 @@ const DecksCrud: WithAuthentication<NextPage> = () => {
       <Modal.NewTopic
         isOpen={isCreatingTopic}
         setIsOpen={setIsCreatingTopic}
-        onSubmit={values => {
-          setTopics(topics => [...topics, values.title])
-        }}
+        onSubmit={values => addTopic(values.title)}
       />
     </>
   )
