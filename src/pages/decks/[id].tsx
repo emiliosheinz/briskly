@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import type { GetServerSideProps } from 'next'
 import { type NextPage } from 'next'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -10,7 +11,7 @@ import { Button } from '~/components/button'
 import { Card } from '~/components/card'
 import { ImageUploader } from '~/components/image-uploader'
 import { Input } from '~/components/input'
-import { Modal } from '~/components/modal'
+import type { CardFormValues } from '~/components/modal/new-card/new-card-modal.types'
 import { Pill } from '~/components/pill'
 import { TextArea } from '~/components/text-area'
 import { MAX_TOPICS_PER_DECK } from '~/constants'
@@ -22,6 +23,13 @@ import type { WithAuthentication } from '~/types/auth'
 import { routes } from '~/utils/navigation'
 
 const NEW_DECK_ID = 'new'
+
+const NewCardModal = dynamic(() =>
+  import('~/components/modal').then(m => m.Modal.NewCard),
+)
+const NewTopicModal = dynamic(() =>
+  import('~/components/modal').then(m => m.Modal.NewTopic),
+)
 
 export const getServerSideProps: GetServerSideProps = async context => {
   if (!context.params?.id || context.params?.id !== NEW_DECK_ID) {
@@ -95,7 +103,7 @@ const TopicsSection = () => {
           <PlusCircleIcon className='w-6, h-6' />
         </Pill>
       </div>
-      <Modal.NewTopic
+      <NewTopicModal
         isOpen={isCreatingTopic}
         setIsOpen={setIsCreatingTopic}
         onSubmit={values => addTopic(values.title)}
@@ -104,15 +112,38 @@ const TopicsSection = () => {
   )
 }
 
+type NewCardModalState = {
+  isOpen: boolean
+  cardIdx?: number
+}
+
 const CardsSection = () => {
   const { cards, addCard, deleteCard, editCard } = useCreateNewDeckContext()
 
-  const [newCardModalState, setNewCardModalState] = useState<{
-    isOpen: boolean
-    cardIdx?: number
-  }>({
-    isOpen: false,
-  })
+  const [newCardModalState, setNewCardModalState] = useState<NewCardModalState>(
+    { isOpen: false },
+  )
+
+  const isCreatingNewCard = newCardModalState.cardIdx === undefined
+
+  const modalFieldsValues = isCreatingNewCard
+    ? { answer: '', question: '' }
+    : cards[newCardModalState.cardIdx!]
+
+  const handleNewCardFormSubmit = (values: CardFormValues) => {
+    if (isCreatingNewCard) {
+      addCard(values)
+    } else {
+      editCard(newCardModalState.cardIdx!, values)
+    }
+  }
+
+  const closeModal = (isOpen: boolean) => {
+    setNewCardModalState(state => ({
+      ...state,
+      isOpen,
+    }))
+  }
 
   return (
     <>
@@ -122,10 +153,10 @@ const CardsSection = () => {
           <Card
             isEditable
             key={`${card.question}-${card.answer}`}
+            onDeletePress={() => deleteCard(idx)}
             onEditPress={() => {
               setNewCardModalState({ isOpen: true, cardIdx: idx })
             }}
-            onDeletePress={() => deleteCard(idx)}
           >
             {card.question}
           </Card>
@@ -134,26 +165,11 @@ const CardsSection = () => {
           <PlusCircleIcon className='h-12 w-12' />
         </Card>
       </div>
-      <Modal.NewCard
+      <NewCardModal
         isOpen={newCardModalState.isOpen}
-        setIsOpen={(isOpen: boolean) => {
-          setNewCardModalState(state => ({
-            ...state,
-            isOpen,
-          }))
-        }}
-        onSubmit={values => {
-          if (newCardModalState.cardIdx === undefined) {
-            addCard(values)
-          } else {
-            editCard(newCardModalState.cardIdx, values)
-          }
-        }}
-        defaultValues={
-          newCardModalState.cardIdx === undefined
-            ? { answer: '', question: '' }
-            : cards[newCardModalState.cardIdx]
-        }
+        setIsOpen={closeModal}
+        onSubmit={handleNewCardFormSubmit}
+        defaultValues={modalFieldsValues}
       />
     </>
   )
