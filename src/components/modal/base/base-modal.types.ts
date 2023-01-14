@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
 
-export type ModalProps = {
+export type BaseModalProps = {
   title: string
   children: React.ReactNode
   isOpen: boolean

@@ -2,9 +2,9 @@ import React, { Fragment } from 'react'
 
 import { Dialog, Transition } from '@headlessui/react'
 
-import type { ModalProps } from './base-modal.types'
+import type { BaseModalProps } from './base-modal.types'
 
-export function BaseModal(props: ModalProps) {
+export function BaseModal(props: BaseModalProps) {
   const { title, children, isOpen, setIsOpen } = props
 
   return (
