@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from '~/components/button'
 import { Input } from '~/components/input'
+import { withoutPropagation } from '~/utils/forms'
 
 import { BaseModal } from '../base/base-modal.component'
 import type {
@@ -12,40 +13,36 @@ import type {
 } from './new-topic-modal.types'
 import { TopicFormSchema } from './new-topic-modal.types'
 
-export function NewTopicModal({
-  isOpen,
-  setIsOpen,
-  onSubmit,
-}: NewTopicModalProps) {
-  const newTopicForm = useForm<TopicFormValues>({
-    resolver: zodResolver(TopicFormSchema),
-  })
+export function NewTopicModal(props: NewTopicModalProps) {
+  const { isOpen, setIsOpen, onSubmit } = props
+
+  const { handleSubmit, reset, formState, register } = useForm<TopicFormValues>(
+    { resolver: zodResolver(TopicFormSchema) },
+  )
+
+  const close = () => {
+    setIsOpen(false)
+    reset()
+  }
+
+  const handleSubmitWithoutPropagation = withoutPropagation(
+    handleSubmit(values => {
+      onSubmit(values)
+      close()
+    }),
+  )
 
   return (
     <BaseModal isOpen={isOpen} setIsOpen={setIsOpen} title='Criar Tópico'>
-      <form
-        className='flex flex-col'
-        onSubmit={newTopicForm.handleSubmit(values => {
-          onSubmit(values)
-          setIsOpen(false)
-          newTopicForm.reset()
-        })}
-      >
+      <form className='flex flex-col' onSubmit={handleSubmitWithoutPropagation}>
         <Input
           id='title'
-          label='Título*'
-          {...newTopicForm.register('title')}
-          error={newTopicForm.formState.errors['title']?.message as string}
+          label='Título'
+          {...register('title')}
+          error={formState.errors['title']?.message as string}
         />
         <div className='flex flex-row justify-end gap-5'>
-          <Button
-            type='button'
-            variant='bad'
-            onClick={() => {
-              setIsOpen(false)
-              newTopicForm.reset()
-            }}
-          >
+          <Button type='button' variant='bad' onClick={close}>
             Cancelar
           </Button>
           <Button>Salvar</Button>
