@@ -1,19 +1,25 @@
-import { z } from 'zod'
-
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { DeckSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
   createNewDeck: protectedProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        description: z.string(),
-        image: z.string(),
-      }),
-    )
-    .mutation(({ input, ctx }) => {
+    .input(DeckSchema)
+    .mutation(({ input: { topics, ...input }, ctx }) => {
       return ctx.prisma.deck.create({
-        data: { ...input, ownerId: ctx.session.user.id, topic },
+        data: {
+          ...input,
+          ownerId: ctx.session.user.id,
+          topics: {
+            connectOrCreate: topics?.map(topic => {
+              return {
+                where: { title: topic.toLocaleLowerCase() },
+                create: {
+                  title: topic.toLocaleLowerCase(),
+                },
+              }
+            }),
+          },
+        },
       })
     }),
 })
