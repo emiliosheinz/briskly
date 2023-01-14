@@ -20,6 +20,7 @@ export function Button(props: ButtonProps) {
     fullWidth,
     isLoading,
     children,
+    className,
     ...otherProps
   } = props
 
@@ -48,6 +49,7 @@ export function Button(props: ButtonProps) {
           'flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50',
           variantBasedClassNames[variant],
           fullWidth ? fullWidthClassNames : '',
+          className ?? '',
         )}
         {...otherProps}
       >
