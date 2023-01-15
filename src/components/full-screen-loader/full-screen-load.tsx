@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
 
-import { useRouteChangeLoader } from '~/hooks/use-route-change-loader/use-route-change-loader.hook'
+import { useRouteChangeLoader } from '~/hooks/use-route-change-loader'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
 
 import { Loader } from '../loader'
