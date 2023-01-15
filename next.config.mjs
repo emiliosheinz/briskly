@@ -16,9 +16,7 @@ const config = {
   images: {
     // Follows TailwindCSS screens breakpoints
     deviceSizes: [640, 768, 1024, 1280, 1536],
-    domains: [
-      `${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com`,
-    ],
+    domains: [`${process.env.AWS_CLOUD_FRONT_URL?.replace('https://', '')}`],
   },
 }
 export default config
