@@ -1,3 +1,4 @@
+import { Visibility } from '@prisma/client'
 import { z } from 'zod'
 
 import { MAX_TOPICS_PER_DECK } from '~/constants'
@@ -35,4 +36,8 @@ export const DeckSchema = z.object({
   cards: z
     .array(CardSchema)
     .min(1, { message: 'Um deck deve ter ao menos 1 Card' }),
+  visibility: z.nativeEnum(Visibility, {
+    required_error: 'Defina a visibilidade do seu Deck',
+    invalid_type_error: 'Visibilidade definida inválida',
+  }),
 })

@@ -13,6 +13,7 @@ import { ImageUploader } from '~/components/image-uploader'
 import { Input } from '~/components/input'
 import type { CardFormValues } from '~/components/modal/new-card/new-card-modal.types'
 import { Pill } from '~/components/pill'
+import { RadioGroup } from '~/components/radio-group'
 import { TextArea } from '~/components/text-area'
 import { MAX_TOPICS_PER_DECK } from '~/constants'
 import {
@@ -175,6 +176,20 @@ const CardsSection = () => {
   )
 }
 
+const VisibilitySection = () => {
+  const { setVisibility, visibility, visibilityOptions } =
+    useCreateNewDeckContext()
+
+  return (
+    <RadioGroup
+      label='Visibilidade'
+      options={visibilityOptions}
+      selected={visibility}
+      onChange={setVisibility}
+    />
+  )
+}
+
 const SubmitButtonsSection = () => {
   const router = useRouter()
 
@@ -212,10 +227,7 @@ const DecksCrudContent = () => {
         <MainInfoSection />
         <TopicsSection />
         <CardsSection />
-        <h2 className='text-xl font-semibold'>Visibilidade</h2>
-        <div className='h-10 w-full bg-primary-200'></div>
-        <div className='h-10 w-full bg-primary-200'></div>
-        <div className='h-10 w-full bg-primary-200'></div>
+        <VisibilitySection />
         <SubmitButtonsSection />
       </form>
     </>

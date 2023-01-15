@@ -1,8 +1,12 @@
+import type { Dispatch, SetStateAction } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
+import type { Visibility } from '@prisma/client'
 import noop from 'lodash/noop'
 import { z } from 'zod'
 
+import type { Option } from '~/components/radio-group'
+import { DECK_VISIBILITY_OPTIONS } from '~/constants'
 import type { CardSchema } from '~/utils/validators/card'
 import { DeckSchema } from '~/utils/validators/deck'
 
@@ -35,6 +39,10 @@ export type CreateNewDeckContextState = {
   addCard: (card: Card) => void
   deleteCard: (idx: number) => void
   editCard: (idx: number, updatedCard: Card) => void
+
+  visibilityOptions: Array<Option<Visibility>>
+  visibility?: Option<Visibility>
+  setVisibility: Dispatch<SetStateAction<Option<Visibility> | undefined>>
 }
 
 export const initialState: CreateNewDeckContextState = {
@@ -48,4 +56,8 @@ export const initialState: CreateNewDeckContextState = {
   addCard: noop,
   deleteCard: noop,
   editCard: noop,
+
+  visibilityOptions: DECK_VISIBILITY_OPTIONS,
+  visibility: DECK_VISIBILITY_OPTIONS[0],
+  setVisibility: noop,
 }

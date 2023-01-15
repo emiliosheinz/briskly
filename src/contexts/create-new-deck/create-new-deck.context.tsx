@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Visibility } from '@prisma/client'
 import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 
+import { DECK_VISIBILITY_OPTIONS } from '~/constants'
 import { api, handleApiClientSideError } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
 import { compress } from '~/utils/image'
@@ -49,6 +51,7 @@ export function CreateNewDeckContextProvider(
 
   const [topics, setTopics] = useState<Array<string>>([])
   const [cards, setCards] = useState<Array<Card>>([])
+  const [visibility, setVisibility] = useState(DECK_VISIBILITY_OPTIONS[0])
 
   const createNewDeckForm = useForm<FormValues>({
     resolver: zodResolver(DeckFormSchema),
@@ -90,10 +93,13 @@ export function CreateNewDeckContextProvider(
         compress(values.image[0]),
       ])
 
+      const safeVisibility = visibility ? visibility.value : Visibility.Private
+
       await createNewDeckMutation.mutateAsync({
         ...values,
         topics,
         cards,
+        visibility: safeVisibility,
         image: uploadConfig.fileName,
       })
 
@@ -108,6 +114,8 @@ export function CreateNewDeckContextProvider(
   }
 
   const contextValue = {
+    ...initialState,
+
     createNewDeckForm,
     submitDeckCreation,
 
@@ -119,6 +127,9 @@ export function CreateNewDeckContextProvider(
     addCard,
     deleteCard,
     editCard,
+
+    visibility,
+    setVisibility,
   }
 
   return (
