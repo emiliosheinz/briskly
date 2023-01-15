@@ -194,7 +194,7 @@ const SubmitButtonsSection = () => {
   const router = useRouter()
 
   return (
-    <footer className='flex justify-end gap-5'>
+    <footer className='mt-5 flex justify-end gap-5'>
       <Button
         variant='bad'
         type='button'
@@ -210,6 +210,8 @@ const SubmitButtonsSection = () => {
 const DecksCrudContent = () => {
   const { createNewDeckForm, submitDeckCreation } = useCreateNewDeckContext()
 
+  const onSubmit = createNewDeckForm?.handleSubmit(submitDeckCreation)
+
   return (
     <>
       <Head>
@@ -220,10 +222,7 @@ const DecksCrudContent = () => {
         />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <form
-        className='flex flex-col gap-5'
-        onSubmit={createNewDeckForm?.handleSubmit(submitDeckCreation)}
-      >
+      <form className='flex flex-col gap-5' onSubmit={onSubmit}>
         <MainInfoSection />
         <TopicsSection />
         <CardsSection />
