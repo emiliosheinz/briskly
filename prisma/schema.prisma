@@ -41,6 +41,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  decks         Deck[]
 }
 
 model VerificationToken {
@@ -49,4 +50,36 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+enum Visibility {
+  Public
+  Private
+  WithLink
+}
+
+model Deck {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  visibility  Visibility @default(Public)
+  ownerId     String
+  image       String     @unique
+  user        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  topics      Topic[]
+  cards       Card[]
+}
+
+model Topic {
+  id    String @id @default(cuid())
+  title String @unique
+  decks Deck[]
+}
+
+model Card {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  deckId   String
+  deck     Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
 }

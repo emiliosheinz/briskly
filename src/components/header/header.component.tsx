@@ -1,47 +1,48 @@
-import { signIn, signOut, useSession } from 'next-auth/react'
-import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
-// TODO emiliosheinz: Create unit tests for Header component
-// TODO emiliosheinz: Create Storybook documentation for Header component
+import { Image } from '~/components/image'
+
+import { AuthButton } from '../auth-button'
+import { DesktopPrimaryMenu } from './components/desktop-primary-menu'
+import { DesktopSecondaryMenu } from './components/desktop-secondary-menu '
+import { MobileHamburgerMenu } from './components/mobile-hamburger-menu'
+
 export function Header() {
-  const { data: sessionData } = useSession()
+  const { data: session, status } = useSession()
 
-  const onClick = sessionData ? () => signOut() : () => signIn()
-  const label = sessionData ? 'Sign out' : 'Sign in'
+  const isLoadingSession = status === 'loading'
 
-  function renderAuthButton() {
-    return (
-      <button
-        className='whitespace-nowrap text-base font-medium text-primary-900'
-        onClick={onClick}
-      >
-        {label}
-      </button>
-    )
+  const renderLogo = () => (
+    <Image src='/images/logo.png' width={40} height={35} alt='Briskly logo' />
+  )
+
+  const renderDesktopSecondaryMenu = () => {
+    if (isLoadingSession) return null
+
+    if (!session) {
+      return (
+        <div className='hidden w-32 md:block'>
+          <AuthButton />
+        </div>
+      )
+    }
+
+    return <DesktopSecondaryMenu />
   }
 
   return (
-    <header className='relative bg-primary-50'>
-      <div className='mx-auto max-w-full px-4 sm:px-6'>
-        <div className='flex items-center justify-between border-b-2 border-primary-200 py-6 md:justify-start md:space-x-10'>
-          <div className='flex justify-start lg:w-0 lg:flex-1'>
-            <Link href='/'>
-              <span className='sr-only'>Briskly</span>
-              {/* TODO emiliosheinz: Change image component to use custom component */}
-              <Image
-                className='h-8 w-auto sm:h-10'
-                src='/images/logo.png'
-                width={80}
-                height={80}
-                alt='Briskly logo'
-              />
-            </Link>
-          </div>
-          <div className='flex flex-1 items-center justify-end lg:w-0'>
-            {renderAuthButton()}
-          </div>
+    <header className='border-b-2 border-primary-200 bg-primary-50'>
+      <div className='mx-auto flex h-20 max-w-7xl items-center justify-between px-3 md:space-x-10 md:px-5'>
+        <div className='flex items-center justify-start'>
+          <Link href='/' data-testid='home-anchor'>
+            <span className='sr-only'>Briskly</span>
+            {renderLogo()}
+          </Link>
+          <DesktopPrimaryMenu />
         </div>
+        <MobileHamburgerMenu />
+        {renderDesktopSecondaryMenu()}
       </div>
     </header>
   )

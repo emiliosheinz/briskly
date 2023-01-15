@@ -3,7 +3,7 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
 import { env } from '~/env/server.mjs'
-import { prisma } from '~/server/db/client'
+import { prisma } from '~/server/common/db'
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
