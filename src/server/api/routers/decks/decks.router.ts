@@ -45,11 +45,9 @@ export const decksRouter = createTRPCRouter({
         skip: page * 30,
       })
 
-      return Promise.all(
-        decks.map(async deck => ({
-          ...deck,
-          image: await getS3ImageUrl(deck.image),
-        })),
-      )
+      return decks.map(deck => ({
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+      }))
     }),
 })
