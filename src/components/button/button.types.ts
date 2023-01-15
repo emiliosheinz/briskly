@@ -8,5 +8,5 @@ export type ButtonProps = {
   isLoading?: boolean
 } & Omit<
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
-  'className' | 'aria-disabled'
+  'aria-disabled'
 >

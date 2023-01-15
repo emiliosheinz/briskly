@@ -26,6 +26,10 @@ export const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
   POSTGRES_USER: z.string().min(1).optional(),
   POSTGRES_PASSWORD: z.string().min(7).optional(),
+  AWS_S3_REGION: z.string(),
+  AWS_S3_ACCESS_KEY_ID: z.string(),
+  AWS_S3_SECRET_ACCESS_KEY: z.string(),
+  AWS_S3_BUCKET: z.string(),
 })
 
 /**

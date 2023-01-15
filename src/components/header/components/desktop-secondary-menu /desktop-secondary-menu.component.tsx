@@ -35,7 +35,7 @@ export function DesktopSecondaryMenu() {
       >
         <Popover.Panel
           data-testid='popover-panel'
-          className='absolute right-0 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
+          className='absolute right-0 z-30 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
         >
           {DESKTOP_MENU_OPTIONS.SECONDARY.map(option => (
             <Link
