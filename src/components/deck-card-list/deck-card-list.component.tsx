@@ -14,7 +14,7 @@ export function DeckCardList({ decks }: DeckCardListProps) {
         <Link
           href='#'
           key={deck.id}
-          className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 shadow-md hover:bg-primary-100 lg:flex-row'
+          className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 shadow-md hover:bg-primary-100 lg:h-64 lg:flex-row'
         >
           <div className='relative flex aspect-square w-full lg:w-2/5'>
             <Image
