@@ -1,4 +1,12 @@
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { Visibility } from '@prisma/client'
+import { z } from 'zod'
+
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc'
+import { getS3ImageUrl } from '~/server/common/s3'
 import { DeckSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
@@ -22,5 +30,24 @@ export const decksRouter = createTRPCRouter({
           cards: { create: cards },
         },
       })
+    }),
+  getPublicDecks: publicProcedure
+    .input(
+      z.object({
+        page: z.number(),
+      }),
+    )
+    .query(async ({ input: { page }, ctx }) => {
+      const decks = await ctx.prisma.deck.findMany({
+        where: { visibility: Visibility.Public },
+        orderBy: { createdAt: 'desc' },
+        take: 30,
+        skip: page * 30,
+      })
+
+      return decks.map(deck => ({
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+      }))
     }),
 })

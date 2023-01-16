@@ -18,9 +18,14 @@ export async function getS3UploadURL(key: string) {
   const command = new PutObjectCommand({
     Key: key,
     Bucket: env.AWS_S3_BUCKET,
+    ContentType: 'image/jpg',
   })
 
-  return getSignedUrl(getAwsS3Client(), command, { expiresIn: 180 })
+  return getSignedUrl(getAwsS3Client(), command, { expiresIn: 30 })
+}
+
+export function getS3ImageUrl(key: string) {
+  return `${env.AWS_CLOUD_FRONT_URL}/${key}`
 }
 
 export function getRandomFileName() {

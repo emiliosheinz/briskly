@@ -25,10 +25,10 @@ import { initialState } from './create-new-deck.types'
 const CreateNewDeckContext =
   React.createContext<CreateNewDeckContextState>(initialState)
 
-const uploadImageWithoutAwait = (uploadUrl: string, image?: File) => {
+const uploadImage = async (uploadUrl: string, image?: File) => {
   if (!image) return
 
-  fetch(uploadUrl, {
+  await fetch(uploadUrl, {
     method: 'PUT',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -102,8 +102,8 @@ export function CreateNewDeckContextProvider(
         visibility: safeVisibility,
         image: uploadConfig.fileName,
       })
+      await uploadImage(uploadConfig.uploadUrl, image)
 
-      uploadImageWithoutAwait(uploadConfig.uploadUrl, image)
       notify.success('Deck criado com sucesso!')
       router.replace(routes.home())
     } catch (error) {
