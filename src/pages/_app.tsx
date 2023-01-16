@@ -1,20 +1,29 @@
 import { Fragment } from 'react'
-import { Toaster } from 'react-hot-toast'
 
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
 import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import type { AppType } from 'next/app'
+import dynamic from 'next/dynamic'
 
-import { AuthGuard } from '~/components/auth-guard'
-import { FullScreenLoader } from '~/components/full-screen-loader'
 import { Header } from '~/components/header'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 
 import '~/styles/tailwind.css'
 
+const FullScreenLoader = dynamic(() =>
+  import('~/components/full-screen-loader').then(
+    module => module.FullScreenLoader,
+  ),
+)
+const AuthGuard = dynamic(() =>
+  import('~/components/auth-guard').then(module => module.AuthGuard),
+)
+const Toaster = dynamic(() =>
+  import('react-hot-toast').then(module => module.Toaster),
+)
 /**
  * Needed to infer requiresAuthentication as a prop of Component
  */
