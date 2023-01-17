@@ -26,7 +26,10 @@ export function FullScreenLoader() {
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 flex items-center justify-center bg-primary-900 bg-opacity-25'>
+          <div
+            tabIndex={0}
+            className='fixed inset-0 flex items-center justify-center bg-primary-900 bg-opacity-25'
+          >
             <Loader />
           </div>
         </Transition.Child>
