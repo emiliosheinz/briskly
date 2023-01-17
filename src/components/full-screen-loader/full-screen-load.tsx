@@ -12,7 +12,7 @@ import { Loader } from '../loader'
 
 export function FullScreenLoader() {
   const isLoading = useAtomValue(fullScreenLoaderAtom)
-  const debouncedIsLoading = useDebounce(isLoading, 350)
+  const debouncedIsLoading = useDebounce(isLoading, 250)
 
   console.log(debouncedIsLoading)
 
