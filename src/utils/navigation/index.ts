@@ -1,4 +1,4 @@
 export const routes = {
   home: () => '/',
-  createNewDeck: () => '/decks/new',
+  createNewDeck: () => '/decks/create/new',
 }

@@ -3,10 +3,10 @@ import { z } from 'zod'
 
 import { MAX_TOPICS_PER_DECK } from '~/constants'
 
-import { CardSchema } from './card'
-import { TopicSchema } from './topic'
+import { CardInputSchema } from './card'
+import { TopicInputSchema } from './topic'
 
-export const DeckSchema = z.object({
+export const DeckInputSchema = z.object({
   title: z
     .string({
       required_error: 'O título do Deck é obrigatório',
@@ -28,13 +28,13 @@ export const DeckSchema = z.object({
     })
     .min(1, { message: 'A imagem do Deck é obrigatória' }),
   topics: z
-    .array(TopicSchema)
+    .array(TopicInputSchema)
     .max(MAX_TOPICS_PER_DECK, {
       message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK}`,
     })
     .optional(),
   cards: z
-    .array(CardSchema)
+    .array(CardInputSchema)
     .min(1, { message: 'Um deck deve ter ao menos 1 Card' }),
   visibility: z.nativeEnum(Visibility, {
     required_error: 'Defina a visibilidade do seu Deck',

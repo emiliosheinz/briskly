@@ -7,11 +7,11 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 import { getS3ImageUrl } from '~/server/common/s3'
-import { DeckSchema } from '~/utils/validators/deck'
+import { DeckInputSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
   createNewDeck: protectedProcedure
-    .input(DeckSchema)
+    .input(DeckInputSchema)
     .mutation(({ input: { topics, cards, ...input }, ctx }) => {
       return ctx.prisma.deck.create({
         data: {

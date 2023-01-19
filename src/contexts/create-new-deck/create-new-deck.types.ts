@@ -1,16 +1,16 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
-import type { Visibility } from '@prisma/client'
+import type { Deck, Topic, Visibility, Card } from '@prisma/client'
 import noop from 'lodash/noop'
 import { z } from 'zod'
 
 import type { Option } from '~/components/radio-group'
 import { DECK_VISIBILITY_OPTIONS } from '~/constants'
-import type { CardSchema } from '~/utils/validators/card'
-import { DeckSchema } from '~/utils/validators/deck'
+import type { CardInputSchema } from '~/utils/validators/card'
+import { DeckInputSchema } from '~/utils/validators/deck'
 
-export const DeckFormSchema = DeckSchema.pick({
+export const DeckInputFormSchema = DeckInputSchema.pick({
   title: true,
   description: true,
 }).extend({
@@ -19,26 +19,32 @@ export const DeckFormSchema = DeckSchema.pick({
   }),
 })
 
-export type FormValues = z.infer<typeof DeckFormSchema>
+export type FormInputValues = z.infer<typeof DeckInputFormSchema>
 
-export type Card = z.infer<typeof CardSchema>
+export type CardInput = z.infer<typeof CardInputSchema>
+
+export type DeckWithCardsAndTopics = Deck & {
+  cards: Array<Card>
+  topics: Array<Topic>
+}
 
 export type CreateNewDeckContextProviderProps = {
   children: React.ReactNode
+  deck?: DeckWithCardsAndTopics | null
 }
 
 export type CreateNewDeckContextState = {
-  createNewDeckForm?: UseFormReturn<FormValues>
-  submitDeckCreation: (values: FormValues) => Promise<void>
+  createNewDeckForm?: UseFormReturn<FormInputValues>
+  submitDeckCreation: (values: FormInputValues) => Promise<void>
 
   topics: Array<string>
   addTopic: (topic: string) => void
   deleteTopic: (idx: number) => void
 
-  cards: Array<Card>
-  addCard: (card: Card) => void
+  cards: Array<CardInput>
+  addCard: (card: CardInput) => void
   deleteCard: (idx: number) => void
-  editCard: (idx: number, updatedCard: Card) => void
+  editCard: (idx: number, updatedCard: CardInput) => void
 
   visibilityOptions: Array<Option<Visibility>>
   visibility?: Option<Visibility>
