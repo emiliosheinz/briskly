@@ -1,18 +1,18 @@
 import Link from 'next/link'
 
 import { Image } from '~/components/image'
+import { routes } from '~/utils/navigation'
 
 import type { DeckCardListProps } from './deck-card-list.types'
 import { Error } from './error.component'
 import { Loading } from './loading.component'
 
-// TODO emiliosheinz: Redirect user to the right link
 export function DeckCardList({ decks }: DeckCardListProps) {
   return (
     <div className='flex-w grid grid-cols-1 gap-5 sm:grid-cols-2'>
       {decks.map((deck, idx) => (
         <Link
-          href={`/decks/create/${deck.id}`}
+          href={routes.editDeck(deck.id)}
           key={deck.id}
           className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 shadow-md hover:bg-primary-100 lg:h-64 lg:flex-row'
         >
