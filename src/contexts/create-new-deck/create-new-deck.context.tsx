@@ -61,17 +61,16 @@ export function CreateNewDeckContextProvider(
   const [cards, setCards] = useState<Array<CardInput>>(
     deck?.cards.map(card => card) || [],
   )
+  const [visibility, setVisibility] = useState(
+    DECK_VISIBILITY_OPTIONS.find(option => option.value === deck?.visibility) ||
+      DECK_VISIBILITY_OPTIONS[0],
+  )
 
   /**
    * Only used when isEditing is true
    */
   const [deletedTopics, setDeletedTopics] = useState<Array<TopicInput>>([])
   const [deletedCards, setDeletedCards] = useState<Array<CardInput>>([])
-
-  const [visibility, setVisibility] = useState(
-    DECK_VISIBILITY_OPTIONS.find(option => option.value === deck?.visibility) ||
-      DECK_VISIBILITY_OPTIONS[0],
-  )
 
   const createNewDeckForm = useForm<FormInputValues>({
     resolver: zodResolver(DeckInputFormSchema),
@@ -147,6 +146,7 @@ export function CreateNewDeckContextProvider(
         visibility: safeVisibility,
         image: uploadConfig.fileName,
       })
+
       await uploadImage(uploadConfig.uploadUrl, image)
 
       notify.success('Deck criado com sucesso!')
@@ -176,6 +176,9 @@ export function CreateNewDeckContextProvider(
             getFileUploadConfigMutation.mutateAsync(),
             compress(formImage),
           ])
+          /**
+           * When form image was changed we need to delete de old one from S3 bucket
+           */
           deleteFileByUrlMutation.mutate({ url: deckImageUrl })
         }
 
@@ -183,7 +186,7 @@ export function CreateNewDeckContextProvider(
           ? visibility.value
           : Visibility.Private
         /**
-         * Only topics and cards without id where recently added
+         * Only topics and cards without id were recently added
          */
         const newTopics = topics.filter(({ id }) => !id)
         const newCards = cards.filter(({ id }) => !id)
@@ -203,7 +206,7 @@ export function CreateNewDeckContextProvider(
           await uploadImage(uploadConfig.uploadUrl, image)
         }
 
-        notify.success('Deck criado com sucesso!')
+        notify.success('Deck editado com sucesso!')
         router.replace(routes.home())
       } catch (error) {
         console.log(error)
@@ -213,6 +216,9 @@ export function CreateNewDeckContextProvider(
       }
     }
 
+  /**
+   * If isEditingDeck uses update function else uses the creation function
+   */
   const submitDeck = isEditingDeck(deck)
     ? submitDeckUpdate(deck)
     : submitDeckCreation
