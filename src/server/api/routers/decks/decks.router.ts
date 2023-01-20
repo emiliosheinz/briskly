@@ -7,7 +7,7 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 import { getS3ImageUrl } from '~/server/common/s3'
-import { DeckInputSchema } from '~/utils/validators/deck'
+import { DeckInputSchema, UpdateDeckInputSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
   createNewDeck: protectedProcedure
@@ -20,9 +20,9 @@ export const decksRouter = createTRPCRouter({
           topics: {
             connectOrCreate: topics?.map(topic => {
               return {
-                where: { title: topic.toLocaleLowerCase() },
+                where: { title: topic.title.toLocaleLowerCase() },
                 create: {
-                  title: topic.toLocaleLowerCase(),
+                  title: topic.title.toLocaleLowerCase(),
                 },
               }
             }),
@@ -31,6 +31,43 @@ export const decksRouter = createTRPCRouter({
         },
       })
     }),
+  updateDeck: protectedProcedure
+    .input(UpdateDeckInputSchema)
+    .mutation(
+      ({
+        input: {
+          id,
+          newCards,
+          newTopics,
+          deletedCards,
+          deletedTopics,
+          ...input
+        },
+        ctx,
+      }) => {
+        return ctx.prisma.deck.update({
+          where: { id },
+          data: {
+            ...input,
+            cards: {
+              delete: deletedCards?.map(({ id }) => ({ id })),
+              create: newCards,
+            },
+            topics: {
+              disconnect: deletedTopics?.map(({ id }) => ({ id })),
+              connectOrCreate: newTopics?.map(topic => {
+                return {
+                  where: { title: topic.title.toLocaleLowerCase() },
+                  create: {
+                    title: topic.title.toLocaleLowerCase(),
+                  },
+                }
+              }),
+            },
+          },
+        })
+      },
+    ),
   getPublicDecks: publicProcedure
     .input(
       z.object({

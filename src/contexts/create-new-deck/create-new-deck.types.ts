@@ -9,19 +9,25 @@ import type { Option } from '~/components/radio-group'
 import { DECK_VISIBILITY_OPTIONS } from '~/constants'
 import type { CardInputSchema } from '~/utils/validators/card'
 import { DeckInputSchema } from '~/utils/validators/deck'
+import type { TopicInputSchema } from '~/utils/validators/topic'
 
 export const DeckInputFormSchema = DeckInputSchema.pick({
   title: true,
   description: true,
 }).extend({
-  image: z.custom<FileList>(val => val instanceof FileList && val.length > 0, {
-    message: 'A imagem do Deck é obrigatória',
-  }),
+  image: z.custom<FileList | string>(
+    val =>
+      (val instanceof FileList || typeof val === 'string') && val.length > 0,
+    {
+      message: 'A imagem do Deck é obrigatória',
+    },
+  ),
 })
 
 export type FormInputValues = z.infer<typeof DeckInputFormSchema>
 
 export type CardInput = z.infer<typeof CardInputSchema>
+export type TopicInput = z.infer<typeof TopicInputSchema>
 
 export type DeckWithCardsAndTopics = Deck & {
   cards: Array<Card>
@@ -35,9 +41,9 @@ export type CreateNewDeckContextProviderProps = {
 
 export type CreateNewDeckContextState = {
   createNewDeckForm?: UseFormReturn<FormInputValues>
-  submitDeckCreation: (values: FormInputValues) => Promise<void>
+  submitDeck: (values: FormInputValues) => Promise<void>
 
-  topics: Array<string>
+  topics: Array<TopicInput>
   addTopic: (topic: string) => void
   deleteTopic: (idx: number) => void
 
@@ -52,7 +58,7 @@ export type CreateNewDeckContextState = {
 }
 
 export const initialState: CreateNewDeckContextState = {
-  submitDeckCreation: () => new Promise(noop),
+  submitDeck: () => new Promise(noop),
 
   topics: [],
   addTopic: noop,

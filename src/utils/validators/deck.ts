@@ -7,6 +7,7 @@ import { CardInputSchema } from './card'
 import { TopicInputSchema } from './topic'
 
 export const DeckInputSchema = z.object({
+  id: z.string().optional(),
   title: z
     .string({
       required_error: 'O título do Deck é obrigatório',
@@ -40,4 +41,17 @@ export const DeckInputSchema = z.object({
     required_error: 'Defina a visibilidade do seu Deck',
     invalid_type_error: 'Visibilidade definida inválida',
   }),
+})
+
+export const UpdateDeckInputSchema = DeckInputSchema.pick({
+  title: true,
+  description: true,
+  visibility: true,
+}).extend({
+  id: z.string(),
+  image: DeckInputSchema.shape.image.optional(),
+  deletedTopics: z.array(TopicInputSchema).optional(),
+  newTopics: z.array(TopicInputSchema).optional(),
+  deletedCards: z.array(CardInputSchema).optional(),
+  newCards: z.array(CardInputSchema).optional(),
 })

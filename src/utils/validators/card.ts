@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const CardInputSchema = z.object({
+  id: z.string().optional(),
   question: z
     .string({
       required_error: 'A pergunta de um Card é obrigatória',

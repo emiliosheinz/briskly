@@ -22,6 +22,7 @@ import {
   useCreateNewDeckContext,
 } from '~/contexts/create-new-deck'
 import { getServerAuthSession } from '~/server/common/auth'
+import { getS3ImageUrl } from '~/server/common/s3'
 import type { WithAuthentication } from '~/types/auth'
 import { routes } from '~/utils/navigation'
 
@@ -64,15 +65,17 @@ export const getServerSideProps: GetServerSideProps<{
     },
   })
 
-  console.log(deck)
-
   if (!deck) {
     return { notFound: true }
   }
 
+  console.log(deck.image)
   return {
     props: {
-      deck,
+      deck: {
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+      },
     },
   }
 }
@@ -90,6 +93,7 @@ const MainInfoSection = () => {
           <ImageUploader
             id='image'
             {...register?.('image')}
+            defaultValue={formState?.defaultValues?.image as string}
             error={formState?.errors['image']?.message as string}
           />
         </div>
@@ -122,7 +126,7 @@ const TopicsSection = () => {
     <>
       <h2 className='text-xl font-semibold'>Tópicos</h2>
       <div className='flex w-full flex-wrap gap-4'>
-        {topics.map((topic, idx) => (
+        {topics.map(({ title: topic }, idx) => (
           <Pill key={topic} isDeletable onClick={() => deleteTopic(idx)}>
             {topic}
           </Pill>
@@ -238,9 +242,9 @@ const SubmitButtonsSection = () => {
 }
 
 const DecksCrudContent = () => {
-  const { createNewDeckForm, submitDeckCreation } = useCreateNewDeckContext()
+  const { createNewDeckForm, submitDeck } = useCreateNewDeckContext()
 
-  const onSubmit = createNewDeckForm?.handleSubmit(submitDeckCreation)
+  const onSubmit = createNewDeckForm?.handleSubmit(submitDeck)
 
   return (
     <>

@@ -12,7 +12,7 @@ export function DeckCardList({ decks }: DeckCardListProps) {
     <div className='flex-w grid grid-cols-1 gap-5 sm:grid-cols-2'>
       {decks.map((deck, idx) => (
         <Link
-          href='#'
+          href={`/decks/create/${deck.id}`}
           key={deck.id}
           className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 shadow-md hover:bg-primary-100 lg:h-64 lg:flex-row'
         >
