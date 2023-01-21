@@ -22,6 +22,7 @@ import {
   useCreateNewDeckContext,
 } from '~/contexts/create-new-deck'
 import { getServerAuthSession } from '~/server/common/auth'
+import { prisma } from '~/server/common/db'
 import { getS3ImageUrl } from '~/server/common/s3'
 import type { WithAuthentication } from '~/types/auth'
 import { routes } from '~/utils/navigation'
@@ -57,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const deck = await prisma?.deck.findFirst({
+  const deck = await prisma.deck.findFirst({
     where: { id: deckId, ownerId: session.user.id },
     include: {
       cards: true,
