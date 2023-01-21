@@ -65,6 +65,8 @@ model Deck {
   visibility  Visibility @default(Public)
   ownerId     String
   image       String     @unique
+  updatedAt   DateTime   @default(now()) @updatedAt
+  createdAt   DateTime   @default(now())
   user        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   topics      Topic[]
   cards       Card[]

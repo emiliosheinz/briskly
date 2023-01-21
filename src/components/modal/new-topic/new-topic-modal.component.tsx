@@ -9,16 +9,17 @@ import { withoutPropagation } from '~/utils/forms'
 import { BaseModal } from '../base/base-modal.component'
 import type {
   NewTopicModalProps,
-  TopicFormValues,
+  TopicFormInputValues,
 } from './new-topic-modal.types'
-import { TopicFormSchema } from './new-topic-modal.types'
+import { TopicFormInputSchema } from './new-topic-modal.types'
 
 export function NewTopicModal(props: NewTopicModalProps) {
   const { isOpen, setIsOpen, onSubmit } = props
 
-  const { handleSubmit, reset, formState, register } = useForm<TopicFormValues>(
-    { resolver: zodResolver(TopicFormSchema) },
-  )
+  const { handleSubmit, reset, formState, register } =
+    useForm<TopicFormInputValues>({
+      resolver: zodResolver(TopicFormInputSchema),
+    })
 
   const close = () => {
     setIsOpen(false)

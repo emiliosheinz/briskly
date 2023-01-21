@@ -2,16 +2,18 @@ import type { SubmitHandler } from 'react-hook-form'
 
 import { z } from 'zod'
 
-import { TopicSchema } from '~/utils/validators/topic'
+import { TopicInputSchema } from '~/utils/validators/topic'
 
 import type { BaseModalProps } from '../base/base-modal.types'
 
-export const TopicFormSchema = z.object({ title: TopicSchema })
-export type TopicFormValues = z.infer<typeof TopicFormSchema>
+export const TopicFormInputSchema = z.object({
+  title: TopicInputSchema.shape.title,
+})
+export type TopicFormInputValues = z.infer<typeof TopicFormInputSchema>
 
 export type NewTopicModalProps = Pick<
   BaseModalProps,
   'isOpen' | 'setIsOpen'
 > & {
-  onSubmit: SubmitHandler<TopicFormValues>
+  onSubmit: SubmitHandler<TopicFormInputValues>
 }
