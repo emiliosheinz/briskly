@@ -14,6 +14,7 @@ export const prisma =
       env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   })
 
+console.log('>>>>>>>>', env.NODE_ENV)
 if (env.NODE_ENV !== 'production') {
   global.prisma = prisma
 }
