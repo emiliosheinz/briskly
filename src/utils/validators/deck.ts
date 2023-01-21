@@ -54,4 +54,5 @@ export const UpdateDeckInputSchema = DeckInputSchema.pick({
   newTopics: z.array(TopicInputSchema).optional(),
   deletedCards: z.array(CardInputSchema).optional(),
   newCards: z.array(CardInputSchema).optional(),
+  editedCards: z.array(CardInputSchema).optional(),
 })

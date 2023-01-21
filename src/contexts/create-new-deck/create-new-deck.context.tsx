@@ -51,12 +51,18 @@ export function CreateNewDeckContextProvider(
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
   const router = useRouter()
 
+  /**
+   * Deck related mutations
+   */
   const createNewDeckMutation = api.decks.createNewDeck.useMutation()
   const updateDeckMutation = api.decks.updateDeck.useMutation()
   const deleteFileByUrlMutation = api.files.deleteFileByUrl.useMutation()
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
 
+  /**
+   * Shared states between creation and edit
+   */
   const [topics, setTopics] = useState<Array<TopicInput>>(deck?.topics || [])
   const [cards, setCards] = useState<Array<CardInput>>(
     deck?.cards.map(card => card) || [],
@@ -68,9 +74,11 @@ export function CreateNewDeckContextProvider(
 
   /**
    * Only used when isEditing is true
+   * Needed to control removed and edited items due to database updates
    */
   const [deletedTopics, setDeletedTopics] = useState<Array<TopicInput>>([])
   const [deletedCards, setDeletedCards] = useState<Array<CardInput>>([])
+  const [editedCards, setEditedCards] = useState<Array<CardInput>>([])
 
   const createNewDeckForm = useForm<FormInputValues>({
     resolver: zodResolver(DeckInputFormSchema),
@@ -93,7 +101,7 @@ export function CreateNewDeckContextProvider(
 
     /**
      * If is editing and topic has id adds deletedTopic to deletedTopics array
-     * We need to do it to delete this topics from the Database
+     * We need to do it to delete this topics from the Database later
      */
     if (isEditingDeck(deck) && deletedTopic?.id) {
       setDeletedTopics(topics => [...topics, deletedTopic])
@@ -106,26 +114,34 @@ export function CreateNewDeckContextProvider(
     setCards(cards => [...cards, card])
   }
 
+  const editCard = (idx: number, updatedCard: CardInput) => {
+    /**
+     * Is is editing and updated card has id we need to save it in the
+     * editedCards array to updated it later in the Database
+     */
+    if (isEditingDeck(deck) && !!updatedCard.id) {
+      setEditedCards(editedCards => [...editedCards, updatedCard])
+    }
+
+    setCards(cards => [
+      ...cards.slice(0, idx),
+      updatedCard,
+      ...cards.slice(idx + 1),
+    ])
+  }
+
   const deleteCard = (idx: number) => {
     const deletedCard = cards[idx]
 
     /**
      * If is editing and card has id adds deletedCard to deletedCards array
-     * We need to do it to delete this card from the Database
+     * We need to do it to delete this card from the Database later
      */
     if (isEditingDeck(deck) && deletedCard?.id) {
       setDeletedCards(cards => [...cards, deletedCard])
     }
 
     setCards(cards => [...cards.slice(0, idx), ...cards.slice(idx + 1)])
-  }
-
-  const editCard = (idx: number, updatedCard: CardInput) => {
-    setCards(cards => [
-      ...cards.slice(0, idx),
-      updatedCard,
-      ...cards.slice(idx + 1),
-    ])
   }
 
   const submitDeckCreation = async (values: FormInputValues) => {
@@ -137,14 +153,12 @@ export function CreateNewDeckContextProvider(
         compress(values.image[0] as File),
       ])
 
-      const safeVisibility = visibility ? visibility.value : Visibility.Private
-
       await createNewDeckMutation.mutateAsync({
         ...values,
-        topics,
         cards,
-        visibility: safeVisibility,
+        topics,
         image: uploadConfig.fileName,
+        visibility: visibility?.value ?? Visibility.Private,
       })
 
       await uploadImage(uploadConfig.uploadUrl, image)
@@ -182,26 +196,30 @@ export function CreateNewDeckContextProvider(
           deleteFileByUrlMutation.mutate({ url: deckImageUrl })
         }
 
-        const safeVisibility = visibility
-          ? visibility.value
-          : Visibility.Private
         /**
-         * Only topics and cards without id were recently added
+         * !Worst case of complexity is a O square which can lead to long time runs
          */
-        const newTopics = topics.filter(({ id }) => !id)
-        const newCards = cards.filter(({ id }) => !id)
+        const editedAndNotDeleted = editedCards.filter(
+          edited => !deletedCards.some(deleted => deleted.id === edited.id),
+        )
 
-        await updateDeckMutation.mutateAsync({
+        const mutationParams = {
           ...values,
           id: deckId,
-          newCards,
           deletedCards,
-          newTopics,
           deletedTopics,
           image: uploadConfig?.fileName,
-          visibility: safeVisibility,
-        })
+          editedCards: editedAndNotDeleted,
+          newCards: cards.filter(({ id }) => !id),
+          newTopics: topics.filter(({ id }) => !id),
+          visibility: visibility?.value ?? Visibility.Private,
+        }
 
+        await updateDeckMutation.mutateAsync(mutationParams)
+
+        /**
+         * uploadConfig is only defined when image was modified
+         */
         if (uploadConfig) {
           await uploadImage(uploadConfig.uploadUrl, image)
         }
@@ -217,7 +235,7 @@ export function CreateNewDeckContextProvider(
     }
 
   /**
-   * If isEditingDeck uses update function else uses the creation function
+   * If isEditingDeck uses update function (currying) else uses the creation function
    */
   const submitDeck = isEditingDeck(deck)
     ? submitDeckUpdate(deck)

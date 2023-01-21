@@ -41,6 +41,7 @@ export const decksRouter = createTRPCRouter({
           newTopics,
           deletedCards,
           deletedTopics,
+          editedCards,
           ...input
         },
         ctx,
@@ -52,6 +53,10 @@ export const decksRouter = createTRPCRouter({
             cards: {
               delete: deletedCards?.map(({ id }) => ({ id })),
               create: newCards,
+              update: editedCards?.map(({ id, ...card }) => ({
+                where: { id },
+                data: card,
+              })),
             },
             topics: {
               disconnect: deletedTopics?.map(({ id }) => ({ id })),

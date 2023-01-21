@@ -69,7 +69,6 @@ export const getServerSideProps: GetServerSideProps<{
     return { notFound: true }
   }
 
-  console.log(deck.image)
   return {
     props: {
       deck: {
