@@ -7,7 +7,8 @@ import { classNames } from '~/utils/css'
 import type { CardProps } from './card.types'
 
 export function _Card(props: CardProps) {
-  const { children, isEditable, onDeletePress, onEditPress, onClick } = props
+  const { children, isEditable, onDeletePress, onEditPress, onClick, as } =
+    props
 
   const renderEditButtons = () => {
     if (!isEditable) return null
@@ -24,8 +25,10 @@ export function _Card(props: CardProps) {
     )
   }
 
+  const Container = as || 'div'
+
   return (
-    <div
+    <Container
       className={classNames(
         'relative flex aspect-video w-96 items-center justify-center rounded-md bg-primary-50 p-5 text-center text-lg text-primary-900 shadow-lg shadow-primary-200 ring-1 ring-primary-900 enabled:hover:bg-primary-100',
         onClick ? 'cursor-pointer' : '',
@@ -34,7 +37,7 @@ export function _Card(props: CardProps) {
     >
       {children}
       {renderEditButtons()}
-    </div>
+    </Container>
   )
 }
 

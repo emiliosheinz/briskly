@@ -153,7 +153,7 @@ export function CreateNewDeckContextProvider(
         compress(values.image[0] as File),
       ])
 
-      await createNewDeckMutation.mutateAsync({
+      const deck = await createNewDeckMutation.mutateAsync({
         ...values,
         cards,
         topics,
@@ -164,7 +164,7 @@ export function CreateNewDeckContextProvider(
       await uploadImage(uploadConfig.uploadUrl, image)
 
       notify.success('Deck criado com sucesso!')
-      router.replace(routes.home())
+      router.replace(routes.deckDetails(deck.id))
     } catch (error) {
       handleApiClientSideError({ error })
     } finally {
@@ -225,7 +225,7 @@ export function CreateNewDeckContextProvider(
         }
 
         notify.success('Deck editado com sucesso!')
-        router.replace(routes.home())
+        router.back()
       } catch (error) {
         console.log(error)
         handleApiClientSideError({ error })

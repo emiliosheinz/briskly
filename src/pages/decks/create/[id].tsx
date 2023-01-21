@@ -25,7 +25,6 @@ import { getServerAuthSession } from '~/server/common/auth'
 import { prisma } from '~/server/common/db'
 import { getS3ImageUrl } from '~/server/common/s3'
 import type { WithAuthentication } from '~/types/auth'
-import { routes } from '~/utils/navigation'
 
 const NEW_DECK_ID = 'new'
 
@@ -178,7 +177,7 @@ const CardsSection = () => {
   return (
     <>
       <h2 className='text-xl font-semibold'>Cards</h2>
-      <div className='w-ful jus flex flex-wrap gap-5'>
+      <div className='w-ful flex flex-wrap gap-5'>
         {cards.map((card, idx) => (
           <Card
             isEditable
@@ -224,11 +223,7 @@ const SubmitButtonsSection = () => {
 
   return (
     <footer className='mt-5 flex justify-end gap-5'>
-      <Button
-        variant='bad'
-        type='button'
-        onClick={() => router.replace(routes.home())}
-      >
+      <Button variant='bad' type='button' onClick={() => router.back()}>
         Cancelar
       </Button>
       <Button type='submit'>Salvar</Button>
