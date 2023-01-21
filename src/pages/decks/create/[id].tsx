@@ -42,12 +42,7 @@ export const getServerSideProps: GetServerSideProps<{
   const deckId = context.params?.id as string
 
   if (!deckId) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
+    return { notFound: true }
   }
 
   const session = await getServerAuthSession(context)
