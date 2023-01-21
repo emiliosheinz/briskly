@@ -7,11 +7,11 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 import { getS3ImageUrl } from '~/server/common/s3'
-import { DeckSchema } from '~/utils/validators/deck'
+import { DeckInputSchema, UpdateDeckInputSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
   createNewDeck: protectedProcedure
-    .input(DeckSchema)
+    .input(DeckInputSchema)
     .mutation(({ input: { topics, cards, ...input }, ctx }) => {
       return ctx.prisma.deck.create({
         data: {
@@ -20,9 +20,9 @@ export const decksRouter = createTRPCRouter({
           topics: {
             connectOrCreate: topics?.map(topic => {
               return {
-                where: { title: topic.toLocaleLowerCase() },
+                where: { title: topic.title.toLocaleLowerCase() },
                 create: {
-                  title: topic.toLocaleLowerCase(),
+                  title: topic.title.toLocaleLowerCase(),
                 },
               }
             }),
@@ -31,6 +31,48 @@ export const decksRouter = createTRPCRouter({
         },
       })
     }),
+  updateDeck: protectedProcedure
+    .input(UpdateDeckInputSchema)
+    .mutation(
+      ({
+        input: {
+          id,
+          newCards,
+          newTopics,
+          deletedCards,
+          deletedTopics,
+          editedCards,
+          ...input
+        },
+        ctx,
+      }) => {
+        return ctx.prisma.deck.update({
+          where: { id },
+          data: {
+            ...input,
+            cards: {
+              delete: deletedCards?.map(({ id }) => ({ id })),
+              create: newCards,
+              update: editedCards?.map(({ id, ...card }) => ({
+                where: { id },
+                data: card,
+              })),
+            },
+            topics: {
+              disconnect: deletedTopics?.map(({ id }) => ({ id })),
+              connectOrCreate: newTopics?.map(topic => {
+                return {
+                  where: { title: topic.title.toLocaleLowerCase() },
+                  create: {
+                    title: topic.title.toLocaleLowerCase(),
+                  },
+                }
+              }),
+            },
+          },
+        })
+      },
+    ),
   getPublicDecks: publicProcedure
     .input(
       z.object({

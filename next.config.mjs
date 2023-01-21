@@ -24,5 +24,15 @@ const config = {
     deviceSizes: [640, 768, 1024, 1280, 1536],
     domains: [`${process.env.AWS_CLOUD_FRONT_URL?.replace('https://', '')}`],
   },
+  experimental: {
+    swcPlugins: [
+      [
+        'next-superjson-plugin',
+        {
+          excluded: [],
+        },
+      ],
+    ],
+  },
 }
 export default withBundleAnalyzer(config)

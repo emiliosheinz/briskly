@@ -7,18 +7,22 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '~/components/button'
 import { TextArea } from '~/components/text-area'
 import { withoutPropagation } from '~/utils/forms'
-import { CardSchema } from '~/utils/validators/card'
+import { CardInputSchema } from '~/utils/validators/card'
 
 import { BaseModal } from '../base/base-modal.component'
-import type { CardFormValues, NewCardModalProps } from './new-card-modal.types'
+import type {
+  CardFormInputValues,
+  NewCardModalProps,
+} from './new-card-modal.types'
 
 export function NewCardModal(props: NewCardModalProps) {
   const { isOpen, setIsOpen, onSubmit, defaultValues } = props
 
-  const { reset, handleSubmit, register, formState } = useForm<CardFormValues>({
-    resolver: zodResolver(CardSchema),
-    defaultValues: useMemo(() => defaultValues, [defaultValues]),
-  })
+  const { reset, handleSubmit, register, formState } =
+    useForm<CardFormInputValues>({
+      resolver: zodResolver(CardInputSchema),
+      defaultValues: useMemo(() => defaultValues, [defaultValues]),
+    })
 
   useEffect(() => {
     reset(defaultValues)

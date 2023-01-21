@@ -13,10 +13,10 @@ export const ImageUploader = React.forwardRef<
   HTMLInputElement,
   ImageUploaderProps
 >(function ImageUploader(props, ref) {
-  const { id, onChange, error, ...otherProps } = props
+  const { id, onChange, error, defaultValue, ...otherProps } = props
 
   const [image, setImage] = useState<File>()
-  const previewImage = useFilePreview(image)
+  const previewImage = useFilePreview(image) || defaultValue
 
   const renderIconAndImageTypes = () => {
     if (!!previewImage) return null

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import type { GetServerSideProps } from 'next'
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
@@ -11,15 +11,18 @@ import { Button } from '~/components/button'
 import { Card } from '~/components/card'
 import { ImageUploader } from '~/components/image-uploader'
 import { Input } from '~/components/input'
-import type { CardFormValues } from '~/components/modal/new-card/new-card-modal.types'
+import type { CardFormInputValues } from '~/components/modal/new-card/new-card-modal.types'
 import { Pill } from '~/components/pill'
 import { RadioGroup } from '~/components/radio-group'
 import { TextArea } from '~/components/text-area'
 import { MAX_TOPICS_PER_DECK } from '~/constants'
+import type { DeckWithCardsAndTopics } from '~/contexts/create-new-deck'
 import {
   CreateNewDeckContextProvider,
   useCreateNewDeckContext,
 } from '~/contexts/create-new-deck'
+import { getServerAuthSession } from '~/server/common/auth'
+import { getS3ImageUrl } from '~/server/common/s3'
 import type { WithAuthentication } from '~/types/auth'
 import { routes } from '~/utils/navigation'
 
@@ -32,8 +35,12 @@ const NewTopicModal = dynamic(() =>
   import('~/components/modal').then(m => m.Modal.NewTopic),
 )
 
-export const getServerSideProps: GetServerSideProps = async context => {
-  if (!context.params?.id || context.params?.id !== NEW_DECK_ID) {
+export const getServerSideProps: GetServerSideProps<{
+  deck?: DeckWithCardsAndTopics | null
+}> = async context => {
+  const deckId = context.params?.id as string
+
+  if (!deckId) {
     return {
       redirect: {
         destination: '/',
@@ -42,8 +49,33 @@ export const getServerSideProps: GetServerSideProps = async context => {
     }
   }
 
+  const session = await getServerAuthSession(context)
+
+  if (!session?.user || deckId === NEW_DECK_ID) {
+    return {
+      props: {},
+    }
+  }
+
+  const deck = await prisma?.deck.findFirst({
+    where: { id: deckId, ownerId: session.user.id },
+    include: {
+      cards: true,
+      topics: true,
+    },
+  })
+
+  if (!deck) {
+    return { notFound: true }
+  }
+
   return {
-    props: {},
+    props: {
+      deck: {
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+      },
+    },
   }
 }
 
@@ -60,6 +92,7 @@ const MainInfoSection = () => {
           <ImageUploader
             id='image'
             {...register?.('image')}
+            defaultValue={formState?.defaultValues?.image as string}
             error={formState?.errors['image']?.message as string}
           />
         </div>
@@ -92,7 +125,7 @@ const TopicsSection = () => {
     <>
       <h2 className='text-xl font-semibold'>Tópicos</h2>
       <div className='flex w-full flex-wrap gap-4'>
-        {topics.map((topic, idx) => (
+        {topics.map(({ title: topic }, idx) => (
           <Pill key={topic} isDeletable onClick={() => deleteTopic(idx)}>
             {topic}
           </Pill>
@@ -131,7 +164,7 @@ const CardsSection = () => {
     ? { answer: '', question: '' }
     : cards[newCardModalState.cardIdx!]
 
-  const handleNewCardFormSubmit = (values: CardFormValues) => {
+  const handleNewCardFormSubmit = (values: CardFormInputValues) => {
     if (isCreatingNewCard) {
       addCard(values)
     } else {
@@ -208,9 +241,9 @@ const SubmitButtonsSection = () => {
 }
 
 const DecksCrudContent = () => {
-  const { createNewDeckForm, submitDeckCreation } = useCreateNewDeckContext()
+  const { createNewDeckForm, submitDeck } = useCreateNewDeckContext()
 
-  const onSubmit = createNewDeckForm?.handleSubmit(submitDeckCreation)
+  const onSubmit = createNewDeckForm?.handleSubmit(submitDeck)
 
   return (
     <>
@@ -233,9 +266,13 @@ const DecksCrudContent = () => {
   )
 }
 
-const DecksCrud: WithAuthentication<NextPage> = () => {
+const DecksCrud: WithAuthentication<
+  NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
+> = props => {
+  const { deck } = props
+
   return (
-    <CreateNewDeckContextProvider>
+    <CreateNewDeckContextProvider deck={deck}>
       <DecksCrudContent />
     </CreateNewDeckContextProvider>
   )
