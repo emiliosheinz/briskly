@@ -34,14 +34,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   decks         Deck[]
+  studySessions StudySession[]
 }
 
 model VerificationToken {
@@ -59,17 +60,18 @@ enum Visibility {
 }
 
 model Deck {
-  id          String     @id @default(cuid())
-  title       String
-  description String
-  visibility  Visibility @default(Public)
-  ownerId     String
-  image       String     @unique
-  updatedAt   DateTime   @default(now()) @updatedAt
-  createdAt   DateTime   @default(now())
-  user        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  topics      Topic[]
-  cards       Card[]
+  id            String         @id @default(cuid())
+  title         String
+  description   String
+  visibility    Visibility     @default(Public)
+  ownerId       String
+  image         String         @unique
+  updatedAt     DateTime       @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
+  user          User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  topics        Topic[]
+  cards         Card[]
+  studySessions StudySession[]
 }
 
 model Topic {
@@ -85,3 +87,19 @@ model Card {
   deckId   String
   deck     Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
 }
+
+model StudySession {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deckId String
+  deck   Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@id([userId, deckId])
+  @@unique([userId, deckId])
+}
+
+// model StudySessionBox {
+//   id String @id @default(cuid())
+//   studySessionId String
+//   studySession StudySession
+// }
