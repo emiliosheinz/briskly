@@ -5,6 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
   EllipsisVerticalIcon,
+  RectangleStackIcon,
 } from '@heroicons/react/24/outline'
 import { Visibility } from '@prisma/client'
 import { useSetAtom } from 'jotai'
@@ -98,6 +99,7 @@ function ActionsDropDown({
   const router = useRouter()
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
   const deleteDeckMutation = api.decks.deleteDeck.useMutation()
+  const createStudySessionMutation = api.studySession.create.useMutation()
 
   const actions = [
     {
@@ -115,6 +117,24 @@ function ActionsDropDown({
           await deleteDeckMutation.mutateAsync({ id: deckId })
 
           notify.success('Deck excluído com sucesso!')
+          router.back()
+        } catch (error) {
+          handleApiClientSideError({ error })
+        } finally {
+          setIsLoading(false)
+        }
+      },
+    },
+    {
+      label: 'Estudar com este Deck',
+      icon: RectangleStackIcon,
+      onClick: async () => {
+        try {
+          setIsLoading(true)
+
+          await createStudySessionMutation.mutateAsync({ deckId })
+
+          notify.success('Sessão de estudo criada com sucesso!')
           router.back()
         } catch (error) {
           handleApiClientSideError({ error })
