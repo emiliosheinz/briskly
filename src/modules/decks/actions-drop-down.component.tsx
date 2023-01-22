@@ -81,11 +81,9 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
         }
       },
     },
-  ]
+  ].filter(({ isEnabled }) => isEnabled)
 
-  const hasEnabledActions = actions.some(({ isEnabled }) => isEnabled)
-
-  if (!hasEnabledActions) return null
+  if (actions.length === 0) return null
 
   return (
     <div className={className}>
