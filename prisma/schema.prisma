@@ -88,9 +88,9 @@ model Card {
   answer               String
   deckId               String
   deck                 Deck                  @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  studySessionAttempts StudySessionAttempt[]
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @default(now()) @updatedAt
+  studySessionBoxCards StudySessionBoxCard[]
 }
 
 model StudySession {
@@ -114,17 +114,26 @@ model StudySessionBox {
   studySession         StudySession          @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
   lastReview           DateTime              @default(now())
   reviewGapInHours     Int
+  studySessionBoxCards StudySessionBoxCard[]
+}
+
+model StudySessionBoxCard {
+  id                   String                @id @default(cuid())
+  studySessionBoxId    String
+  studySessionBox      StudySessionBox       @relation(fields: [studySessionBoxId], references: [id], onDelete: Cascade)
+  cardId               String
+  card                 Card                  @relation(fields: [cardId], references: [id], onDelete: Cascade)
   studySessionAttempts StudySessionAttempt[]
+
+  @@unique([studySessionBoxId, cardId])
 }
 
 model StudySessionAttempt {
-  id                String          @id @default(cuid())
-  answer            String
-  isRight           Boolean
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @default(now()) @updatedAt
-  studySessionBoxId String
-  studySessionBox   StudySessionBox @relation(fields: [studySessionBoxId], references: [id], onDelete: Cascade)
-  cardId            String
-  card              Card            @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  id                    String              @id @default(cuid())
+  answer                String
+  isRight               Boolean
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @default(now()) @updatedAt
+  studySessionBoxCardId String
+  studySessionBoxCard   StudySessionBoxCard @relation(fields: [studySessionBoxCardId], references: [id], onDelete: Cascade)
 }
