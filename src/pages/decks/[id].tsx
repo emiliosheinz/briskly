@@ -1,36 +1,32 @@
 import { Fragment } from 'react'
 
-import { Menu, Transition } from '@headlessui/react'
-import {
-  PencilSquareIcon,
-  TrashIcon,
-  EllipsisVerticalIcon,
-  RectangleStackIcon,
-} from '@heroicons/react/24/outline'
 import { Visibility } from '@prisma/client'
-import { useSetAtom } from 'jotai'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 
-import { Button } from '~/components/button'
 import { Card } from '~/components/card'
 import { Image } from '~/components/image'
 import { getServerAuthSession } from '~/server/common/auth'
 import { prisma } from '~/server/common/db'
 import { getS3ImageUrl } from '~/server/common/s3'
-import { api, handleApiClientSideError } from '~/utils/api'
-import { fullScreenLoaderAtom } from '~/utils/atoms'
-import { classNames } from '~/utils/css'
-import { formatToDayMonthYearWithHourAndSeconds } from '~/utils/date-time'
-import { routes } from '~/utils/navigation'
-import { notify } from '~/utils/toast'
 
 const Pill = dynamic(() =>
   import('~/components/pill').then(module => module.Pill),
+)
+
+const ActionsDropDown = dynamic(() =>
+  import('~/modules/decks/actions-drop-down.component').then(
+    module => module.ActionsDropDown,
+  ),
+)
+
+const StudySessionCard = dynamic(() =>
+  import('~/modules/decks/study-session-card.component').then(
+    module => module.StudySessionCard,
+  ),
 )
 
 async function getDeckFromDatabase(deckId: string) {
@@ -91,158 +87,6 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-function ActionsDropDown({
-  className,
-  deckId,
-}: {
-  className?: string
-  deckId: string
-}) {
-  const router = useRouter()
-  const setIsLoading = useSetAtom(fullScreenLoaderAtom)
-  const deleteDeckMutation = api.decks.deleteDeck.useMutation()
-  const createStudySessionMutation = api.studySession.create.useMutation()
-
-  const actions = [
-    {
-      label: 'Editar Deck',
-      icon: PencilSquareIcon,
-      onClick: () => router.push(routes.editDeck(deckId)),
-    },
-    {
-      label: 'Excluir Deck',
-      icon: TrashIcon,
-      onClick: async () => {
-        try {
-          setIsLoading(true)
-
-          await deleteDeckMutation.mutateAsync({ id: deckId })
-
-          notify.success('Deck excluído com sucesso!')
-          router.back()
-        } catch (error) {
-          handleApiClientSideError({ error })
-        } finally {
-          setIsLoading(false)
-        }
-      },
-    },
-    {
-      label: 'Estudar com este Deck',
-      icon: RectangleStackIcon,
-      onClick: async () => {
-        try {
-          setIsLoading(true)
-
-          await createStudySessionMutation.mutateAsync({ deckId })
-
-          notify.success('Sessão de estudo criada com sucesso!')
-          router.back()
-        } catch (error) {
-          handleApiClientSideError({ error })
-        } finally {
-          setIsLoading(false)
-        }
-      },
-    },
-  ]
-
-  return (
-    <div className={className}>
-      <Menu as='div' className='relative inline-block text-left'>
-        <div>
-          <Menu.Button className='m-2 rounded-sm bg-primary-50'>
-            <EllipsisVerticalIcon
-              className='hover:text-violet-100 h-8 w-8 text-primary-900'
-              aria-hidden='true'
-            />
-          </Menu.Button>
-        </div>
-        <Transition
-          as={Fragment}
-          enter='transition ease-out duration-100'
-          enterFrom='transform opacity-0 scale-95'
-          enterTo='transform opacity-100 scale-100'
-          leave='transition ease-in duration-75'
-          leaveFrom='transform opacity-100 scale-100'
-          leaveTo='transform opacity-0 scale-95'
-        >
-          <Menu.Items className='absolute right-0 w-56 origin-top-right rounded-md bg-primary-50 shadow-lg ring-1 ring-primary-900 ring-opacity-10 focus:outline-none'>
-            <div className='px-1 py-1 '>
-              {actions.map(action => (
-                <Menu.Item key={action.label}>
-                  {({ active }) => (
-                    <button
-                      onClick={action.onClick}
-                      className={classNames(
-                        'flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm',
-                        active
-                          ? 'bg-primary-800 text-primary-50'
-                          : 'text-primary-900',
-                      )}
-                    >
-                      <action.icon className='h-6 w-6' />
-                      <span>{action.label}</span>
-                    </button>
-                  )}
-                </Menu.Item>
-              ))}
-            </div>
-          </Menu.Items>
-        </Transition>
-      </Menu>
-    </div>
-  )
-}
-
-const StudySessionCard = (props: { deckId: string }) => {
-  const { deckId } = props
-
-  const { data, isLoading } =
-    api.studySession.getLastAndNextReviewDates.useQuery({ deckId })
-
-  if (isLoading) {
-    return (
-      <div className='flex animate-pulse rounded-md bg-primary-200 p-20 sm:p-16'>
-        <span className='sr-only'>Loading...</span>
-      </div>
-    )
-  }
-
-  if (!data) return null
-
-  const { lastReviewDateTime, nextReviewDateTime } = data
-
-  return (
-    <div className='flex flex-col gap-5 rounded-md bg-primary-50 p-5 shadow-md shadow-primary-200 ring-1 ring-primary-900 sm:flex-row'>
-      <div className='flex flex-1 items-center gap-5'>
-        <RectangleStackIcon className='h-16 w-16 text-primary-900' />
-        <div className='flex flex-col text-primary-900'>
-          <p className='text-lg sm:text-xl'>Sessão de estudos atual</p>
-          <p className='text-base'>
-            {`Última revisão: ${formatToDayMonthYearWithHourAndSeconds(
-              lastReviewDateTime,
-            )}`}
-          </p>
-          <p className='text-base'>
-            {`Próxima revisão: ${formatToDayMonthYearWithHourAndSeconds(
-              nextReviewDateTime,
-            )}`}
-          </p>
-        </div>
-      </div>
-      <div className='hidden h-0 sm:flex sm:h-auto sm:items-end'>
-        <Button disabled>Começar Revisão</Button>
-      </div>
-      <div className='block sm:hidden sm:w-0'>
-        <Button disabled fullWidth>
-          Começar Revisão
-        </Button>
-      </div>
-    </div>
-  )
-}
-
 const DeckDetails: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = props => {
@@ -272,16 +116,6 @@ const DeckDetails: NextPage<
     if (!isAuthenticated) return null
 
     return <StudySessionCard deckId={deck.id} />
-  }
-
-  const renderActionButtons = () => {
-    const isCurrentUserDeckOwner = session?.user?.id === deck.ownerId
-
-    if (!isAuthenticated || !isCurrentUserDeckOwner) return null
-
-    return (
-      <ActionsDropDown className='absolute top-0 right-0' deckId={deck.id} />
-    )
   }
 
   return (
@@ -323,7 +157,11 @@ const DeckDetails: NextPage<
             </Card>
           ))}
         </ul>
-        {renderActionButtons()}
+        <ActionsDropDown
+          className='absolute top-0 right-0'
+          deckId={deck.id}
+          deckOwnerId={deck.ownerId}
+        />
       </div>
     </>
   )
