@@ -75,21 +75,28 @@ model Deck {
 }
 
 model Topic {
-  id    String @id @default(cuid())
-  title String @unique
-  decks Deck[]
+  id        String   @id @default(cuid())
+  title     String   @unique
+  decks     Deck[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Card {
-  id       String @id @default(cuid())
-  question String
-  answer   String
-  deckId   String
-  deck     Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  id                   String                @id @default(cuid())
+  question             String
+  answer               String
+  deckId               String
+  deck                 Deck                  @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  studySessionAttempts StudySessionAttempt[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now()) @updatedAt
 }
 
 model StudySession {
   id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now()) @updatedAt
   userId            String
   user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   deckId            String
@@ -100,9 +107,24 @@ model StudySession {
 }
 
 model StudySessionBox {
-  id               String       @id @default(cuid())
-  studySessionId   String
-  studySession     StudySession @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
-  lastReview       DateTime     @default(now())
-  reviewGapInHours Int
+  id                   String                @id @default(cuid())
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now()) @updatedAt
+  studySessionId       String
+  studySession         StudySession          @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
+  lastReview           DateTime              @default(now())
+  reviewGapInHours     Int
+  studySessionAttempts StudySessionAttempt[]
+}
+
+model StudySessionAttempt {
+  id                String          @id @default(cuid())
+  answer            String
+  isRight           Boolean
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @default(now()) @updatedAt
+  studySessionBoxId String
+  studySessionBox   StudySessionBox @relation(fields: [studySessionBoxId], references: [id], onDelete: Cascade)
+  cardId            String
+  card              Card            @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
