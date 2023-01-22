@@ -21,3 +21,11 @@ export const DECK_VISIBILITY_OPTIONS: Array<Option<Visibility>> = [
     description: 'Todo com acesso direto ao link do Deck',
   },
 ]
+
+export const STUDY_SESSION_BOXES = [
+  { reviewGapInHours: 24 },
+  { reviewGapInHours: 24 * 3 },
+  { reviewGapInHours: 24 * 7 },
+  { reviewGapInHours: 24 * 15 },
+  { reviewGapInHours: 24 * 20 },
+]

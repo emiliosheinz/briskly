@@ -51,10 +51,16 @@ function isTRPCClientError(
 }
 
 function handleTRPCClientError(error: TRPCClientError<AppRouter>) {
-  const errors = JSON.parse(error.message)
+  const isArrayOfErrors = error.message.startsWith('[')
 
-  for (const { message } of errors) {
-    notify.error(message)
+  if (isArrayOfErrors) {
+    const errors = JSON.parse(error.message)
+
+    for (const { message } of errors) {
+      notify.error(message)
+    }
+  } else {
+    notify.error(error.message)
   }
 }
 

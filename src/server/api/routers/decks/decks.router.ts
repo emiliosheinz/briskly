@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc'
-import { getS3ImageUrl } from '~/server/common/s3'
+import { deleteObjectFromS3, getS3ImageUrl } from '~/server/common/s3'
 import { DeckInputSchema, UpdateDeckInputSchema } from '~/utils/validators/deck'
 
 export const decksRouter = createTRPCRouter({
@@ -73,6 +73,13 @@ export const decksRouter = createTRPCRouter({
         })
       },
     ),
+  deleteDeck: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input: { id }, ctx }) => {
+      const deck = await ctx.prisma.deck.findFirstOrThrow({ where: { id } })
+      await deleteObjectFromS3(deck.image)
+      await ctx.prisma.deck.delete({ where: { id } })
+    }),
   getPublicDecks: publicProcedure
     .input(
       z.object({

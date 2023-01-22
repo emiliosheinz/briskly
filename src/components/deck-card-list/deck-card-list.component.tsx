@@ -12,9 +12,9 @@ export function DeckCardList({ decks }: DeckCardListProps) {
     <div className='flex-w grid grid-cols-1 gap-5 sm:grid-cols-2'>
       {decks.map((deck, idx) => (
         <Link
-          href={routes.editDeck(deck.id)}
+          href={routes.deckDetails(deck.id)}
           key={deck.id}
-          className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 shadow-md hover:bg-primary-100 lg:h-64 lg:flex-row'
+          className='flex flex-col overflow-hidden rounded-md border border-primary-900 bg-primary-50 text-primary-900 shadow-md lg:h-64 lg:flex-row'
         >
           <div className='relative flex aspect-square w-full lg:w-2/5'>
             <Image
@@ -29,12 +29,10 @@ export function DeckCardList({ decks }: DeckCardListProps) {
             />
           </div>
           <div className='flex flex-1 flex-col p-4'>
-            <h5 className='mb-2 text-2xl font-bold tracking-tight text-primary-900'>
+            <h5 className='mb-2 text-2xl font-bold tracking-tight'>
               {deck.title}
             </h5>
-            <p className='mb-3 font-normal text-primary-900'>
-              {deck.description}
-            </p>
+            <p className='mb-3 font-normal'>{deck.description}</p>
           </div>
         </Link>
       ))}

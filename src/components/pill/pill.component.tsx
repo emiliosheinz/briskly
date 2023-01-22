@@ -17,6 +17,7 @@ export function _Pill(props: PillProps) {
       className={classNames(
         'rounded-full ring-1',
         isDeletable ? 'items-center justify-center pr-3' : '',
+        onClick ? '' : 'hover:cursor-default enabled:hover:bg-primary-50',
       )}
       variant='secondary'
       onClick={onClick}
