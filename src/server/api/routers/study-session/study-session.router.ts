@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { STUDY_SESSION_BOXES } from '~/constants'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { addHours } from '~/utils/date-time'
 
 export const studySessionRouter = createTRPCRouter({
   create: protectedProcedure
@@ -72,5 +73,41 @@ export const studySessionRouter = createTRPCRouter({
           studySessionBoxId: firstStudySessionBox!.id,
         })),
       })
+    }),
+  getLastAndNextReviewDates: protectedProcedure
+    .input(
+      z.object({
+        deckId: z.string().min(1),
+      }),
+    )
+    .query(async ({ input: { deckId }, ctx }) => {
+      await new Promise(r => setTimeout(r, 3000))
+      const studySession = await ctx.prisma.studySession.findFirst({
+        where: { deckId: deckId },
+      })
+
+      if (!studySession) return null
+
+      const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
+        where: { studySessionId: studySession.id },
+        orderBy: { lastReview: 'desc' },
+      })
+
+      let nextReviewDateTime
+
+      for (const box of studySessionBoxes) {
+        const currentReviewDate = addHours(box.lastReview, box.reviewGapInHours)
+
+        if (!nextReviewDateTime) {
+          nextReviewDateTime = currentReviewDate
+        } else if (currentReviewDate < nextReviewDateTime) {
+          nextReviewDateTime = currentReviewDate
+        }
+      }
+
+      return {
+        nextReviewDateTime,
+        lastReviewDateTime: studySessionBoxes[0]?.lastReview,
+      }
     }),
 })
