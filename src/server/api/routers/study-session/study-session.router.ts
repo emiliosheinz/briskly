@@ -82,7 +82,7 @@ export const studySessionRouter = createTRPCRouter({
     )
     .query(async ({ input: { deckId }, ctx }) => {
       const studySession = await ctx.prisma.studySession.findFirst({
-        where: { deckId: deckId, deck: { ownerId: ctx.session.user.id } },
+        where: { deckId: deckId, userId: ctx.session.user.id },
       })
 
       if (!studySession) return null
