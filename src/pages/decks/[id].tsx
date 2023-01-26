@@ -18,13 +18,13 @@ const Pill = dynamic(() =>
 )
 
 const ActionsDropDown = dynamic(() =>
-  import('~/modules/decks/actions-drop-down.component').then(
+  import('~/modules/decks/components/actions-drop-down.component').then(
     module => module.ActionsDropDown,
   ),
 )
 
 const StudySessionCard = dynamic(() =>
-  import('~/modules/decks/study-session-card.component').then(
+  import('~/modules/decks/components/study-session-card.component').then(
     module => module.StudySessionCard,
   ),
 )
