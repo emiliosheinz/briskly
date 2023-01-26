@@ -7,4 +7,5 @@ export type CardProps = {
   onEditPress?: () => void
   onClick?: () => void
   as?: ReactTag
+  fullWidth?: boolean
 }

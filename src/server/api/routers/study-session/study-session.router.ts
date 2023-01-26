@@ -109,4 +109,74 @@ export const studySessionRouter = createTRPCRouter({
         lastReviewDateTime: studySessionBoxes[0]?.lastReview,
       }
     }),
+  getReviewSession: protectedProcedure
+    .input(z.object({ deckId: z.string().min(1) }))
+    .query(async ({ input: { deckId }, ctx }) => {
+      const { user } = ctx.session
+
+      await new Promise(r => setTimeout(r, 1000))
+      const currentStudySession = await ctx.prisma.studySession.findFirst({
+        where: { deckId, userId: user.id },
+        include: {
+          studySessionBoxes: {
+            where: { studySessionBoxCards: { some: {} } },
+            // include: { studySessionBoxCards: { include: { card: true } } },
+          },
+        },
+      })
+
+      if (!currentStudySession) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Nenhuma sessão de estudos foi encontrada',
+        })
+      }
+
+      const currentSessionBox = [...currentStudySession.studySessionBoxes].sort(
+        (a, b) => {
+          const aNextReviewDate = addHours(a.lastReview, a.reviewGapInHours)
+          const bNextReviewDate = addHours(b.lastReview, b.reviewGapInHours)
+
+          if (aNextReviewDate < bNextReviewDate) return -1
+          if (aNextReviewDate > bNextReviewDate) return 1
+          return 0
+        },
+      )[0]
+
+      if (!currentSessionBox) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Nenhuma sessão de estudos foi encontrada',
+        })
+      }
+
+      const studySessionBoxCards =
+        await ctx.prisma.studySessionBoxCard.findMany({
+          where: { studySessionBoxId: currentSessionBox.id },
+          select: { id: true, card: { select: { question: true } } },
+        })
+
+      return {
+        studySessionId: currentStudySession.id,
+        currentSessionBox: {
+          id: currentSessionBox.id,
+          cards: studySessionBoxCards.map(({ id, card: { question } }) => ({
+            id,
+            question,
+          })),
+        },
+      }
+    }),
+  answerStudySessionCard: protectedProcedure.mutation(async () => {
+    await new Promise(r => setTimeout(r, 3000))
+    if (Math.random() > Math.random()) {
+      return { isCorrect: true }
+    }
+
+    if (Math.random() > Math.random()) {
+      throw new Error('deu ruim')
+    }
+
+    return { isCorrect: false }
+  }),
 })
