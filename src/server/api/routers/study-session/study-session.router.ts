@@ -81,26 +81,54 @@ export const studySessionRouter = createTRPCRouter({
         })),
       })
     }),
-  getHasDeckStudySession: protectedProcedure
+  getStudySessionBasicInfo: protectedProcedure
     .input(
       z.object({
         deckId: z.string().min(1),
       }),
     )
     .query(async ({ input: { deckId }, ctx }) => {
-      const studySession = await ctx.prisma.studySession.findFirst({
-        where: { deckId: deckId, userId: ctx.session.user.id },
+      const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
+        where: {
+          studySession: { deckId, userId: ctx.session.user.id },
+          studySessionBoxCards: { some: {} },
+        },
+        orderBy: { lastReview: 'desc' },
+        select: {
+          createdAt: true,
+          lastReview: true,
+          reviewGapInHours: true,
+        },
       })
 
-      return { hasDeckStudySession: !!studySession }
+      if (studySessionBoxes.length === 0) return null
+
+      let nextReviewDate
+      for (const box of studySessionBoxes) {
+        const lastReview = box.lastReview || box.createdAt
+        const currentReviewDate = addHours(lastReview, box.reviewGapInHours)
+
+        if (!nextReviewDate) {
+          nextReviewDate = currentReviewDate
+        } else if (currentReviewDate < nextReviewDate) {
+          nextReviewDate = currentReviewDate
+        }
+      }
+
+      const lastReviewDate = studySessionBoxes.find(
+        ({ lastReview }) => !!lastReview,
+      )?.lastReview
+
+      return {
+        nextReviewDate,
+        lastReviewDate,
+      }
     }),
   getReviewSession: protectedProcedure
     .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {
-      const { user } = ctx.session
-
       const currentStudySession = await ctx.prisma.studySession.findFirst({
-        where: { deckId, userId: user.id },
+        where: { deckId, userId: ctx.session.user.id },
         include: {
           studySessionBoxes: {
             where: { studySessionBoxCards: { some: {} } },
