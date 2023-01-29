@@ -14,26 +14,27 @@ import { getS3ImageUrl } from '~/server/common/s3'
 import type { WithAuthentication } from '~/types/auth'
 
 const Cards = dynamic(() =>
-  import('~/modules/decks/create/cards.component').then(module => module.Cards),
+  import('~/modules/decks/create/components/cards.component').then(
+    module => module.Cards,
+  ),
 )
-
 const MainInfo = dynamic(() =>
-  import('~/modules/decks/create/main-info.component').then(
+  import('~/modules/decks/create/components/main-info.component').then(
     module => module.MainInfo,
   ),
 )
 const SubmitButtons = dynamic(() =>
-  import('~/modules/decks/create/submit-buttons.component').then(
+  import('~/modules/decks/create/components/submit-buttons.component').then(
     module => module.SubmitButtons,
   ),
 )
 const Topics = dynamic(() =>
-  import('~/modules/decks/create/topics.component').then(
+  import('~/modules/decks/create/components/topics.component').then(
     module => module.Topics,
   ),
 )
 const Visibility = dynamic(() =>
-  import('~/modules/decks/create/visibility.component').then(
+  import('~/modules/decks/create/components/visibility.component').then(
     module => module.Visibility,
   ),
 )

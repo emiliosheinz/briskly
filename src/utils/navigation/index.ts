@@ -3,4 +3,5 @@ export const routes = {
   createNewDeck: () => '/decks/create/new',
   editDeck: (id: string) => `/decks/create/${id}`,
   deckDetails: (id: string) => `/decks/${id}`,
+  reviewDeck: (id: string) => `/decks/review/${id}`,
 }

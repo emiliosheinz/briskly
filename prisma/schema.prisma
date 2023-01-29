@@ -112,7 +112,7 @@ model StudySessionBox {
   updatedAt            DateTime              @default(now()) @updatedAt
   studySessionId       String
   studySession         StudySession          @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
-  lastReview           DateTime              @default(now())
+  lastReview           DateTime?
   reviewGapInHours     Int
   studySessionBoxCards StudySessionBoxCard[]
 }

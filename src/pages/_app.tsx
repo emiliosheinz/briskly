@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
 import type { Session } from 'next-auth'
@@ -56,6 +57,7 @@ const MyApp: AppType<{ session: Session | null }> = props => {
       </SessionProvider>
       <Toaster />
       <FullScreenLoader />
+      <ReactQueryDevtools initialIsOpen={false} />
     </JotaiProvider>
   )
 }

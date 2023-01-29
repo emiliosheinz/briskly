@@ -11,7 +11,7 @@ module.exports = {
         500: '#64748b',
         200: '#E2E8F0',
         100: '#F1F5F9',
-        50: '#F8FAFC',
+        50: '#FFFFFF',
       },
       black: {
         900: '#000000',
@@ -32,5 +32,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('tailwindcss-animation-delay'),
+  ],
 }

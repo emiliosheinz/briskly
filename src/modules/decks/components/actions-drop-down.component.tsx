@@ -73,7 +73,7 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
           await createStudySessionMutation.mutateAsync({ deckId })
 
           notify.success('Sessão de estudo criada com sucesso!')
-          router.back()
+          router.push(routes.reviewDeck(deckId))
         } catch (error) {
           handleApiClientSideError({ error })
         } finally {
