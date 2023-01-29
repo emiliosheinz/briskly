@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
+import { z } from 'zod'
 
 import { Button } from '~/components/button'
 import { Card } from '~/components/card'
@@ -11,6 +14,10 @@ import { TextArea } from '~/components/text-area'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 import { classNames } from '~/utils/css'
+
+type FormInputValues = {
+  answer: string
+}
 
 export const getServerSideProps: GetServerSideProps<{
   deckId: string
@@ -26,6 +33,10 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
+/**
+ * TODO quando revisar o ultimo card atualizar o lastReview date do box
+ */
+
 const ReviewDeck: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
@@ -34,8 +45,12 @@ const ReviewDeck: WithAuthentication<
   const {
     isLoading,
     isError,
-    data: { currentSessionBox } = {},
-  } = api.studySession.getReviewSession.useQuery({ deckId })
+    data: { studySessionBoxes } = {},
+  } = api.studySession.getReviewSession.useQuery(
+    { deckId },
+    { refetchOnWindowFocus: false },
+  )
+  const cards = studySessionBoxes?.flatMap(({ cards }) => cards)
 
   const {
     isLoading: isValidatingAnswer,
@@ -45,12 +60,29 @@ const ReviewDeck: WithAuthentication<
     reset: resetAnswerState,
   } = api.studySession.answerStudySessionCard.useMutation()
 
+  const finishStudySessionForMutation =
+    api.studySession.finishStudySessionForBox.useMutation()
+
+  const {
+    handleSubmit,
+    register,
+    formState,
+    reset: resetForm,
+  } = useForm<FormInputValues>({
+    resolver: zodResolver(
+      z.object({ answer: z.string().min(1, 'Campo obrigatório') }),
+    ),
+  })
+
   const [currentCardIdx, setCurrentCardIdx] = useState(0)
   const [currentCardStage, setCurrentCardStage] = useState<
-    'question' | 'answer' | 'validation'
+    'question' | 'answer' | 'validation' | 'finished'
   >('question')
 
   const validationTimeout = useRef<NodeJS.Timeout>()
+
+  const currentCard = cards?.[currentCardIdx]
+  const shouldDisableButtonsAndInputs = isValidatingAnswer || !!answerResult
 
   useEffect(() => {
     const hasAnsweredCard = currentCardStage === 'answer'
@@ -69,10 +101,24 @@ const ReviewDeck: WithAuthentication<
     }
   }, [currentCardStage, isValidatingAnswer, answerResult])
 
+  useEffect(() => {
+    if (currentCardStage === 'finished' && studySessionBoxes) {
+      finishStudySessionForMutation.mutate({
+        boxIds: studySessionBoxes?.map(({ id }) => id),
+      })
+    }
+  }, [currentCardStage, studySessionBoxes, finishStudySessionForMutation])
+
   const goToNextCard = () => {
+    if (!cards) return
+
+    const isLastCard = currentCardIdx === cards.length - 1
+    const nextCardIdx = isLastCard ? currentCardIdx : currentCardIdx + 1
+
+    resetForm()
     resetAnswerState()
-    setCurrentCardStage('question')
-    setCurrentCardIdx(idx => idx + 1)
+    setCurrentCardIdx(nextCardIdx)
+    setCurrentCardStage(isLastCard ? 'finished' : 'question')
   }
 
   const renderCardContent = () => {
@@ -86,11 +132,7 @@ const ReviewDeck: WithAuthentication<
     }
 
     if (currentCardStage === 'question') {
-      return (
-        <p className='text-base md:text-2xl'>
-          {currentSessionBox?.cards[currentCardIdx]?.question}
-        </p>
-      )
+      return <p className='text-base md:text-2xl'>{currentCard?.question}</p>
     }
 
     if (hasErrorValidatingCard || !answerResult)
@@ -100,7 +142,7 @@ const ReviewDeck: WithAuthentication<
         </span>
       )
 
-    if (!answerResult.isCorrect) {
+    if (!answerResult.isRight) {
       return <span className='text-5xl sm:text-8xl'>😪</span>
     }
 
@@ -110,7 +152,7 @@ const ReviewDeck: WithAuthentication<
   const renderButtons = () => {
     if (currentCardStage === 'validation') {
       return (
-        <Button fullWidth onClick={goToNextCard}>
+        <Button type='button' fullWidth onClick={goToNextCard}>
           Próximo Card
         </Button>
       )
@@ -120,18 +162,16 @@ const ReviewDeck: WithAuthentication<
       <>
         <Button
           fullWidth
+          disabled={shouldDisableButtonsAndInputs}
           variant='secondary'
-          onClick={() => setCurrentCardIdx(idx => idx + 1)}
+          type='button'
+          onClick={() => {
+            console.log('TODO emiliosheinz: not implemented')
+          }}
         >
           Passar
         </Button>
-        <Button
-          fullWidth
-          onClick={async () => {
-            answerCard()
-            setCurrentCardStage('answer')
-          }}
-        >
+        <Button disabled={shouldDisableButtonsAndInputs} fullWidth>
           Responder
         </Button>
       </>
@@ -139,13 +179,43 @@ const ReviewDeck: WithAuthentication<
   }
 
   const renderContent = () => {
-    if (isLoading) return <span>Loading...</span>
-    if (isError) return <span>Error</span>
+    if (isLoading)
+      return (
+        <div className='flex w-full animate-pulse flex-col gap-5'>
+          <span className='aspect-video w-full bg-primary-200' />
+          <span className='h-40 w-full bg-primary-200 sm:h-56' />
+          <span className='h-16 w-full bg-primary-200' />
+        </div>
+      )
+
+    if (isError)
+      return (
+        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+          😕 Houve um erro ao iniciar a sua revisão. Por favor, tente novamente
+          mais tarde!
+        </p>
+      )
+
+    if (currentCardStage === 'finished')
+      return (
+        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+          🎉 Parabéns!!! Você revisou todos os Cards pendentes.
+        </p>
+      )
+
+    // TODO emiliosheinz: Adicionar tooltip explicando porque nenhum card precisa ser revisado
+    if (!cards?.length)
+      return (
+        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+          🎉 No momento nenhum Card precisa ser revisado. Por favor, volte mais
+          tarde.
+        </p>
+      )
 
     return (
-      <div className='mx-auto flex max-w-3xl flex-col gap-5'>
+      <>
         <p className='text-center'>
-          {currentCardIdx + 1}/{currentSessionBox?.cards.length}
+          {currentCardIdx + 1}/{cards?.length}
         </p>
         <div className='group [perspective:1000px]'>
           <div
@@ -161,14 +231,30 @@ const ReviewDeck: WithAuthentication<
             </div>
             <div className='absolute w-full [transform:rotateY(180deg)] [backface-visibility:hidden]'>
               <Card fullWidth>
-                <span className='text-base md:text-2xl'>Resposta</span>
+                <span className='text-base md:text-2xl'>
+                  {answerResult?.answer}
+                </span>
               </Card>
             </div>
           </div>
         </div>
-        <TextArea label='Resposta' id='answer' />
-        <div className='flex gap-5'>{renderButtons()}</div>
-      </div>
+        <form
+          onSubmit={handleSubmit(values => {
+            answerCard({ ...values, boxCardId: currentCard?.id as string })
+            setCurrentCardStage('answer')
+          })}
+          className='flex flex-col gap-3'
+        >
+          <TextArea
+            disabled={shouldDisableButtonsAndInputs}
+            label='Resposta'
+            id='answer'
+            {...register('answer')}
+            error={formState?.errors['answer']?.message as string}
+          />
+          <div className='flex gap-5'>{renderButtons()}</div>
+        </form>
+      </>
     )
   }
 
@@ -179,7 +265,9 @@ const ReviewDeck: WithAuthentication<
         <meta name='description' content='' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      {renderContent()}
+      <div className='mx-auto flex max-w-3xl flex-col items-center gap-5'>
+        {renderContent()}
+      </div>
     </>
   )
 }
