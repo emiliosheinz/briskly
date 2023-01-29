@@ -18,7 +18,7 @@ export const DECK_VISIBILITY_OPTIONS: Array<Option<Visibility>> = [
   {
     name: 'Apenas com link',
     value: Visibility.WithLink,
-    description: 'Todo com acesso direto ao link do Deck',
+    description: 'Todos com acesso direto ao link do Deck',
   },
 ]
 

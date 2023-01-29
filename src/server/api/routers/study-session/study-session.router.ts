@@ -49,7 +49,6 @@ export const studySessionRouter = createTRPCRouter({
         })
       }
 
-      // TODO emiliosheinz: Improve endpoint performance by grouping queries
       const studySession = await ctx.prisma.studySession.create({
         data: {
           deckId,
