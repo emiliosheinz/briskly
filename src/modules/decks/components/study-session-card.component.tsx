@@ -56,7 +56,12 @@ export const StudySessionCard = (props: { deckId: string }) => {
         </div>
       </div>
       <div className='hidden h-0 sm:flex sm:h-auto sm:items-end'>
-        <Button disabled>Começar Revisão</Button>
+        <Button
+          disabled={hasNextReviewDateAfterNow}
+          onClick={() => router.push(routes.reviewDeck(deckId))}
+        >
+          Começar Revisão
+        </Button>
       </div>
       <div className='block sm:hidden sm:w-0'>
         <Button

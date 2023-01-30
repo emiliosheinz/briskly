@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 import { api } from '~/utils/api'
 
-type CardAnswerStages = 'question' | 'answer' | 'validation' | 'finished'
+type CardAnswerStages = 'question' | 'answer' | 'validation' | 'done'
 
 export function useDeckReview(deckId: string) {
   const {
@@ -27,7 +27,7 @@ export function useDeckReview(deckId: string) {
     isError: hasErrorValidatingAnswer,
   } = api.studySession.answerStudySessionCard.useMutation()
 
-  const finishStudySessionForMutation =
+  const { mutate: finishStudySession } =
     api.studySession.finishStudySessionForBox.useMutation()
 
   const form = useForm<{ answer: string }>({
@@ -44,6 +44,7 @@ export function useDeckReview(deckId: string) {
 
   const validationTimeout = useRef<NodeJS.Timeout>()
   const currentCard = cards?.[currentCardIdx]
+  const isLastCard = cards ? currentCardIdx === cards.length - 1 : false
 
   useEffect(() => {
     const hasAnsweredCard = cardAnswerStage === 'answer'
@@ -63,29 +64,28 @@ export function useDeckReview(deckId: string) {
   }, [cardAnswerStage, isValidatingAnswer, answerResult])
 
   useEffect(() => {
-    if (cardAnswerStage === 'finished' && studySessionBoxes) {
-      finishStudySessionForMutation.mutate({
-        boxIds: studySessionBoxes?.map(({ id }) => id),
+    if (isLastCard && cardAnswerStage === 'validation' && studySessionBoxes) {
+      finishStudySession({
+        boxIds: studySessionBoxes.map(({ id }) => id),
       })
     }
-  }, [cardAnswerStage, studySessionBoxes, finishStudySessionForMutation])
+  }, [cardAnswerStage, studySessionBoxes, isLastCard, finishStudySession])
 
   const goToNextCard = () => {
     if (!cards) return
-
-    const isLastCard = currentCardIdx === cards.length - 1
     const nextCardIdx = isLastCard ? currentCardIdx : currentCardIdx + 1
 
     form.reset()
     resetAnswerState()
     setCurrentCardIdx(nextCardIdx)
-    setCardAnswerStage(isLastCard ? 'finished' : 'question')
+    setCardAnswerStage(isLastCard ? 'done' : 'question')
   }
 
   return {
     form,
     goToNextCard,
     cardAnswerStage,
+    isLastCard,
 
     isLoadingCards,
     hasErrorLoadingCards,

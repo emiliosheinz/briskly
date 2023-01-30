@@ -103,15 +103,23 @@ export const studySessionRouter = createTRPCRouter({
 
       if (studySessionBoxes.length === 0) return null
 
+      const isFirstReview = studySessionBoxes.every(
+        ({ lastReview }) => !lastReview,
+      )
       let nextReviewDate
-      for (const box of studySessionBoxes) {
-        const lastReview = box.lastReview || box.createdAt
-        const currentReviewDate = addHours(lastReview, box.reviewGapInHours)
 
-        if (!nextReviewDate) {
-          nextReviewDate = currentReviewDate
-        } else if (currentReviewDate < nextReviewDate) {
-          nextReviewDate = currentReviewDate
+      if (isFirstReview) {
+        nextReviewDate = studySessionBoxes[0]?.createdAt
+      } else {
+        for (const box of studySessionBoxes) {
+          const lastReview = box.lastReview || box.createdAt
+          const currentReviewDate = addHours(lastReview, box.reviewGapInHours)
+
+          if (!nextReviewDate) {
+            nextReviewDate = currentReviewDate
+          } else if (currentReviewDate < nextReviewDate) {
+            nextReviewDate = currentReviewDate
+          }
         }
       }
 

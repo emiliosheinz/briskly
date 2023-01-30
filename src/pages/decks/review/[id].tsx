@@ -1,6 +1,7 @@
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 import { Button } from '~/components/button'
 import { Card } from '~/components/card'
@@ -9,6 +10,7 @@ import { TextArea } from '~/components/text-area'
 import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook'
 import type { WithAuthentication } from '~/types/auth'
 import { classNames } from '~/utils/css'
+import { routes } from '~/utils/navigation'
 
 export const getServerSideProps: GetServerSideProps<{
   deckId: string
@@ -33,10 +35,13 @@ const ReviewDeck: WithAuthentication<
 > = props => {
   const { deckId } = props
 
+  const router = useRouter()
+
   const {
     form,
     cards,
     answer,
+    isLastCard,
     answerResult,
     currentCard,
     goToNextCard,
@@ -82,7 +87,7 @@ const ReviewDeck: WithAuthentication<
     if (cardAnswerStage === 'validation') {
       return (
         <Button type='button' fullWidth onClick={goToNextCard}>
-          Próximo Card
+          {isLastCard ? 'Ok' : 'Próximo Card'}
         </Button>
       )
     }
@@ -95,7 +100,7 @@ const ReviewDeck: WithAuthentication<
           variant='secondary'
           type='button'
           onClick={() => {
-            console.log('TODO emiliosheinz: not implemented')
+            console.log('TODO emiliosheinz: not implemented iet')
           }}
         >
           Passar
@@ -127,11 +132,19 @@ const ReviewDeck: WithAuthentication<
       )
     }
 
-    if (cardAnswerStage === 'finished') {
+    if (cardAnswerStage === 'done') {
       return (
-        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-          🎉 Parabéns!!! Você revisou todos os Cards pendentes.
-        </p>
+        <div>
+          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+            🎉 Parabéns!!! Você revisou todos os Cards pendentes.
+          </p>
+          <Button
+            fullWidth
+            onClick={() => router.replace(routes.deckDetails(deckId))}
+          >
+            OK
+          </Button>
+        </div>
       )
     }
 
@@ -146,7 +159,7 @@ const ReviewDeck: WithAuthentication<
     }
 
     return (
-      <>
+      <div className='flex w-full flex-col gap-5'>
         <p className='text-center'>
           {currentCardIdx + 1}/{cards?.length}
         </p>
@@ -184,7 +197,7 @@ const ReviewDeck: WithAuthentication<
           />
           <div className='flex gap-5'>{renderButtons()}</div>
         </form>
-      </>
+      </div>
     )
   }
 
@@ -195,7 +208,7 @@ const ReviewDeck: WithAuthentication<
         <meta name='description' content='' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <div className='mx-auto flex max-w-3xl flex-col items-center gap-5'>
+      <div className='mx-auto flex w-full max-w-3xl justify-center'>
         {renderContent()}
       </div>
     </>
