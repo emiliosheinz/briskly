@@ -227,7 +227,6 @@ export function CreateNewDeckContextProvider(
         notify.success('Deck editado com sucesso!')
         router.back()
       } catch (error) {
-        console.log(error)
         handleApiClientSideError({ error })
       } finally {
         setIsLoading(false)
