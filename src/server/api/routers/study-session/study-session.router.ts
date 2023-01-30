@@ -9,11 +9,7 @@ import { addHours } from '~/utils/date-time'
 
 export const studySessionRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(
-      z.object({
-        deckId: z.string().min(1),
-      }),
-    )
+    .input(z.object({ deckId: z.string().min(1) }))
     .mutation(async ({ input: { deckId }, ctx }) => {
       const hasStudySession = !!(await ctx.prisma.studySession.findFirst({
         where: { deckId, userId: ctx.session.user.id },
@@ -82,11 +78,7 @@ export const studySessionRouter = createTRPCRouter({
       })
     }),
   getStudySessionBasicInfo: protectedProcedure
-    .input(
-      z.object({
-        deckId: z.string().min(1),
-      }),
-    )
+    .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {
       const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
         where: {
@@ -294,11 +286,7 @@ export const studySessionRouter = createTRPCRouter({
       return { isRight: isAnswerRight, answer: card.answer }
     }),
   finishStudySessionForBox: protectedProcedure
-    .input(
-      z.object({
-        boxIds: z.array(z.string().min(1)),
-      }),
-    )
+    .input(z.object({ boxIds: z.array(z.string().min(1)) }))
     .mutation(async ({ input, ctx }) => {
       await ctx.prisma.$transaction(
         input.boxIds.map(boxId =>
