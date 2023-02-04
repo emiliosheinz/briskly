@@ -7,6 +7,7 @@ import { Button } from '~/components/button'
 import { Card } from '~/components/card'
 import { Loader } from '~/components/loader'
 import { TextArea } from '~/components/text-area'
+import { Tooltip } from '~/components/tooltip'
 import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook'
 import type { WithAuthentication } from '~/types/auth'
 import { classNames } from '~/utils/css'
@@ -148,12 +149,12 @@ const ReviewDeck: WithAuthentication<
       )
     }
 
-    // TODO emiliosheinz: Adicionar tooltip explicando porque nenhum card precisa ser revisado
     if (!cards?.length) {
       return (
         <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
           🎉 No momento nenhum Card precisa ser revisado. Por favor, volte mais
-          tarde.
+          tarde
+          <Tooltip hint='Você não tem cards para revisar pois Briskly utiliza a metodologia de repetição espaçada para determinar quando você deve revisar determinado card.' />
         </p>
       )
     }
