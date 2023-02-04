@@ -83,13 +83,17 @@ export const studySessionRouter = createTRPCRouter({
       const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
         where: {
           studySession: { deckId, userId: ctx.session.user.id },
-          studySessionBoxCards: { some: {} },
         },
         orderBy: { lastReview: 'desc' },
         select: {
           createdAt: true,
           lastReview: true,
           reviewGapInHours: true,
+          _count: {
+            select: {
+              studySessionBoxCards: true,
+            },
+          },
         },
       })
 
@@ -103,7 +107,11 @@ export const studySessionRouter = createTRPCRouter({
       if (isFirstReview) {
         nextReviewDate = studySessionBoxes[0]?.createdAt
       } else {
-        for (const box of studySessionBoxes) {
+        const boxesWithCards = studySessionBoxes.filter(
+          ({ _count: { studySessionBoxCards } }) => studySessionBoxCards > 0,
+        )
+
+        for (const box of boxesWithCards) {
           const lastReview = box.lastReview || box.createdAt
           const currentReviewDate = addHours(lastReview, box.reviewGapInHours)
 
@@ -131,7 +139,6 @@ export const studySessionRouter = createTRPCRouter({
         where: { deckId, userId: ctx.session.user.id },
         include: {
           studySessionBoxes: {
-            where: { studySessionBoxCards: { some: {} } },
             select: {
               id: true,
               createdAt: true,
