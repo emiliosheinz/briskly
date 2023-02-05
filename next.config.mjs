@@ -14,7 +14,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  swcMinify: true,
+  /**
+   * Set to false because of React Tooltip
+   * See: https://github.com/ReactTooltip/react-tooltip/issues/933
+   */
+  swcMinify: false,
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
