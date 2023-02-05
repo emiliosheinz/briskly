@@ -49,15 +49,14 @@ const ReviewDeck: WithAuthentication<
     currentCardIdx,
     isLoadingCards,
     cardAnswerStage,
-    isValidatingAnswer,
     hasErrorLoadingCards,
-    hasErrorValidatingAnswer,
   } = useDeckReview(deckId)
 
-  const shouldDisableButtonsAndInputs = isValidatingAnswer || !!answerResult
+  const isLoadingAnswer = cardAnswerStage === 'loading'
+  const shouldDisableButtonsAndInputs = isLoadingAnswer || !!answerResult
 
   const renderCardContent = () => {
-    if (isValidatingAnswer) {
+    if (isLoadingAnswer) {
       return (
         <div className='flex flex-col items-center gap-2'>
           <span className='text-base md:text-2xl'>Validando Resposta</span>
@@ -70,14 +69,14 @@ const ReviewDeck: WithAuthentication<
       return <p className='text-base md:text-2xl'>{currentCard?.question}</p>
     }
 
-    if (hasErrorValidatingAnswer || !answerResult)
+    if (cardAnswerStage === 'error')
       return (
         <span className='max-w-xs text-base text-error-700 md:text-2xl'>
           Houve um erro ao validar a sua resposta. Tente novamente mais tarde!
         </span>
       )
 
-    if (!answerResult.isRight) {
+    if (!answerResult?.isRight) {
       return <span className='text-5xl sm:text-8xl'>😪</span>
     }
 
@@ -98,11 +97,9 @@ const ReviewDeck: WithAuthentication<
         <Button
           fullWidth
           disabled={shouldDisableButtonsAndInputs}
-          variant='secondary'
+          variant='bad'
           type='button'
-          onClick={() => {
-            console.log('TODO emiliosheinz: not implemented iet')
-          }}
+          onClick={() => answer({ answer: undefined })}
         >
           Passar
         </Button>
