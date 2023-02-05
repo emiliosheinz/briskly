@@ -194,7 +194,7 @@ export const studySessionRouter = createTRPCRouter({
   answerStudySessionCard: protectedProcedure
     .input(
       z.object({
-        answer: z.string().min(1),
+        answer: z.string().min(1).optional(),
         boxCardId: z.string().min(1),
       }),
     )
@@ -222,7 +222,7 @@ export const studySessionRouter = createTRPCRouter({
       if (!boxCard) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Não foi possível localizar este o card',
+          message: 'Não foi possível localizar o card',
         })
       }
 
@@ -237,6 +237,27 @@ export const studySessionRouter = createTRPCRouter({
           code: 'FORBIDDEN',
           message: 'Este usuário não pode responder este card',
         })
+      }
+
+      const firstStudySessionBox = studySessionBoxes[0]
+
+      if (!firstStudySessionBox) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Houve um erro ao atualizar o estado do seu Deck.',
+        })
+      }
+
+      /**
+       * If the user didn't answer the question, we move the card to the first box
+       */
+      if (!answer) {
+        await ctx.prisma.studySessionBoxCard.update({
+          where: { id: boxCardId },
+          data: { studySessionBoxId: firstStudySessionBox.id },
+        })
+
+        return { isRight: false, answer: card.answer }
       }
 
       const isAnswerRight = compareTwoStrings(answer, card.answer) > 0.8
@@ -254,7 +275,6 @@ export const studySessionRouter = createTRPCRouter({
         ({ id }) => id === currentBoxId,
       )
       const lastBoxIdx = studySessionBoxes.length - 1
-      const firstBoxIx = 0
 
       const isInTheLastBox = currentBoxIdx === lastBoxIdx
 
@@ -273,15 +293,6 @@ export const studySessionRouter = createTRPCRouter({
           data: { studySessionBoxId: nextStudySessionBox.id },
         })
       } else {
-        const firstStudySessionBox = studySessionBoxes[firstBoxIx]
-
-        if (!firstStudySessionBox) {
-          throw new TRPCError({
-            code: 'CONFLICT',
-            message: 'Houve um erro ao atualizar o estado do seu Deck.',
-          })
-        }
-
         updateBoxCard = ctx.prisma.studySessionBoxCard.update({
           where: { id: boxCardId },
           data: { studySessionBoxId: firstStudySessionBox.id },

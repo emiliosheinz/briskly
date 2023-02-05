@@ -6,7 +6,13 @@ import { z } from 'zod'
 
 import { api } from '~/utils/api'
 
-type CardAnswerStages = 'question' | 'answer' | 'validation' | 'done'
+type CardAnswerStages =
+  | 'question'
+  | 'loading'
+  | 'answered'
+  | 'validation'
+  | 'done'
+  | 'error'
 
 export function useDeckReview(deckId: string) {
   const {
@@ -20,11 +26,9 @@ export function useDeckReview(deckId: string) {
   const cards = studySessionBoxes?.flatMap(({ cards }) => cards)
 
   const {
-    mutate: answer,
+    mutateAsync: answer,
     data: answerResult,
     reset: resetAnswerState,
-    isLoading: isValidatingAnswer,
-    isError: hasErrorValidatingAnswer,
   } = api.studySession.answerStudySessionCard.useMutation()
 
   const { mutate: finishStudySession } =
@@ -46,10 +50,12 @@ export function useDeckReview(deckId: string) {
   const currentCard = cards?.[currentCardIdx]
   const isLastCard = cards ? currentCardIdx === cards.length - 1 : false
 
+  /**
+   * useEffect to automatically show the card answer when user has answered the card
+   */
   useEffect(() => {
-    const hasAnsweredCard = cardAnswerStage === 'answer'
-    const shouldShowValidationStep =
-      hasAnsweredCard && !isValidatingAnswer && answerResult
+    const hasAnsweredCard = cardAnswerStage === 'answered'
+    const shouldShowValidationStep = hasAnsweredCard && answerResult
 
     if (shouldShowValidationStep) {
       /**
@@ -61,7 +67,7 @@ export function useDeckReview(deckId: string) {
     } else {
       clearTimeout(validationTimeout.current)
     }
-  }, [cardAnswerStage, isValidatingAnswer, answerResult])
+  }, [cardAnswerStage, answerResult])
 
   useEffect(() => {
     if (isLastCard && cardAnswerStage === 'validation' && studySessionBoxes) {
@@ -81,6 +87,21 @@ export function useDeckReview(deckId: string) {
     setCardAnswerStage(isLastCard ? 'done' : 'question')
   }
 
+  const submitCardAnswer = async (params: { answer?: string }) => {
+    try {
+      if (!currentCard?.id) throw new Error('Card not found')
+
+      setCardAnswerStage('loading')
+      await answer({
+        boxCardId: currentCard.id,
+        answer: params.answer,
+      })
+      setCardAnswerStage('answered')
+    } catch {
+      setCardAnswerStage('error')
+    }
+  }
+
   return {
     form,
     goToNextCard,
@@ -92,15 +113,10 @@ export function useDeckReview(deckId: string) {
     cards,
 
     answerResult,
-    isValidatingAnswer,
-    hasErrorValidatingAnswer,
 
     currentCard,
     currentCardIdx,
 
-    answer: (values: { answer: string }) => {
-      setCardAnswerStage('answer')
-      answer({ ...values, boxCardId: currentCard?.id as string })
-    },
+    answer: submitCardAnswer,
   }
 }
