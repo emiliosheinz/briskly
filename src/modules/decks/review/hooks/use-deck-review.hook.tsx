@@ -18,7 +18,7 @@ export function useDeckReview(deckId: string) {
   const {
     isLoading: isLoadingCards,
     isError: hasErrorLoadingCards,
-    data: { studySessionBoxes } = {},
+    data: { studySessionBoxes, deck } = {},
   } = api.studySession.getReviewSession.useQuery(
     { deckId },
     { refetchOnWindowFocus: false },
@@ -111,6 +111,7 @@ export function useDeckReview(deckId: string) {
     isLoadingCards,
     hasErrorLoadingCards,
     cards,
+    deck,
 
     answerResult,
 

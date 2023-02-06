@@ -138,6 +138,12 @@ export const studySessionRouter = createTRPCRouter({
       const currentStudySession = await ctx.prisma.studySession.findFirst({
         where: { deckId, userId: ctx.session.user.id },
         include: {
+          deck: {
+            select: {
+              title: true,
+              description: true,
+            },
+          },
           studySessionBoxes: {
             select: {
               id: true,
@@ -189,6 +195,7 @@ export const studySessionRouter = createTRPCRouter({
             })),
           }),
         ),
+        deck: currentStudySession.deck,
       }
     }),
   answerStudySessionCard: protectedProcedure

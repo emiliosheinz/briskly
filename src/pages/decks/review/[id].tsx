@@ -27,10 +27,6 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-/**
- * TODO quando revisar o ultimo card atualizar o lastReview date do box
- */
-
 const ReviewDeck: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
@@ -40,6 +36,7 @@ const ReviewDeck: WithAuthentication<
 
   const {
     form,
+    deck,
     cards,
     answer,
     isLastCard,
@@ -55,12 +52,24 @@ const ReviewDeck: WithAuthentication<
   const isLoadingAnswer = cardAnswerStage === 'loading'
   const shouldDisableButtonsAndInputs = isLoadingAnswer || !!answerResult
 
+  const renderOkButton = () => {
+    return (
+      <Button
+        fullWidth
+        variant='secondary'
+        onClick={() => router.replace(routes.deckDetails(deckId))}
+      >
+        Ok
+      </Button>
+    )
+  }
+
   const renderCardContent = () => {
     if (isLoadingAnswer) {
       return (
-        <div className='flex flex-col items-center gap-2'>
-          <span className='text-base md:text-2xl'>Validando Resposta</span>
+        <div className='flex flex-col items-center'>
           <Loader />
+          <span className='sr-only'>Validando Resposta</span>
         </div>
       )
     }
@@ -71,9 +80,11 @@ const ReviewDeck: WithAuthentication<
 
     if (cardAnswerStage === 'error')
       return (
-        <span className='max-w-xs text-base text-error-700 md:text-2xl'>
-          Houve um erro ao validar a sua resposta. Tente novamente mais tarde!
-        </span>
+        <Tooltip hint='Se o erro persistir você pode passar este Card pressionando o botão "Passar". Dessa forma você poderá tentar responder este Card novamente na sua próxima revisão.'>
+          <span className='max-w-xs text-base text-error-700 md:text-2xl'>
+            Houve um erro ao validar a sua resposta. Tente novamente mais tarde!
+          </span>
+        </Tooltip>
       )
 
     if (!answerResult?.isRight) {
@@ -114,19 +125,22 @@ const ReviewDeck: WithAuthentication<
     if (isLoadingCards) {
       return (
         <div className='flex w-full animate-pulse flex-col gap-5'>
-          <span className='aspect-video w-full bg-primary-200' />
-          <span className='h-40 w-full bg-primary-200 sm:h-56' />
-          <span className='h-16 w-full bg-primary-200' />
+          <span className='aspect-video w-full rounded-md bg-primary-200' />
+          <span className='h-40 w-full rounded-md bg-primary-200 sm:h-56' />
+          <span className='h-16 w-full rounded-md bg-primary-200' />
         </div>
       )
     }
 
     if (hasErrorLoadingCards) {
       return (
-        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-          😕 Houve um erro ao iniciar a sua revisão. Por favor, tente novamente
-          mais tarde!
-        </p>
+        <div>
+          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+            😕 Houve um erro ao iniciar a sua revisão. Por favor, tente
+            novamente mais tarde!
+          </p>
+          {renderOkButton()}
+        </div>
       )
     }
 
@@ -134,25 +148,24 @@ const ReviewDeck: WithAuthentication<
       return (
         <div>
           <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-            🎉 Parabéns!!! Você revisou todos os Cards pendentes.
+            🎉 Parabéns!!! Você revisou todos os Cards pendentes. Volte
+            novamente na sua próxima revisão!
           </p>
-          <Button
-            fullWidth
-            onClick={() => router.replace(routes.deckDetails(deckId))}
-          >
-            OK
-          </Button>
+          {renderOkButton()}
         </div>
       )
     }
 
     if (!cards?.length) {
       return (
-        <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-          🎉 No momento nenhum Card precisa ser revisado. Por favor, volte mais
-          tarde
-          <Tooltip hint='Você não tem cards para revisar pois Briskly utiliza a metodologia de repetição espaçada para determinar quando você deve revisar determinado card.' />
-        </p>
+        <div>
+          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
+            🎉 No momento nenhum Card precisa ser revisado. Por favor, volte
+            mais tarde
+            <Tooltip hint='Você não tem cards para revisar pois Briskly utiliza a metodologia de repetição espaçada para determinar quando você deve revisar um Card.' />
+          </p>
+          {renderOkButton()}
+        </div>
       )
     }
 
@@ -176,7 +189,7 @@ const ReviewDeck: WithAuthentication<
             <div className='absolute w-full [transform:rotateY(180deg)] [backface-visibility:hidden]'>
               <Card fullWidth>
                 <span className='text-base md:text-2xl'>
-                  {answerResult?.answer}
+                  {answerResult?.answer || 'Resposta não foi encontrada'}
                 </span>
               </Card>
             </div>
@@ -202,9 +215,8 @@ const ReviewDeck: WithAuthentication<
   return (
     <>
       <Head>
-        <title>Revisão</title>
-        <meta name='description' content='' />
-        <link rel='icon' href='/favicon.ico' />
+        <title>{`Revisando ${deck?.title ?? ''}`}</title>
+        <meta name='description' content={deck?.description ?? ''} />
       </Head>
       <div className='mx-auto flex w-full max-w-3xl justify-center'>
         {renderContent()}
