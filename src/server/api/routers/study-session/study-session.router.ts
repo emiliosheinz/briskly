@@ -151,7 +151,16 @@ export const studySessionRouter = createTRPCRouter({
               lastReview: true,
               reviewGapInHours: true,
               studySessionBoxCards: {
-                select: { id: true, card: { select: { question: true } } },
+                select: {
+                  id: true,
+                  card: {
+                    select: { question: true },
+                  },
+                  studySessionAttempts: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 1,
+                  },
+                },
               },
             },
           },
@@ -185,17 +194,22 @@ export const studySessionRouter = createTRPCRouter({
       }
 
       return {
+        deck: currentStudySession.deck,
         studySessionId: currentStudySession.id,
         studySessionBoxes: studySessionBoxes.map(
-          ({ studySessionBoxCards, id }) => ({
+          ({ studySessionBoxCards, id, lastReview }) => ({
             id,
-            cards: studySessionBoxCards.map(boxCard => ({
-              id: boxCard.id,
-              question: boxCard.card.question,
-            })),
+            cards: studySessionBoxCards
+              .filter(boxCard => {
+                const lastAttempt = boxCard.studySessionAttempts[0]?.createdAt
+                return !lastAttempt || !lastReview || lastAttempt < lastReview
+              })
+              .map(boxCard => ({
+                id: boxCard.id,
+                question: boxCard.card.question,
+              })),
           }),
         ),
-        deck: currentStudySession.deck,
       }
     }),
   answerStudySessionCard: protectedProcedure
