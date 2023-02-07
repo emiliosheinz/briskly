@@ -1,3 +1,3 @@
 # Briskly
 
-TODO emiliosheinz: Add project Readme and documentation
+- Melhorar a UX do fluxo de revisão de um deck

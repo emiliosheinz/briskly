@@ -34,7 +34,7 @@ export const decksRouter = createTRPCRouter({
   updateDeck: protectedProcedure
     .input(UpdateDeckInputSchema)
     .mutation(
-      ({
+      async ({
         input: {
           id,
           newCards,
@@ -46,13 +46,28 @@ export const decksRouter = createTRPCRouter({
         },
         ctx,
       }) => {
+        const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
+          where: {
+            studySession: { deckId: id },
+          },
+          orderBy: { reviewGapInHours: 'asc' },
+          distinct: ['studySessionId'],
+        })
+
         return ctx.prisma.deck.update({
           where: { id },
           data: {
             ...input,
             cards: {
               delete: deletedCards?.map(({ id }) => ({ id })),
-              create: newCards,
+              create: newCards?.map(card => ({
+                ...card,
+                studySessionBoxCards: {
+                  create: studySessionBoxes.map(box => ({
+                    studySessionBoxId: box.id,
+                  })),
+                },
+              })),
               update: editedCards?.map(({ id, ...card }) => ({
                 where: { id },
                 data: card,
