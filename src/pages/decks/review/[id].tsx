@@ -183,7 +183,7 @@ const ReviewDeck: WithAuthentication<
                 : '',
             )}
           >
-            <div className='absolute w-full'>
+            <div className='absolute w-full [backface-visibility:hidden]'>
               <Card fullWidth>{renderCardContent()}</Card>
             </div>
             <div className='absolute w-full [transform:rotateY(180deg)] [backface-visibility:hidden]'>
