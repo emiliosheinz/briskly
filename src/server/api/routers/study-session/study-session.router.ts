@@ -52,89 +52,70 @@ export const studySessionRouter = createTRPCRouter({
         },
       })
 
-      const [firstStudySessionBox] = await ctx.prisma.$transaction(
-        STUDY_SESSION_BOXES.map(({ reviewGapInHours }) =>
+      const now = new Date()
+      const deckCards = deck.cards.map(({ id }) => ({
+        cardId: id,
+      }))
+
+      await ctx.prisma.$transaction(
+        STUDY_SESSION_BOXES.map(({ reviewGapInHours }, idx) =>
           ctx.prisma.studySessionBox.create({
             data: {
               reviewGapInHours,
               studySessionId: studySession.id,
+              nextReview: idx === 0 ? now : addHours(now, reviewGapInHours),
+              studySessionBoxCards: {
+                create: idx === 0 ? deckCards : [],
+              },
             },
           }),
         ),
       )
-
-      if (!firstStudySessionBox) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Erro inesperado ao criar sessão de estudos',
-        })
-      }
-
-      await ctx.prisma.studySessionBoxCard.createMany({
-        data: deck.cards.map(({ id }) => ({
-          cardId: id,
-          studySessionBoxId: firstStudySessionBox.id,
-        })),
-      })
     }),
   getStudySessionBasicInfo: protectedProcedure
     .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {
       const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
         where: {
-          studySession: { deckId, userId: ctx.session.user.id },
-        },
-        orderBy: { lastReview: 'desc' },
-        select: {
-          createdAt: true,
-          lastReview: true,
-          reviewGapInHours: true,
-          _count: {
-            select: {
-              studySessionBoxCards: true,
+          studySession: {
+            deckId,
+            userId: ctx.session.user.id,
+            studySessionBoxes: {
+              some: {
+                studySessionBoxCards: {
+                  some: {},
+                },
+              },
             },
           },
+        },
+        orderBy: [
+          {
+            nextReview: 'asc',
+          },
+          {
+            lastReview: 'desc',
+          },
+        ],
+        select: {
+          lastReview: true,
+          nextReview: true,
         },
       })
 
       if (studySessionBoxes.length === 0) return null
 
-      const isFirstReview = studySessionBoxes.every(
-        ({ lastReview }) => !lastReview,
-      )
-      let nextReviewDate
-
-      if (isFirstReview) {
-        nextReviewDate = studySessionBoxes[0]?.createdAt
-      } else {
-        const boxesWithCards = studySessionBoxes.filter(
-          ({ _count: { studySessionBoxCards } }) => studySessionBoxCards > 0,
-        )
-
-        for (const box of boxesWithCards) {
-          const lastReview = box.lastReview || box.createdAt
-          const currentReviewDate = addHours(lastReview, box.reviewGapInHours)
-
-          if (!nextReviewDate) {
-            nextReviewDate = currentReviewDate
-          } else if (currentReviewDate < nextReviewDate) {
-            nextReviewDate = currentReviewDate
-          }
-        }
-      }
-
-      const lastReviewDate = studySessionBoxes.find(
-        ({ lastReview }) => !!lastReview,
-      )?.lastReview
-
       return {
-        nextReviewDate,
-        lastReviewDate,
+        nextReviewDate: studySessionBoxes[0]?.nextReview,
+        lastReviewDate: studySessionBoxes.find(box => !!box.lastReview)
+          ?.lastReview,
       }
     }),
   getReviewSession: protectedProcedure
     .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {
+      const now = new Date()
+
       const currentStudySession = await ctx.prisma.studySession.findFirst({
         where: { deckId, userId: ctx.session.user.id },
         include: {
@@ -145,11 +126,15 @@ export const studySessionRouter = createTRPCRouter({
             },
           },
           studySessionBoxes: {
+            where: {
+              nextReview: {
+                lte: now,
+              },
+            },
             select: {
               id: true,
-              createdAt: true,
               lastReview: true,
-              reviewGapInHours: true,
+              createdAt: true,
               studySessionBoxCards: {
                 select: {
                   id: true,
@@ -174,35 +159,16 @@ export const studySessionRouter = createTRPCRouter({
         })
       }
 
-      const isFirstReview = currentStudySession.studySessionBoxes.every(
-        ({ lastReview }) => !lastReview,
-      )
-
-      const studySessionBoxes = isFirstReview
-        ? currentStudySession.studySessionBoxes.filter((_, idx) => idx === 0)
-        : currentStudySession.studySessionBoxes.filter(box => {
-            const lastReview = box.lastReview || box.createdAt
-            const nextReview = addHours(lastReview, box.reviewGapInHours)
-            return nextReview < new Date()
-          })
-
-      if (studySessionBoxes.length === 0) {
-        return {
-          studySessionId: currentStudySession.id,
-          studySessionBoxes: [],
-        }
-      }
-
       return {
         deck: currentStudySession.deck,
         studySessionId: currentStudySession.id,
-        studySessionBoxes: studySessionBoxes.map(
-          ({ studySessionBoxCards, id, lastReview }) => ({
+        studySessionBoxes: currentStudySession.studySessionBoxes.map(
+          ({ studySessionBoxCards, id, lastReview, createdAt }) => ({
             id,
             cards: studySessionBoxCards
               .filter(boxCard => {
                 const lastAttempt = boxCard.studySessionAttempts[0]?.createdAt
-                return !lastAttempt || !lastReview || lastAttempt < lastReview
+                return !lastAttempt || lastAttempt < (lastReview || createdAt)
               })
               .map(boxCard => ({
                 id: boxCard.id,
@@ -327,13 +293,33 @@ export const studySessionRouter = createTRPCRouter({
   finishStudySessionForBox: protectedProcedure
     .input(z.object({ boxIds: z.array(z.string().min(1)) }))
     .mutation(async ({ input, ctx }) => {
+      const now = new Date()
+      const boxesReviewGapsInHours = await ctx.prisma.studySessionBox.findMany({
+        where: { id: { in: input.boxIds } },
+        select: { id: true, reviewGapInHours: true },
+      })
+
       await ctx.prisma.$transaction(
-        input.boxIds.map(boxId =>
-          ctx.prisma.studySessionBox.update({
+        input.boxIds.map(boxId => {
+          const boxReviewGapInHours = boxesReviewGapsInHours.find(
+            ({ id }) => id === boxId,
+          )?.reviewGapInHours
+
+          if (!boxReviewGapInHours) {
+            throw new TRPCError({
+              code: 'NOT_FOUND',
+              message: 'Não foi possível executar esta ação',
+            })
+          }
+
+          return ctx.prisma.studySessionBox.update({
             where: { id: boxId },
-            data: { lastReview: new Date() },
-          }),
-        ),
+            data: {
+              lastReview: now,
+              nextReview: addHours(now, boxReviewGapInHours),
+            },
+          })
+        }),
       )
     }),
 })
