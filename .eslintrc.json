@@ -25,6 +25,7 @@
           "/^react/",
           "module",
           "/^~//",
+          "/^@public//",
           ["parent", "sibling", "index"]
         ],
         "alphabetize": { "order": "asc", "ignoreCase": true }
