@@ -12,6 +12,9 @@ const shimmer = `
 
 const MINIMUM_IMAGE_SIZE_WITH_BLUE = 40
 
+const removeUndefinedKeys = (object: Record<string, unknown>) =>
+  Object.fromEntries(Object.entries(object).filter(([, v]) => v !== undefined))
+
 function BaseImage(props: ImageProps) {
   const { width, height, style, ...otherProps } = props
 
@@ -27,16 +30,19 @@ function BaseImage(props: ImageProps) {
       }
     }, [width, height])
 
+  const customImageStyle = useMemo(() => {
+    return {
+      ...removeUndefinedKeys({ width, height }),
+      ...style,
+    }
+  }, [width, height, style])
+
   return (
     <NextImage
       width={width}
       height={height}
       data-testid='image-component'
-      style={{
-        width: width,
-        height: height,
-        ...style,
-      }}
+      style={customImageStyle}
       {...blurProps}
       {...otherProps}
     />
