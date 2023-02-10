@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 
 import { Button } from '~/components/button'
 import { Image } from '~/components/image'
-import PettingImage from '~/images/petting.svg'
 import { routes } from '~/utils/navigation'
 
 import type { FeedbackProps } from './feedback.types'
@@ -16,7 +15,7 @@ export function Feedback(props: FeedbackProps) {
     buttonLabel,
     onButtonClick,
     shouldHideButton,
-    CustomImage,
+    customImageSrc,
   } = props
 
   const router = useRouter()
@@ -52,8 +51,9 @@ export function Feedback(props: FeedbackProps) {
         </div>
         <Image
           width={300}
-          src={CustomImage || PettingImage}
+          height={300}
           alt={`${subtitle} illustration`}
+          src={customImageSrc || '/images/petting.svg'}
         />
       </div>
       {renderButton()}

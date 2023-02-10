@@ -9,7 +9,7 @@ import { Error } from './error.component'
 import { Loading } from './loading.component'
 
 export function DeckCardList({ decks }: DeckCardListProps) {
-  if (decks.length === 0)
+  if (decks.length === 0 || true)
     return (
       <Feedback
         shouldHideButton

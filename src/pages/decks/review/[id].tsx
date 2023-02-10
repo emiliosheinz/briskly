@@ -9,7 +9,6 @@ import { Feedback } from '~/components/feedback'
 import { Loader } from '~/components/loader'
 import { TextArea } from '~/components/text-area'
 import { Tooltip } from '~/components/tooltip'
-import SwingingImage from '~/images/swinging.svg'
 import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook'
 import type { WithAuthentication } from '~/types/auth'
 import { classNames } from '~/utils/css'
@@ -143,7 +142,7 @@ const ReviewDeck: WithAuthentication<
       return (
         <Feedback
           title='🎉 Parabéns!!!'
-          CustomImage={SwingingImage}
+          customImageSrc='/images/swinging.svg'
           subtitle='Você revisou todos os Cards pendentes. Volte novamente na sua próxima revisão.'
           {...okButton}
         />
@@ -154,7 +153,7 @@ const ReviewDeck: WithAuthentication<
       return (
         <Feedback
           title='🎉 Woohooo!!!'
-          CustomImage={SwingingImage}
+          customImageSrc='/images/swinging.svg'
           subtitle={() => (
             <>
               No momento nenhum Card precisa ser revisado. Por favor, volte mais
