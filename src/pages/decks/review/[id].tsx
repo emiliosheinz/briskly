@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Button } from '~/components/button'
 import { Card } from '~/components/card'
+import { Feedback } from '~/components/feedback'
 import { Loader } from '~/components/loader'
 import { TextArea } from '~/components/text-area'
 import { Tooltip } from '~/components/tooltip'
@@ -12,6 +13,8 @@ import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook
 import type { WithAuthentication } from '~/types/auth'
 import { classNames } from '~/utils/css'
 import { routes } from '~/utils/navigation'
+
+import SwingingImage from '@public/images/swinging.svg'
 
 export const getServerSideProps: GetServerSideProps<{
   deckId: string
@@ -52,16 +55,11 @@ const ReviewDeck: WithAuthentication<
   const isLoadingAnswer = cardAnswerStage === 'loading'
   const shouldDisableButtonsAndInputs = isLoadingAnswer || !!answerResult
 
-  const renderOkButton = () => {
-    return (
-      <Button
-        fullWidth
-        variant='secondary'
-        onClick={() => router.replace(routes.deckDetails(deckId))}
-      >
-        Ok
-      </Button>
-    )
+  const okButton = {
+    buttonLabel: 'Ok',
+    onButtonClick: () => {
+      router.replace(routes.deckDetails(deckId))
+    },
   }
 
   const renderCardContent = () => {
@@ -134,38 +132,39 @@ const ReviewDeck: WithAuthentication<
 
     if (hasErrorLoadingCards) {
       return (
-        <div>
-          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-            😕 Houve um erro ao iniciar a sua revisão. Por favor, tente
-            novamente mais tarde!
-          </p>
-          {renderOkButton()}
-        </div>
+        <Feedback
+          title='Erro inesperado'
+          subtitle='Houve um erro ao iniciar revisão. Por favor, tente novamente mais tarde!'
+          {...okButton}
+        />
       )
     }
 
     if (cardAnswerStage === 'done') {
       return (
-        <div>
-          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-            🎉 Parabéns!!! Você revisou todos os Cards pendentes. Volte
-            novamente na sua próxima revisão!
-          </p>
-          {renderOkButton()}
-        </div>
+        <Feedback
+          title='🎉 Parabéns!!!'
+          CustomImage={SwingingImage}
+          subtitle='Você revisou todos os Cards pendentes. Volte novamente na sua próxima revisão.'
+          {...okButton}
+        />
       )
     }
 
     if (!cards?.length) {
       return (
-        <div>
-          <p className='my-16 max-w-sm text-center text-2xl text-primary-900'>
-            🎉 No momento nenhum Card precisa ser revisado. Por favor, volte
-            mais tarde
-            <Tooltip hint='Você não tem cards para revisar pois Briskly utiliza a metodologia de repetição espaçada para determinar quando você deve revisar um Card.' />
-          </p>
-          {renderOkButton()}
-        </div>
+        <Feedback
+          title='🎉 Woohooo!!!'
+          CustomImage={SwingingImage}
+          subtitle={() => (
+            <>
+              No momento nenhum Card precisa ser revisado. Por favor, volte mais
+              tarde
+              <Tooltip hint='Você não tem cards para revisar pois Briskly utiliza a metodologia de repetição espaçada para determinar quando você deve revisar um Card.' />
+            </>
+          )}
+          {...okButton}
+        />
       )
     }
 
@@ -215,7 +214,7 @@ const ReviewDeck: WithAuthentication<
   return (
     <>
       <Head>
-        <title>{`Revisando ${deck?.title ?? ''}`}</title>
+        <title>{`Revisando ${deck?.title ?? 'Carregando...'}`}</title>
         <meta name='description' content={deck?.description ?? ''} />
       </Head>
       <div className='mx-auto flex w-full max-w-3xl justify-center'>

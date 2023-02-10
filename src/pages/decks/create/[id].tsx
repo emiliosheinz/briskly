@@ -93,7 +93,6 @@ const DecksCrudContent = () => {
           name='description'
           content='Crie um novo Deck e comece a estudar'
         />
-        <link rel='icon' href='/favicon.ico' />
       </Head>
       <form className='flex flex-col gap-5' onSubmit={onSubmit}>
         <MainInfo />

@@ -18,16 +18,7 @@ const Home: NextPage = () => {
     return <DeckCardList decks={data} />
   }
 
-  return (
-    <>
-      <Head>
-        <title>Briskly</title>
-        <meta name='description' content='The perfect Flashcards app' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <div className='flex flex-col items-center'>{renderContent()}</div>
-    </>
-  )
+  return <div className='flex flex-col items-center'>{renderContent()}</div>
 }
 
 export default Home

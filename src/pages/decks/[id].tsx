@@ -123,7 +123,6 @@ const DeckDetails: NextPage<
       <Head>
         <title>{deck.title}</title>
         <meta name='description' content={deck.description} />
-        <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='relative flex flex-col gap-5'>
         <div className='flex flex-col gap-5 sm:flex-row'>
