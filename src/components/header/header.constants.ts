@@ -14,7 +14,7 @@ const MENU_OPTIONS = [
   {
     label: 'Para Revisar',
     icon: ClockIcon,
-    href: '#',
+    href: routes.toBeReviewed(),
     isAuthRequired: true,
   },
   {
