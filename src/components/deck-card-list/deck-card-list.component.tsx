@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { Feedback } from '~/components/feedback'
 import { Image } from '~/components/image'
 import { routes } from '~/utils/navigation'
 
@@ -8,6 +9,15 @@ import { Error } from './error.component'
 import { Loading } from './loading.component'
 
 export function DeckCardList({ decks }: DeckCardListProps) {
+  if (decks.length === 0)
+    return (
+      <Feedback
+        shouldHideButton
+        title='Opsss,'
+        subtitle='parece que nenhum deck foi encontrado no momento. Por favor, volte mais tarde!'
+      />
+    )
+
   return (
     <div className='flex-w grid grid-cols-1 gap-5 sm:grid-cols-2'>
       {decks.map((deck, idx) => (
