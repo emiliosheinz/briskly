@@ -114,4 +114,40 @@ export const decksRouter = createTRPCRouter({
         image: getS3ImageUrl(deck.image),
       }))
     }),
+  toBeReviewed: protectedProcedure
+    .input(
+      z.object({
+        page: z.number(),
+      }),
+    )
+    .query(async ({ input: { page }, ctx }) => {
+      const { user } = ctx.session
+      const now = new Date()
+
+      const decks = await ctx.prisma.deck.findMany({
+        take: 10,
+        skip: page * 10,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        where: {
+          studySessions: {
+            some: {
+              userId: user.id,
+              studySessionBoxes: {
+                some: {
+                  studySessionBoxCards: { some: {} },
+                  nextReview: { lte: now },
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return decks.map(deck => ({
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+      }))
+    }),
 })

@@ -7,6 +7,7 @@ import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import type { AppType } from 'next/app'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 
 import { Header } from '~/components/header'
 import type { WithAuthentication } from '~/types/auth'
@@ -45,6 +46,10 @@ const MyApp: AppType<{ session: Session | null }> = props => {
   return (
     <JotaiProvider>
       <SessionProvider session={session}>
+        <Head>
+          <title>Briskly</title>
+          <meta name='description' content='The perfect Flashcards app' />
+        </Head>
         <Header />
         <main className='min-h-screen w-full bg-primary-50'>
           <div className='m-auto w-full max-w-7xl p-3 md:p-5'>

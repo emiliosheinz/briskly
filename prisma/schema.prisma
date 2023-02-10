@@ -114,6 +114,7 @@ model StudySessionBox {
   studySession         StudySession          @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
   lastReview           DateTime?
   reviewGapInHours     Int
+  nextReview           DateTime
   studySessionBoxCards StudySessionBoxCard[]
 }
 

@@ -13,7 +13,7 @@ const shimmer = `
 const MINIMUM_IMAGE_SIZE_WITH_BLUE = 40
 
 function BaseImage(props: ImageProps) {
-  const { width, height, ...otherProps } = props
+  const { width, height, style, ...otherProps } = props
 
   const blurProps: Pick<ImageProps, 'placeholder' | 'blurDataURL'> =
     useMemo(() => {
@@ -32,6 +32,11 @@ function BaseImage(props: ImageProps) {
       width={width}
       height={height}
       data-testid='image-component'
+      style={{
+        width: width,
+        height: height,
+        ...style,
+      }}
       {...blurProps}
       {...otherProps}
     />
