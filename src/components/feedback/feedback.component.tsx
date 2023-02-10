@@ -2,9 +2,8 @@ import { useRouter } from 'next/router'
 
 import { Button } from '~/components/button'
 import { Image } from '~/components/image'
+import PettingImage from '~/images/petting.svg'
 import { routes } from '~/utils/navigation'
-
-import PettingImage from '@public/images/petting.svg'
 
 import type { FeedbackProps } from './feedback.types'
 

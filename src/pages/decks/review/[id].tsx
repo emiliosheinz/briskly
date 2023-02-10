@@ -9,12 +9,11 @@ import { Feedback } from '~/components/feedback'
 import { Loader } from '~/components/loader'
 import { TextArea } from '~/components/text-area'
 import { Tooltip } from '~/components/tooltip'
+import SwingingImage from '~/images/swinging.svg'
 import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook'
 import type { WithAuthentication } from '~/types/auth'
 import { classNames } from '~/utils/css'
 import { routes } from '~/utils/navigation'
-
-import SwingingImage from '@public/images/swinging.svg'
 
 export const getServerSideProps: GetServerSideProps<{
   deckId: string
