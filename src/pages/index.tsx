@@ -1,5 +1,4 @@
 import { type NextPage } from 'next'
-import Head from 'next/head'
 
 import { DeckCardList } from '~/components/deck-card-list'
 import { api } from '~/utils/api'
