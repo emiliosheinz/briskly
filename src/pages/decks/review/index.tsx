@@ -17,7 +17,7 @@ const DecksToBeReviewed: WithAuthentication<NextPage> = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = api.decks.getPublicDecks.useInfiniteQuery(
+  } = api.decks.toBeReviewed.useInfiniteQuery(
     {},
     {
       getNextPageParam: lastPage => lastPage.nextCursor,
