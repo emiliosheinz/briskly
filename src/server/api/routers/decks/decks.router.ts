@@ -1,6 +1,7 @@
 import { Visibility } from '@prisma/client'
 import { z } from 'zod'
 
+import { ITEMS_PER_PAGE } from '~/constants'
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -95,38 +96,47 @@ export const decksRouter = createTRPCRouter({
       await deleteObjectFromS3(deck.image)
       await ctx.prisma.deck.delete({ where: { id } })
     }),
+  /**
+   * Based on https://trpc.io/docs/useInfiniteQuery
+   */
   getPublicDecks: publicProcedure
     .input(
       z.object({
-        page: z.number(),
+        cursor: z.string().nullish(),
       }),
     )
-    .query(async ({ input: { page }, ctx }) => {
+    .query(async ({ input: { cursor }, ctx }) => {
       const decks = await ctx.prisma.deck.findMany({
         where: { visibility: Visibility.Public },
         orderBy: { createdAt: 'desc' },
-        take: 30,
-        skip: page * 30,
+        take: ITEMS_PER_PAGE + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
       })
 
-      return decks.map(deck => ({
-        ...deck,
-        image: getS3ImageUrl(deck.image),
-      }))
+      const hasNextCursor = decks.length > ITEMS_PER_PAGE
+      const nextCursor = hasNextCursor ? decks.pop()!.id : undefined
+
+      return {
+        nextCursor,
+        decks: decks.map(deck => ({
+          ...deck,
+          image: getS3ImageUrl(deck.image),
+        })),
+      }
     }),
   toBeReviewed: protectedProcedure
     .input(
       z.object({
-        page: z.number(),
+        cursor: z.string().nullish(),
       }),
     )
-    .query(async ({ input: { page }, ctx }) => {
+    .query(async ({ input: { cursor }, ctx }) => {
       const { user } = ctx.session
       const now = new Date()
 
       const decks = await ctx.prisma.deck.findMany({
-        take: 10,
-        skip: page * 10,
+        take: ITEMS_PER_PAGE + 1,
+        cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
           createdAt: 'desc',
         },
@@ -145,9 +155,15 @@ export const decksRouter = createTRPCRouter({
         },
       })
 
-      return decks.map(deck => ({
-        ...deck,
-        image: getS3ImageUrl(deck.image),
-      }))
+      const hasNextCursor = decks.length > ITEMS_PER_PAGE
+      const nextCursor = hasNextCursor ? decks.pop()!.id : undefined
+
+      return {
+        decks: decks.map(deck => ({
+          ...deck,
+          image: getS3ImageUrl(deck.image),
+        })),
+        nextCursor,
+      }
     }),
 })
