@@ -26,7 +26,10 @@ const config = {
   images: {
     // Follows TailwindCSS screens breakpoints
     deviceSizes: [640, 768, 1024, 1280, 1536],
-    domains: [`${process.env.AWS_CLOUD_FRONT_URL?.replace('https://', '')}`],
+    domains: [
+      `${process.env.AWS_CLOUD_FRONT_URL?.replace('https://', '')}`,
+      'lh3.googleusercontent.com',
+    ],
   },
   experimental: {
     swcPlugins: [
