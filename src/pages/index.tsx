@@ -6,8 +6,6 @@ import { DeckCardList } from '~/components/deck-card-list'
 import { Loader } from '~/components/loader'
 import { api } from '~/utils/api'
 
-const noop = {}
-
 const Home: NextPage = () => {
   const {
     data,
@@ -17,11 +15,14 @@ const Home: NextPage = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = api.decks.getPublicDecks.useInfiniteQuery(noop, {
-    getNextPageParam: lastPage => lastPage.nextCursor,
-    refetchOnWindowFocus: false,
-    keepPreviousData: true,
-  })
+  } = api.decks.getPublicDecks.useInfiniteQuery(
+    {},
+    {
+      getNextPageParam: lastPage => lastPage.nextCursor,
+      refetchOnWindowFocus: false,
+      keepPreviousData: true,
+    },
+  )
 
   const decks = data?.pages.flatMap(page => page.decks) ?? []
   const hasLoadedDecks = decks.length > 0
