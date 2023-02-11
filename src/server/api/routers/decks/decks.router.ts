@@ -95,24 +95,34 @@ export const decksRouter = createTRPCRouter({
       await deleteObjectFromS3(deck.image)
       await ctx.prisma.deck.delete({ where: { id } })
     }),
+  /**
+   * Based on https://trpc.io/docs/useInfiniteQuery
+   */
   getPublicDecks: publicProcedure
     .input(
       z.object({
-        page: z.number(),
+        cursor: z.string().nullish(),
       }),
     )
-    .query(async ({ input: { page }, ctx }) => {
+    .query(async ({ input: { cursor }, ctx }) => {
+      const limit = 30
       const decks = await ctx.prisma.deck.findMany({
         where: { visibility: Visibility.Public },
         orderBy: { createdAt: 'desc' },
-        take: 30,
-        skip: page * 30,
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
       })
 
-      return decks.map(deck => ({
-        ...deck,
-        image: getS3ImageUrl(deck.image),
-      }))
+      const hasNextCursor = decks.length > limit
+      const nextCursor = hasNextCursor ? decks.pop()!.id : undefined
+
+      return {
+        nextCursor,
+        decks: decks.map(deck => ({
+          ...deck,
+          image: getS3ImageUrl(deck.image),
+        })),
+      }
     }),
   toBeReviewed: protectedProcedure
     .input(
