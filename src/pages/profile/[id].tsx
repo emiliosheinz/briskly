@@ -116,7 +116,7 @@ const Profile: WithAuthentication<
           </p>
         </section>
 
-        <section className='flex flex-col md:flex-[5]'>
+        <section className='flex flex-col md:flex-[6]'>
           <Tab.Group>
             <Tab.List className='flex space-x-1 p-1'>
               {tabs.map(tab => (
