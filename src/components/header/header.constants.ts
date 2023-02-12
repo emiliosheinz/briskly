@@ -20,7 +20,7 @@ const MENU_OPTIONS = [
   {
     label: 'Mais Votados',
     icon: StarIcon,
-    href: '#',
+    href: routes.mostUpvotedDecks(),
     isAuthRequired: false,
   },
   {
