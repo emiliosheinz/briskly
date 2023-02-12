@@ -1,10 +1,9 @@
-import { useState } from 'react'
-
 import { Tab } from '@headlessui/react'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
+import { DeckCardList } from '~/components/deck-card-list'
 import { Image } from '~/components/image'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
@@ -24,17 +23,57 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
+type UserDecksProps = {
+  userId: string
+  isVisible: boolean
+}
+
+function UserDecks(props: UserDecksProps) {
+  const { userId, isVisible } = props
+
+  const { data, isLoading, isError, refetch } = api.decks.byUser.useQuery(
+    {
+      userId: userId,
+    },
+    {
+      enabled: isVisible,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  )
+
+  if (isLoading) return <DeckCardList.Loading />
+
+  if (isError) {
+    return <DeckCardList.Error onRetryPress={refetch} />
+  }
+
+  return <DeckCardList decks={data} />
+}
+
+const tabs = [
+  {
+    name: 'Seus Decks',
+    content: UserDecks,
+  },
+  {
+    name: 'Para Revisar',
+    content: () => {
+      return <div>Decks</div>
+    },
+  },
+]
+
 const Profile: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { userId } = props
-  const { data: user } = api.user.getUser.useQuery({ id: userId })
-
-  const [categories] = useState({
-    Recent: 'Recent',
-    Popular: 'Popular',
-    Trending: 'Trending',
-  })
+  const { data: user } = api.user.getUser.useQuery(
+    { id: userId },
+    {
+      refetchOnWindowFocus: false,
+    },
+  )
 
   const renderUserImage = () => {
     if (!user?.image) return null
@@ -77,33 +116,33 @@ const Profile: WithAuthentication<
           </p>
         </section>
 
-        <section className='flex md:flex-[5]'>
-          <div className='w-full max-w-md sm:px-0'>
-            <Tab.Group>
-              <Tab.List className='flex space-x-1 p-1'>
-                {Object.keys(categories).map(category => (
-                  <Tab
-                    key={category}
-                    className={({ selected }) =>
-                      classNames(
-                        'border-b-2 py-2 px-5 text-base font-medium leading-5 text-primary-900 ring-primary-50 ring-opacity-60 ring-offset-2 ring-offset-primary-500 focus:outline-none focus:ring-2',
-                        selected ? 'border-primary-900' : 'border-primary-50',
-                      )
-                    }
-                  >
-                    {category}
-                  </Tab>
-                ))}
-              </Tab.List>
-              <Tab.Panels className='mt-2'>
-                {Object.values(categories).map((data, idx) => (
-                  <Tab.Panel key={idx} className='focus:ring-0'>
-                    <ul>{data}</ul>
-                  </Tab.Panel>
-                ))}
-              </Tab.Panels>
-            </Tab.Group>
-          </div>
+        <section className='flex flex-col md:flex-[5]'>
+          <Tab.Group>
+            <Tab.List className='flex space-x-1 p-1'>
+              {tabs.map(tab => (
+                <Tab
+                  key={tab.name}
+                  className={({ selected }) =>
+                    classNames(
+                      'border-b-2 py-2 px-5 text-base font-medium leading-5 text-primary-900 ring-primary-50 ring-opacity-60 ring-offset-2 ring-offset-primary-500 focus:outline-none focus:ring-2',
+                      selected ? 'border-primary-900' : 'border-primary-50',
+                    )
+                  }
+                >
+                  {tab.name}
+                </Tab>
+              ))}
+            </Tab.List>
+            <Tab.Panels className='mt-2'>
+              {tabs.map((tab, idx) => (
+                <Tab.Panel key={idx} className='focus:ring-0'>
+                  {({ selected }) => (
+                    <tab.content isVisible={selected} userId={userId} />
+                  )}
+                </Tab.Panel>
+              ))}
+            </Tab.Panels>
+          </Tab.Group>
         </section>
       </div>
     </>
