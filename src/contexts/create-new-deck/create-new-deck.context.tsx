@@ -48,14 +48,27 @@ export function CreateNewDeckContextProvider(
 ) {
   const { children, deck } = props
 
+  const apiContext = api.useContext()
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
   const router = useRouter()
+
+  const invalidateDeckQueries = () => {
+    apiContext.decks.byUser.invalidate()
+
+    if (visibility?.value === Visibility.Public) {
+      apiContext.decks.getPublicDecks.invalidate()
+    }
+  }
 
   /**
    * Deck related mutations
    */
-  const createNewDeckMutation = api.decks.createNewDeck.useMutation()
-  const updateDeckMutation = api.decks.updateDeck.useMutation()
+  const createNewDeckMutation = api.decks.createNewDeck.useMutation({
+    onSuccess: invalidateDeckQueries,
+  })
+  const updateDeckMutation = api.decks.updateDeck.useMutation({
+    onSuccess: invalidateDeckQueries,
+  })
   const deleteFileByUrlMutation = api.files.deleteFileByUrl.useMutation()
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()

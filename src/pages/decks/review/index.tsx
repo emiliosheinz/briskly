@@ -21,7 +21,6 @@ const DecksToBeReviewed: WithAuthentication<NextPage> = () => {
     {},
     {
       getNextPageParam: lastPage => lastPage.nextCursor,
-      refetchOnWindowFocus: false,
       keepPreviousData: true,
     },
   )

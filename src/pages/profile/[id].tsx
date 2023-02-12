@@ -32,14 +32,8 @@ function UserDecks(props: UserDecksProps) {
   const { userId, isVisible } = props
 
   const { data, isLoading, isError, refetch } = api.decks.byUser.useQuery(
-    {
-      userId: userId,
-    },
-    {
-      enabled: isVisible,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    },
+    { userId: userId },
+    { enabled: isVisible },
   )
 
   if (isLoading) return <DeckCardList.Loading />
@@ -68,12 +62,7 @@ const Profile: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { userId } = props
-  const { data: user } = api.user.getUser.useQuery(
-    { id: userId },
-    {
-      refetchOnWindowFocus: false,
-    },
-  )
+  const { data: user } = api.user.getUser.useQuery({ id: userId })
 
   const renderUserImage = () => {
     if (!user?.image) return null

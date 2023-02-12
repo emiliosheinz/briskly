@@ -19,7 +19,6 @@ const Home: NextPage = () => {
     {},
     {
       getNextPageParam: lastPage => lastPage.nextCursor,
-      refetchOnWindowFocus: false,
       keepPreviousData: true,
     },
   )

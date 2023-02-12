@@ -15,14 +15,14 @@ type CardAnswerStages =
   | 'error'
 
 export function useDeckReview(deckId: string) {
+  const apiContext = api.useContext()
+
   const {
     isLoading: isLoadingCards,
     isError: hasErrorLoadingCards,
     data: { studySessionBoxes, deck } = {},
-  } = api.studySession.getReviewSession.useQuery(
-    { deckId },
-    { refetchOnWindowFocus: false },
-  )
+  } = api.studySession.getReviewSession.useQuery({ deckId }, { cacheTime: 0 })
+
   const cards = studySessionBoxes?.flatMap(({ cards }) => cards)
 
   const {
@@ -32,7 +32,12 @@ export function useDeckReview(deckId: string) {
   } = api.studySession.answerStudySessionCard.useMutation()
 
   const { mutate: finishStudySession } =
-    api.studySession.finishStudySessionForBox.useMutation()
+    api.studySession.finishStudySessionForBox.useMutation({
+      onSuccess: () => {
+        apiContext.decks.toBeReviewed.invalidate()
+        apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
+      },
+    })
 
   const form = useForm<{ answer: string }>({
     resolver: zodResolver(
