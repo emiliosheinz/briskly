@@ -185,7 +185,9 @@ export const decksRouter = createTRPCRouter({
   byUser: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input: { userId }, ctx }) => {
-      const isUserGettingItsOwnDecks = ctx.session.user.id === userId
+      const { user } = ctx.session
+
+      const isUserGettingItsOwnDecks = user.id === userId
 
       const decks = await ctx.prisma.deck.findMany({
         where: {
@@ -193,11 +195,16 @@ export const decksRouter = createTRPCRouter({
           visibility: isUserGettingItsOwnDecks ? undefined : Visibility.Public,
         },
         orderBy: { createdAt: 'desc' },
+        include: {
+          upvotes: true,
+        },
       })
 
       return decks.map(deck => ({
         ...deck,
         image: getS3ImageUrl(deck.image),
+        upvotes: deck.upvotes.length,
+        isUpvoted: deck.upvotes.map(upvote => upvote.userId).includes(user.id),
       }))
     }),
   addUpvote: protectedProcedure
