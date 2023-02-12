@@ -9,12 +9,13 @@ import { notify } from '~/utils/toast'
 
 import type { UpvoteButtonProps } from '../deck-card-list.types'
 
-export function UpvoteButton(props: UpvoteButtonProps) {
+export function InnerUpvoteButton(props: UpvoteButtonProps) {
   const { deck } = props
 
   const { data: user } = useSession()
 
-  const { mutate } = api.decks.toggleUpvote.useMutation()
+  const { mutate: addUpvote } = api.decks.addUpvote.useMutation()
+  const { mutate: removeUpvote } = api.decks.removeUpvote.useMutation()
 
   const [isUpvoted, setIsUpvoted] = useState(deck.isUpvoted)
   const [upvotes, setUpvotes] = useState(deck.upvotes)
@@ -23,19 +24,32 @@ export function UpvoteButton(props: UpvoteButtonProps) {
 
   return (
     <button
-      onClick={async () => {
-        if (user) {
-          mutate({ deckId: deck.id })
-          setIsUpvoted(!isUpvoted)
-          setUpvotes(upvotes + (isUpvoted ? -1 : 1))
-        } else {
+      onClick={() => {
+        if (!user) {
           notify.warning('Você precisa estar logado para executar essa ação!')
+          return
         }
+
+        const toggleUpvote = isUpvoted ? removeUpvote : addUpvote
+        toggleUpvote({ deckId: deck.id })
+        setIsUpvoted(!isUpvoted)
+        setUpvotes(upvotes + (isUpvoted ? -1 : 1))
       }}
       className='absolute bottom-0 right-0 flex items-center gap-2 p-2'
     >
       <Icon className='h-8 w-8 text-primary-900' />
       <span>{upvotes}</span>
     </button>
+  )
+}
+export function UpvoteButton(props: UpvoteButtonProps) {
+  return (
+    <InnerUpvoteButton
+      {...props}
+      /**
+       * Add key so the component gets updated when upvotes or isUpvoted changes
+       */
+      key={`${props.deck.isUpvoted}-${props.deck.upvotes}`}
+    />
   )
 }

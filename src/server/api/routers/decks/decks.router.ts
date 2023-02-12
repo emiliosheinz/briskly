@@ -182,30 +182,26 @@ export const decksRouter = createTRPCRouter({
         nextCursor,
       }
     }),
-  toggleUpvote: protectedProcedure
+  addUpvote: protectedProcedure
     .input(z.object({ deckId: z.string() }))
     .mutation(async ({ input: { deckId }, ctx }) => {
       const { user } = ctx.session
 
-      const deck = await ctx.prisma.deck.findFirstOrThrow({
-        where: { id: deckId, visibility: Visibility.Public },
-        select: { id: true, upvotes: { where: { userId: user.id } } },
+      await ctx.prisma.upvote.create({
+        data: {
+          deckId,
+          userId: user.id,
+        },
       })
+    }),
+  removeUpvote: protectedProcedure
+    .input(z.object({ deckId: z.string() }))
+    .mutation(async ({ input: { deckId }, ctx }) => {
+      const { user } = ctx.session
 
-      if (deck.upvotes.length > 0) {
-        const upvoteIds = deck.upvotes.map(upvote => upvote.id)
-
-        await ctx.prisma.upvote.deleteMany({
-          where: { id: { in: upvoteIds } },
-        })
-      } else {
-        await ctx.prisma.upvote.create({
-          data: {
-            deckId,
-            userId: user.id,
-          },
-        })
-      }
+      await ctx.prisma.upvote.deleteMany({
+        where: { deckId, userId: user.id },
+      })
     }),
   getMostUpvotedDecks: publicProcedure.query(async ({ ctx }) => {
     const user = ctx.session?.user
