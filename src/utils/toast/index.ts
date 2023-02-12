@@ -3,10 +3,14 @@ import { toast } from 'react-hot-toast'
 export const notify = {
   success: (message: string) =>
     toast(message, {
-      icon: '✅',
+      icon: '🟢',
     }),
   error: (message: string) =>
     toast(message, {
-      icon: '❌',
+      icon: '🔴',
+    }),
+  warning: (message: string) =>
+    toast(message, {
+      icon: '🟡',
     }),
 }
