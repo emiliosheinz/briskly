@@ -16,9 +16,21 @@ export function InnerUpvoteButton(props: UpvoteButtonProps) {
   const { deck } = props
 
   const { data: user } = useSession()
+  const apiContext = api.useContext()
 
-  const { mutate: addUpvote } = api.decks.addUpvote.useMutation()
-  const { mutate: removeUpvote } = api.decks.removeUpvote.useMutation()
+  const invalidateDeckQueries = () => {
+    apiContext.decks.byUser.invalidate()
+    apiContext.decks.getMostUpvotedDecks.invalidate()
+    apiContext.decks.getPublicDecks.invalidate()
+    apiContext.decks.toBeReviewed.invalidate()
+  }
+
+  const { mutate: addUpvote } = api.decks.addUpvote.useMutation({
+    onSuccess: invalidateDeckQueries,
+  })
+  const { mutate: removeUpvote } = api.decks.removeUpvote.useMutation({
+    onSuccess: invalidateDeckQueries,
+  })
 
   const [isUpvoted, setIsUpvoted] = useState(deck.isUpvoted)
   const [upvotes, setUpvotes] = useState(deck.upvotes)
