@@ -9,6 +9,9 @@ import { notify } from '~/utils/toast'
 
 import type { UpvoteButtonProps } from '../deck-card-list.types'
 
+/**
+ * TODO emiliosheinz: Improve upvotes handling by updating global cache
+ */
 export function InnerUpvoteButton(props: UpvoteButtonProps) {
   const { deck } = props
 
@@ -22,19 +25,21 @@ export function InnerUpvoteButton(props: UpvoteButtonProps) {
 
   const Icon = isUpvoted ? FilledArrowUpIcon : EmptyArrowUpIcon
 
+  const handleButtonClick = () => {
+    if (!user) {
+      notify.warning('Você precisa estar logado para executar essa ação!')
+      return
+    }
+
+    const toggleUpvote = isUpvoted ? removeUpvote : addUpvote
+    toggleUpvote({ deckId: deck.id })
+    setIsUpvoted(!isUpvoted)
+    setUpvotes(upvotes + (isUpvoted ? -1 : 1))
+  }
+
   return (
     <button
-      onClick={() => {
-        if (!user) {
-          notify.warning('Você precisa estar logado para executar essa ação!')
-          return
-        }
-
-        const toggleUpvote = isUpvoted ? removeUpvote : addUpvote
-        toggleUpvote({ deckId: deck.id })
-        setIsUpvoted(!isUpvoted)
-        setUpvotes(upvotes + (isUpvoted ? -1 : 1))
-      }}
+      onClick={handleButtonClick}
       className='absolute bottom-0 right-0 flex items-center gap-2 p-2'
     >
       <Icon className='h-8 w-8 text-primary-900' />
@@ -42,6 +47,7 @@ export function InnerUpvoteButton(props: UpvoteButtonProps) {
     </button>
   )
 }
+
 export function UpvoteButton(props: UpvoteButtonProps) {
   return (
     <InnerUpvoteButton
