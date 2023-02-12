@@ -1,6 +1,6 @@
 import { Feedback } from '~/components/feedback'
 
-import type { ErrorProps } from './deck-card-list.types'
+import type { ErrorProps } from '../deck-card-list.types'
 
 export function Error(props: ErrorProps) {
   const { onRetryPress } = props
