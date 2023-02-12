@@ -6,9 +6,11 @@ import Link from 'next/link'
 
 import { AuthButton } from '~/components/auth-button'
 
-import { DESKTOP_MENU_OPTIONS } from '../../header.constants'
+import { useMenuOptions } from '../../hooks/use-menu-options'
 
 export function DesktopSecondaryMenu() {
+  const menuOptions = useMenuOptions()
+
   return (
     <Popover
       data-testid='desktop-secondary-menu'
@@ -37,7 +39,7 @@ export function DesktopSecondaryMenu() {
           data-testid='popover-panel'
           className='absolute right-0 z-30 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
         >
-          {DESKTOP_MENU_OPTIONS.SECONDARY.map(option => (
+          {menuOptions.desktop.secondary.map(option => (
             <Link
               href={option.href}
               key={option.label}

@@ -2,20 +2,17 @@ import { Fragment } from 'react'
 
 import { Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 import { AuthButton } from '~/components/auth-button'
 
-import { MOBILE_MENU_OPTIONS } from '../../header.constants'
+import { useMenuOptions } from '../../hooks/use-menu-options'
 
 export function MobileHamburgerMenu() {
-  const { data: session } = useSession()
+  const menuOptions = useMenuOptions()
 
   const renderMenuOptions = () =>
-    MOBILE_MENU_OPTIONS.map(option => {
-      if (option.isAuthRequired && !session) return null
-
+    menuOptions.mobile.map(option => {
       return (
         <Link
           href={option.href}
