@@ -106,7 +106,7 @@ export const decksRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input: { cursor }, ctx }) => {
-      const { user } = ctx.session || {}
+      const user = ctx.session?.user
 
       const decks = await ctx.prisma.deck.findMany({
         where: { visibility: Visibility.Public },
@@ -207,4 +207,25 @@ export const decksRouter = createTRPCRouter({
         })
       }
     }),
+  getMostUpvotedDecks: publicProcedure.query(async ({ ctx }) => {
+    const user = ctx.session?.user
+
+    const decks = await ctx.prisma.deck.findMany({
+      where: { visibility: Visibility.Public, upvotes: { some: {} } },
+      orderBy: { upvotes: { _count: 'desc' } },
+      take: 10,
+      include: {
+        upvotes: true,
+      },
+    })
+
+    return decks.map(deck => ({
+      ...deck,
+      image: getS3ImageUrl(deck.image),
+      upvotes: deck.upvotes.length,
+      isUpvoted: user
+        ? deck.upvotes.map(upvote => upvote.userId).includes(user.id)
+        : false,
+    }))
+  }),
 })
