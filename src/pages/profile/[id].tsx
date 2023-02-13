@@ -1,6 +1,7 @@
 import { Tab } from '@headlessui/react'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 
 import { DeckCardList, DecksToBeReviewed } from '~/components/deck-card-list'
@@ -45,22 +46,35 @@ function UserDecks(props: UserDecksProps) {
   return <DeckCardList decks={data} />
 }
 
-const tabs = [
+const menuTabs = [
   {
-    name: 'Seus Decks',
+    name: 'Decks',
     content: UserDecks,
+    isProfileOwnerOnly: false,
   },
   {
     name: 'Para Revisar',
     content: DecksToBeReviewed,
+    isProfileOwnerOnly: true,
   },
 ]
 
+/**
+ * TODO emiliosheinz: Loading state
+ */
 const ProfilePage: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { userId } = props
+
+  const { data: session } = useSession()
   const { data: user } = api.user.getUser.useQuery({ id: userId })
+
+  const isUserProfileOwner = userId === session?.user?.id
+
+  const tabs = menuTabs.filter(
+    ({ isProfileOwnerOnly }) => isUserProfileOwner || !isProfileOwnerOnly,
+  )
 
   const renderUserImage = () => {
     if (!user?.image) return null
@@ -121,10 +135,10 @@ const ProfilePage: WithAuthentication<
               ))}
             </Tab.List>
             <Tab.Panels className='mt-2'>
-              {tabs.map((tab, idx) => (
+              {tabs.map(({ content: Content }, idx) => (
                 <Tab.Panel key={idx} className='focus:ring-0'>
                   {({ selected }) => (
-                    <tab.content isVisible={selected} userId={userId} />
+                    <Content isVisible={selected} userId={userId} />
                   )}
                 </Tab.Panel>
               ))}
