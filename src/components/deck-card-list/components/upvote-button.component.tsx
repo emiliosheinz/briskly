@@ -7,11 +7,8 @@ import { useSession } from 'next-auth/react'
 import { api } from '~/utils/api'
 import { notify } from '~/utils/toast'
 
-import type { UpvoteButtonProps } from '../deck-card-list.types'
+import type { UpvoteButtonProps } from '../types/deck-card-list.types'
 
-/**
- * TODO emiliosheinz: Improve upvotes handling by updating global cache
- */
 export function InnerUpvoteButton(props: UpvoteButtonProps) {
   const { deck } = props
 

@@ -3,7 +3,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
-import { DeckCardList } from '~/components/deck-card-list'
+import { DeckCardList, DecksToBeReviewed } from '~/components/deck-card-list'
 import { Image } from '~/components/image'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
@@ -52,13 +52,11 @@ const tabs = [
   },
   {
     name: 'Para Revisar',
-    content: () => {
-      return <div>Decks</div>
-    },
+    content: DecksToBeReviewed,
   },
 ]
 
-const Profile: WithAuthentication<
+const ProfilePage: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { userId } = props
@@ -138,6 +136,6 @@ const Profile: WithAuthentication<
   )
 }
 
-Profile.requiresAuthentication = true
+ProfilePage.requiresAuthentication = true
 
-export default Profile
+export default ProfilePage

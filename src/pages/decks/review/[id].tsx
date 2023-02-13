@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-const ReviewDeck: WithAuthentication<
+const ReviewDeckPage: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { deckId } = props
@@ -222,6 +222,6 @@ const ReviewDeck: WithAuthentication<
   )
 }
 
-ReviewDeck.requiresAuthentication = true
+ReviewDeckPage.requiresAuthentication = true
 
-export default ReviewDeck
+export default ReviewDeckPage

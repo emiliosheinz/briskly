@@ -3,7 +3,7 @@ import { type NextPage } from 'next'
 import { DeckCardList } from '~/components/deck-card-list'
 import { api } from '~/utils/api'
 
-const MostUpvotedDecks: NextPage = () => {
+const MostUpvotedDecksPage: NextPage = () => {
   const {
     data: decks,
     isError,
@@ -24,4 +24,4 @@ const MostUpvotedDecks: NextPage = () => {
   return <div className='flex flex-col items-center'>{renderContent()}</div>
 }
 
-export default MostUpvotedDecks
+export default MostUpvotedDecksPage

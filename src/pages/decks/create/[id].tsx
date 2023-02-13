@@ -80,7 +80,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-const DecksCrudContent = () => {
+const DecksCrudPageContent = () => {
   const { createNewDeckForm, submitDeck } = useCreateNewDeckContext()
 
   const onSubmit = createNewDeckForm?.handleSubmit(submitDeck)
@@ -105,18 +105,18 @@ const DecksCrudContent = () => {
   )
 }
 
-const DecksCrud: WithAuthentication<
+const DecksCrudPage: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { deck } = props
 
   return (
     <CreateNewDeckContextProvider deck={deck}>
-      <DecksCrudContent />
+      <DecksCrudPageContent />
     </CreateNewDeckContextProvider>
   )
 }
 
-DecksCrud.requiresAuthentication = true
+DecksCrudPage.requiresAuthentication = true
 
-export default DecksCrud
+export default DecksCrudPage

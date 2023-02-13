@@ -7,7 +7,7 @@ import { routes } from '~/utils/navigation'
 import { Error } from './components/error.component'
 import { Loading } from './components/loading.component'
 import { UpvoteButton } from './components/upvote-button.component'
-import type { DeckCardListProps } from './deck-card-list.types'
+import type { DeckCardListProps } from './types/deck-card-list.types'
 
 export function DeckCardList(props: DeckCardListProps) {
   const { decks } = props
