@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
-import { DeckCardList, DecksToBeReviewed } from '~/components/deck-card-list'
 import { Feedback } from '~/components/feedback'
 import { Image } from '~/components/image'
 import { profileMenuTabs } from '~/modules/profile/constants/profile-menu-tabs'
