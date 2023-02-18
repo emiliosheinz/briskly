@@ -1,6 +1,6 @@
 import { Feedback } from '~/components/feedback'
 
-export default function FiveHundred() {
+export default function FiveHundredPage() {
   return (
     <Feedback
       title='Erro inesperado!'

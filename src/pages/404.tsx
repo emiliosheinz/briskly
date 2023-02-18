@@ -1,6 +1,6 @@
 import { Feedback } from '~/components/feedback'
 
-export default function FourOhFor() {
+export default function FourOhForPage() {
   return (
     <Feedback
       title='Desculpe,'

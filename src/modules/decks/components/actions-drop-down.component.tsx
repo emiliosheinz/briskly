@@ -28,9 +28,21 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
 
   const router = useRouter()
   const setIsLoading = useSetAtom(fullScreenLoaderAtom)
+  const apiContext = api.useContext()
 
-  const deleteDeckMutation = api.decks.deleteDeck.useMutation()
-  const createStudySessionMutation = api.studySession.create.useMutation()
+  const deleteDeckMutation = api.decks.deleteDeck.useMutation({
+    onSuccess: () => {
+      apiContext.decks.byUser.invalidate()
+      apiContext.decks.getPublicDecks.invalidate()
+      apiContext.decks.toBeReviewed.invalidate()
+    },
+  })
+  const createStudySessionMutation = api.studySession.create.useMutation({
+    onSuccess: () => {
+      apiContext.decks.toBeReviewed.invalidate()
+      apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
+    },
+  })
 
   const { data: session } = useSession()
   const isAuthenticated = !!session?.user

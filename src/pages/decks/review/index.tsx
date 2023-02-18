@@ -1,44 +1,10 @@
-import { InView } from 'react-intersection-observer'
-
 import { type NextPage } from 'next'
 import Head from 'next/head'
 
-import { DeckCardList } from '~/components/deck-card-list'
-import { Loader } from '~/components/loader'
+import { DecksToBeReviewed } from '~/components/deck-card-list'
 import type { WithAuthentication } from '~/types/auth'
-import { api } from '~/utils/api'
 
-const DecksToBeReviewed: WithAuthentication<NextPage> = () => {
-  const {
-    data,
-    isError,
-    refetch,
-    isLoading,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = api.decks.toBeReviewed.useInfiniteQuery(
-    {},
-    {
-      getNextPageParam: lastPage => lastPage.nextCursor,
-      refetchOnWindowFocus: false,
-      keepPreviousData: true,
-    },
-  )
-
-  const decks = data?.pages.flatMap(page => page.decks) ?? []
-  const hasLoadedDecks = decks.length > 0
-
-  const renderContent = () => {
-    if (isLoading) return <DeckCardList.Loading />
-
-    if (!hasLoadedDecks && isError) {
-      return <DeckCardList.Error onRetryPress={refetch} />
-    }
-
-    return <DeckCardList decks={decks} />
-  }
-
+const DecksToBeReviewedPage: WithAuthentication<NextPage> = () => {
   return (
     <>
       <Head>
@@ -48,22 +14,11 @@ const DecksToBeReviewed: WithAuthentication<NextPage> = () => {
           content='Lista de decks que você precisa revisar'
         />
       </Head>
-      {renderContent()}
-      <InView
-        as='div'
-        className='mt-5 flex w-full items-center justify-center'
-        onChange={inView => {
-          if (inView && hasNextPage && !isError && !isFetchingNextPage) {
-            fetchNextPage()
-          }
-        }}
-      >
-        {isFetchingNextPage ? <Loader /> : null}
-      </InView>
+      <DecksToBeReviewed />
     </>
   )
 }
 
-DecksToBeReviewed.requiresAuthentication = true
+DecksToBeReviewedPage.requiresAuthentication = true
 
-export default DecksToBeReviewed
+export default DecksToBeReviewedPage

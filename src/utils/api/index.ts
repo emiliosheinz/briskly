@@ -28,6 +28,20 @@ export const api = createTRPCNext<AppRouter>({
           url: `${getBaseUrl()}/api/trpc`,
         }),
       ],
+      abortOnUnmount: true,
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 5, // 5 minutes
+            cacheTime: 1000 * 60 * 10, // 10 minutes
+            retry: 3,
+            // Applies a exponential backoff to retry
+            // See https://tanstack.com/query/v4/docs/react/reference/useQuery
+            retryDelay: attempt =>
+              Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
+          },
+        },
+      },
     }
   },
   ssr: false,
