@@ -2,13 +2,22 @@ import { Tab } from '@headlessui/react'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
 import { DeckCardList, DecksToBeReviewed } from '~/components/deck-card-list'
+import { Feedback } from '~/components/feedback'
 import { Image } from '~/components/image'
+import { profileMenuTabs } from '~/modules/profile/constants/profile-menu-tabs'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 import { classNames } from '~/utils/css'
+
+const ProfileLoader = dynamic(() =>
+  import('~/modules/profile/components/profile-loader.component').then(
+    module => module.ProfileLoader,
+  ),
+)
 
 export const getServerSideProps: GetServerSideProps<{
   userId: string
@@ -24,55 +33,21 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-type UserDecksProps = {
-  userId: string
-  isVisible: boolean
-}
-
-function UserDecks(props: UserDecksProps) {
-  const { userId, isVisible } = props
-
-  const { data, isLoading, isError, refetch } = api.decks.byUser.useQuery(
-    { userId: userId },
-    { enabled: isVisible },
-  )
-
-  if (isLoading) return <DeckCardList.Loading />
-
-  if (isError) {
-    return <DeckCardList.Error onRetryPress={refetch} />
-  }
-
-  return <DeckCardList decks={data} />
-}
-
-const menuTabs = [
-  {
-    name: 'Decks',
-    content: UserDecks,
-    isProfileOwnerOnly: false,
-  },
-  {
-    name: 'Para Revisar',
-    content: DecksToBeReviewed,
-    isProfileOwnerOnly: true,
-  },
-]
-
-/**
- * TODO emiliosheinz: Loading state
- */
 const ProfilePage: WithAuthentication<
   NextPage<InferGetServerSidePropsType<typeof getServerSideProps>>
 > = props => {
   const { userId } = props
 
   const { data: session } = useSession()
-  const { data: user } = api.user.getUser.useQuery({ id: userId })
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = api.user.getUser.useQuery({ id: userId })
 
   const isUserProfileOwner = userId === session?.user?.id
 
-  const tabs = menuTabs.filter(
+  const tabs = profileMenuTabs.filter(
     ({ isProfileOwnerOnly }) => isUserProfileOwner || !isProfileOwnerOnly,
   )
 
@@ -80,7 +55,7 @@ const ProfilePage: WithAuthentication<
     if (!user?.image) return null
 
     return (
-      <div className='relative h-20 w-20 md:h-64 md:w-64'>
+      <div className='relative h-20 w-20 rounded-full md:h-64 md:w-64'>
         <Image
           fill
           src={user.image}
@@ -88,6 +63,19 @@ const ProfilePage: WithAuthentication<
           alt={`${user.name} profile image`}
         />
       </div>
+    )
+  }
+
+  if (isLoading) {
+    return <ProfileLoader />
+  }
+
+  if (isError) {
+    return (
+      <Feedback
+        title='Opsss,'
+        subtitle='Ocorreu um erro ao carregar o perfil do usuário.'
+      />
     )
   }
 
@@ -109,12 +97,6 @@ const ProfilePage: WithAuthentication<
               </p>
             </div>
           </div>
-          <p className='text-primary-900'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
         </section>
 
         <section className='flex flex-col md:flex-[6]'>
