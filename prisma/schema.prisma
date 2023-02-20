@@ -43,6 +43,9 @@ model User {
   sessions      Session[]
   decks         Deck[]
   studySessions StudySession[]
+  upvotes       Upvote[]
+  description   String?
+  topics        Topic[]
 }
 
 model VerificationToken {
@@ -72,6 +75,7 @@ model Deck {
   topics        Topic[]
   cards         Card[]
   studySessions StudySession[]
+  upvotes       Upvote[]
 }
 
 model Topic {
@@ -80,6 +84,7 @@ model Topic {
   decks     Deck[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  users     User[]
 }
 
 model Card {
@@ -137,4 +142,16 @@ model StudySessionAttempt {
   updatedAt             DateTime            @default(now()) @updatedAt
   studySessionBoxCardId String
   studySessionBoxCard   StudySessionBoxCard @relation(fields: [studySessionBoxCardId], references: [id], onDelete: Cascade)
+}
+
+model Upvote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deckId    String
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, deckId])
 }

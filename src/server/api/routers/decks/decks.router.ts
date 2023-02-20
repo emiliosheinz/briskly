@@ -106,11 +106,16 @@ export const decksRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input: { cursor }, ctx }) => {
+      const user = ctx.session?.user
+
       const decks = await ctx.prisma.deck.findMany({
         where: { visibility: Visibility.Public },
         orderBy: { createdAt: 'desc' },
         take: ITEMS_PER_PAGE + 1, // get an extra item at the end which we'll use as next cursor
         cursor: cursor ? { id: cursor } : undefined,
+        include: {
+          upvotes: true,
+        },
       })
 
       const hasNextCursor = decks.length > ITEMS_PER_PAGE
@@ -121,6 +126,10 @@ export const decksRouter = createTRPCRouter({
         decks: decks.map(deck => ({
           ...deck,
           image: getS3ImageUrl(deck.image),
+          upvotes: deck.upvotes.length,
+          isUpvoted: user
+            ? deck.upvotes.map(upvote => upvote.userId).includes(user.id)
+            : false,
         })),
       }
     }),
@@ -153,6 +162,9 @@ export const decksRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          upvotes: true,
+        },
       })
 
       const hasNextCursor = decks.length > ITEMS_PER_PAGE
@@ -162,8 +174,81 @@ export const decksRouter = createTRPCRouter({
         decks: decks.map(deck => ({
           ...deck,
           image: getS3ImageUrl(deck.image),
+          upvotes: deck.upvotes.length,
+          isUpvoted: deck.upvotes
+            .map(upvote => upvote.userId)
+            .includes(user.id),
         })),
         nextCursor,
       }
     }),
+  byUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input: { userId }, ctx }) => {
+      const { user: signedInUser } = ctx.session
+
+      const isUserGettingItsOwnDecks = signedInUser.id === userId
+
+      const decks = await ctx.prisma.deck.findMany({
+        where: {
+          ownerId: userId,
+          visibility: isUserGettingItsOwnDecks ? undefined : Visibility.Public,
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          upvotes: true,
+        },
+      })
+
+      return decks.map(deck => ({
+        ...deck,
+        image: getS3ImageUrl(deck.image),
+        upvotes: deck.upvotes.length,
+        isUpvoted: deck.upvotes
+          .map(upvote => upvote.userId)
+          .includes(signedInUser.id),
+      }))
+    }),
+  addUpvote: protectedProcedure
+    .input(z.object({ deckId: z.string() }))
+    .mutation(async ({ input: { deckId }, ctx }) => {
+      const { user } = ctx.session
+
+      await ctx.prisma.upvote.create({
+        data: {
+          deckId,
+          userId: user.id,
+        },
+      })
+    }),
+  removeUpvote: protectedProcedure
+    .input(z.object({ deckId: z.string() }))
+    .mutation(async ({ input: { deckId }, ctx }) => {
+      const { user } = ctx.session
+
+      await ctx.prisma.upvote.deleteMany({
+        where: { deckId, userId: user.id },
+      })
+    }),
+  getMostUpvotedDecks: publicProcedure.query(async ({ ctx }) => {
+    const user = ctx.session?.user
+
+    const decks = await ctx.prisma.deck.findMany({
+      where: { visibility: Visibility.Public, upvotes: { some: {} } },
+      orderBy: { upvotes: { _count: 'desc' } },
+      take: 10,
+      include: {
+        upvotes: true,
+      },
+    })
+
+    return decks.map(deck => ({
+      ...deck,
+      image: getS3ImageUrl(deck.image),
+      upvotes: deck.upvotes.length,
+      isUpvoted: user
+        ? deck.upvotes.map(upvote => upvote.userId).includes(user.id)
+        : false,
+    }))
+  }),
 })

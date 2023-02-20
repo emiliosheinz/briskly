@@ -1,12 +1,14 @@
 import { InView } from 'react-intersection-observer'
 
-import { type NextPage } from 'next'
-
-import { DeckCardList } from '~/components/deck-card-list'
 import { Loader } from '~/components/loader'
 import { api } from '~/utils/api'
 
-const HomePage: NextPage = () => {
+import { DeckCardList } from './deck-card-list.component'
+import type { DecksToBeReviewedProps } from './types/decks-to-be-reviewed.types'
+
+export function DecksToBeReviewed(props: DecksToBeReviewedProps) {
+  const { isVisible = true } = props
+
   const {
     data,
     isError,
@@ -15,11 +17,12 @@ const HomePage: NextPage = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = api.decks.getPublicDecks.useInfiniteQuery(
+  } = api.decks.toBeReviewed.useInfiniteQuery(
     {},
     {
       getNextPageParam: lastPage => lastPage.nextCursor,
       keepPreviousData: true,
+      enabled: isVisible,
     },
   )
 
@@ -37,7 +40,7 @@ const HomePage: NextPage = () => {
   }
 
   return (
-    <div className='flex flex-col items-center'>
+    <>
       {renderContent()}
       <InView
         as='div'
@@ -50,8 +53,6 @@ const HomePage: NextPage = () => {
       >
         {isFetchingNextPage ? <Loader /> : null}
       </InView>
-    </div>
+    </>
   )
 }
-
-export default HomePage

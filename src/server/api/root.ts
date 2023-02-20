@@ -1,6 +1,7 @@
 import { decksRouter } from './routers/decks'
 import { filesRouter } from './routers/files'
 import { studySessionRouter } from './routers/study-session'
+import { userRouter } from './routers/user'
 import { createTRPCRouter } from './trpc'
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   decks: decksRouter,
   files: filesRouter,
   studySession: studySessionRouter,
+  user: userRouter,
 })
 
 export type AppRouter = typeof appRouter

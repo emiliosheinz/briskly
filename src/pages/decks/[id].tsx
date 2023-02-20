@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 }
 
-const DeckDetails: NextPage<
+const DeckDetailsPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = props => {
   const { deck } = props
@@ -166,4 +166,4 @@ const DeckDetails: NextPage<
   )
 }
 
-export default DeckDetails
+export default DeckDetailsPage

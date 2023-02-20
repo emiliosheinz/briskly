@@ -2,13 +2,39 @@ import { Fragment } from 'react'
 
 import { Popover, Transition } from '@headlessui/react'
 import { UserCircleIcon } from '@heroicons/react/24/outline'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 import { AuthButton } from '~/components/auth-button'
+import { Image } from '~/components/image'
 
-import { DESKTOP_MENU_OPTIONS } from '../../header.constants'
+import { useMenuOptions } from '../../hooks/use-menu-options'
 
 export function DesktopSecondaryMenu() {
+  const menuOptions = useMenuOptions()
+  const { data: session } = useSession()
+
+  const renderImage = () => {
+    if (!session?.user?.image) {
+      return (
+        <UserCircleIcon
+          className='h-8 w-8 text-primary-900'
+          aria-hidden='true'
+        />
+      )
+    }
+
+    return (
+      <Image
+        src={session.user.image}
+        width={32}
+        height={32}
+        alt='Imagem de perfil do usuário'
+        className='rounded-full ring-1 ring-primary-900'
+      />
+    )
+  }
+
   return (
     <Popover
       data-testid='desktop-secondary-menu'
@@ -19,10 +45,7 @@ export function DesktopSecondaryMenu() {
         data-testid='popover-button'
         className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'
       >
-        <UserCircleIcon
-          className='h-8 w-8 text-primary-900'
-          aria-hidden='true'
-        />
+        {renderImage()}
       </Popover.Button>
       <Transition
         as={Fragment}
@@ -37,7 +60,7 @@ export function DesktopSecondaryMenu() {
           data-testid='popover-panel'
           className='absolute right-0 z-30 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
         >
-          {DESKTOP_MENU_OPTIONS.SECONDARY.map(option => (
+          {menuOptions.desktop.secondary.map(option => (
             <Link
               href={option.href}
               key={option.label}
