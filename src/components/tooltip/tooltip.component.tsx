@@ -5,8 +5,6 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 
-import { classNames } from '~/utils/css'
-
 import type { TooltipProps } from './tooltip.types'
 
 function _Tooltip(props: TooltipProps) {
@@ -18,9 +16,9 @@ function _Tooltip(props: TooltipProps) {
     if (children) {
       return React.cloneElement(children, {
         id: tooltipId,
-        className: classNames(children.props.className, 'hover:cursor-pointer'),
       })
     }
+
     return (
       <span className='inline-block'>
         <QuestionMarkCircleIcon

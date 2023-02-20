@@ -44,6 +44,8 @@ model User {
   decks         Deck[]
   studySessions StudySession[]
   upvotes       Upvote[]
+  description   String?
+  topics        Topic[]
 }
 
 model VerificationToken {
@@ -82,6 +84,7 @@ model Topic {
   decks     Deck[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  users     User[]
 }
 
 model Card {

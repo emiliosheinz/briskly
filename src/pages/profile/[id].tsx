@@ -7,6 +7,7 @@ import Head from 'next/head'
 
 import { Feedback } from '~/components/feedback'
 import { Image } from '~/components/image'
+import { Pill } from '~/components/pill'
 import { profileMenuTabs } from '~/modules/profile/constants/profile-menu-tabs'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
@@ -54,12 +55,14 @@ const ProfilePage: WithAuthentication<
     if (!user?.image) return null
 
     return (
-      <div className='relative h-20 w-20 rounded-full md:h-64 md:w-64'>
+      <div>
         <Image
-          fill
+          width={112}
+          height={112}
           src={user.image}
           className='rounded-full'
           alt={`${user.name} profile image`}
+          style={{ objectFit: 'contain' }}
         />
       </div>
     )
@@ -84,7 +87,7 @@ const ProfilePage: WithAuthentication<
         <title>{user?.name || 'Carregando...'}</title>
       </Head>
       <div className='flex flex-col gap-5 md:flex-row'>
-        <section className='flex flex-col gap-3 md:flex-[2]'>
+        <section className='flex flex-col gap-5 md:flex-[2]'>
           <div className='flex flex-row items-center gap-3 md:flex-col'>
             {renderUserImage()}
             <div className='flex flex-col items-start md:items-center'>
@@ -96,9 +99,17 @@ const ProfilePage: WithAuthentication<
               </p>
             </div>
           </div>
+          <p className='text-sm text-primary-900'>{user?.description}</p>
+          <ul className='flex flex-wrap gap-3'>
+            {user?.topics.map(topic => (
+              <li key={topic.id}>
+                <Pill>{topic.title}</Pill>
+              </li>
+            ))}
+          </ul>
         </section>
 
-        <section className='flex flex-col md:flex-[6]'>
+        <section className='flex flex-col md:flex-[8]'>
           <Tab.Group>
             <Tab.List className='flex space-x-1 p-1'>
               {tabs.map(tab => (

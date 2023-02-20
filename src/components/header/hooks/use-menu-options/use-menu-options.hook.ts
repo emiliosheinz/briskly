@@ -55,7 +55,7 @@ export function useMenuOptions() {
     {
       label: 'Configurações',
       icon: WrenchIcon,
-      href: '#',
+      href: routes.profileSettings(),
       isAuthRequired: true,
     },
   ]
