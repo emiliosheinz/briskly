@@ -2,7 +2,7 @@ import { Visibility } from '@prisma/client'
 
 import type { Option } from '~/components/radio-group'
 
-export const MAX_TOPICS_PER_DECK = 5
+export const MAX_TOPICS_PER_DECK_AND_USER = 5
 export const ITEMS_PER_PAGE = 30
 
 export const DECK_VISIBILITY_OPTIONS: Array<Option<Visibility>> = [

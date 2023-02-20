@@ -1,7 +1,7 @@
 import { Visibility } from '@prisma/client'
 import { z } from 'zod'
 
-import { MAX_TOPICS_PER_DECK } from '~/constants'
+import { MAX_TOPICS_PER_DECK_AND_USER } from '~/constants'
 
 import { CardInputSchema } from './card'
 import { TopicInputSchema } from './topic'
@@ -30,8 +30,8 @@ export const DeckInputSchema = z.object({
     .min(1, { message: 'A imagem do Deck é obrigatória' }),
   topics: z
     .array(TopicInputSchema)
-    .max(MAX_TOPICS_PER_DECK, {
-      message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK}`,
+    .max(MAX_TOPICS_PER_DECK_AND_USER, {
+      message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK_AND_USER}`,
     })
     .optional(),
   cards: z
