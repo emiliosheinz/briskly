@@ -80,13 +80,9 @@ export const studySessionRouter = createTRPCRouter({
           studySession: {
             deckId,
             userId: ctx.session.user.id,
-            studySessionBoxes: {
-              some: {
-                studySessionBoxCards: {
-                  some: {},
-                },
-              },
-            },
+          },
+          studySessionBoxCards: {
+            some: {},
           },
         },
         orderBy: [
@@ -119,16 +115,13 @@ export const studySessionRouter = createTRPCRouter({
       const currentStudySession = await ctx.prisma.studySession.findFirst({
         where: { deckId, userId: ctx.session.user.id },
         include: {
-          deck: {
-            select: {
-              title: true,
-              description: true,
-            },
-          },
           studySessionBoxes: {
             where: {
               nextReview: {
                 lte: now,
+              },
+              studySessionBoxCards: {
+                some: {},
               },
             },
             select: {
@@ -159,16 +152,16 @@ export const studySessionRouter = createTRPCRouter({
         })
       }
 
+      console.log(JSON.stringify(currentStudySession))
       return {
-        deck: currentStudySession.deck,
         studySessionId: currentStudySession.id,
         studySessionBoxes: currentStudySession.studySessionBoxes.map(
-          ({ studySessionBoxCards, id, lastReview, createdAt }) => ({
+          ({ studySessionBoxCards, id, lastReview }) => ({
             id,
             cards: studySessionBoxCards
               .filter(boxCard => {
                 const lastAttempt = boxCard.studySessionAttempts[0]?.createdAt
-                return !lastAttempt || lastAttempt < (lastReview || createdAt)
+                return !lastAttempt || !lastReview || lastAttempt < lastReview
               })
               .map(boxCard => ({
                 id: boxCard.id,
