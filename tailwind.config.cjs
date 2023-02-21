@@ -2,17 +2,7 @@
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {
-      keyframes: {
-        'fill-width': {
-          '0%': { width: '0%' },
-          '100%': { width: '100%' },
-        },
-      },
-      animation: {
-        'fill-width': 'fill-width 10s ease-out infinite',
-      },
-    },
+    extend: {},
     colors: {
       primary: {
         900: '#0F172A',
