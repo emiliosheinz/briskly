@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
 import { Header } from '~/components/header'
+import { useRouteChangeLoader } from '~/hooks/use-route-change-loader'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 
@@ -39,6 +40,20 @@ const MyApp: AppType<{ session: Session | null }> = props => {
     pageProps: { session, ...pageProps },
   } = props as ComponentWithAuthentication<typeof props>
 
+  const { isRouteLoading } = useRouteChangeLoader()
+
+  function renderRouteLoader() {
+    const progressElement = isRouteLoading ? (
+      <div className='h-1 animate-fill-width bg-primary-800' />
+    ) : null
+
+    return (
+      <div className='bg-primary-50dark:bg-gray-700 h-1 w-full'>
+        {progressElement}
+      </div>
+    )
+  }
+
   const OptionalAuthGuard = Component.requiresAuthentication
     ? AuthGuard
     : Fragment
@@ -51,6 +66,7 @@ const MyApp: AppType<{ session: Session | null }> = props => {
           <meta name='description' content='The perfect Flashcards app' />
         </Head>
         <Header />
+        {renderRouteLoader()}
         <main className='min-h-screen w-full bg-primary-50'>
           <div className='m-auto w-full max-w-7xl p-3 md:p-5'>
             <OptionalAuthGuard>

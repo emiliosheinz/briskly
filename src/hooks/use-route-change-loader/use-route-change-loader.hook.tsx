@@ -1,13 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
-
-import { fullScreenLoaderAtom } from '~/utils/atoms'
 
 export function useRouteChangeLoader() {
   const router = useRouter()
-  const setIsLoading = useSetAtom(fullScreenLoaderAtom)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const handleStart = (url: string) =>
@@ -25,4 +22,6 @@ export function useRouteChangeLoader() {
       router.events.off('routeChangeError', handleComplete)
     }
   }, [router.asPath, router.events, setIsLoading])
+
+  return { isRouteLoading: isLoading }
 }
