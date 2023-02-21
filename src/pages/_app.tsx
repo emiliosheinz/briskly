@@ -66,10 +66,7 @@ const MyApp: AppType<{ session: Session | null }> = props => {
       <Toaster />
       <FullScreenLoader />
       <ReactQueryDevtools initialIsOpen={false} />
-      <NextNProgress
-        color='#1E293B'
-        options={{ showSpinner: false, parent: '#briskly-main' }}
-      />
+      <NextNProgress color='#1E293B' options={{ showSpinner: false }} />
     </JotaiProvider>
   )
 }
