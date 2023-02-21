@@ -1,7 +1,6 @@
 import {
   ClockIcon,
   StarIcon,
-  FireIcon,
   HeartIcon,
   PlusCircleIcon,
   UserCircleIcon,
@@ -35,15 +34,9 @@ export function useMenuOptions() {
       isAuthRequired: false,
     },
     {
-      label: 'Mais Recentes',
-      icon: FireIcon,
-      href: '#',
-      isAuthRequired: false,
-    },
-    {
       label: 'Para Você',
       icon: HeartIcon,
-      href: '#',
+      href: routes.decksForYou(),
       isAuthRequired: true,
     },
     {

@@ -128,7 +128,7 @@ export const decksRouter = createTRPCRouter({
           image: getS3ImageUrl(deck.image),
           upvotes: deck.upvotes.length,
           isUpvoted: user
-            ? deck.upvotes.map(upvote => upvote.userId).includes(user.id)
+            ? deck.upvotes.some(upvote => upvote.userId === user.id)
             : false,
         })),
       }
@@ -247,7 +247,74 @@ export const decksRouter = createTRPCRouter({
       image: getS3ImageUrl(deck.image),
       upvotes: deck.upvotes.length,
       isUpvoted: user
-        ? deck.upvotes.map(upvote => upvote.userId).includes(user.id)
+        ? deck.upvotes.some(upvote => upvote.userId === user.id)
+        : false,
+    }))
+  }),
+  forYou: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx.session
+
+    const userTopics = await ctx.prisma.topic.findMany({
+      where: { users: { some: { id: user.id } } },
+    })
+
+    if (userTopics.length === 0) {
+      return []
+    }
+
+    const decks = await ctx.prisma.deck.findMany({
+      where: {
+        visibility: Visibility.Public,
+        topics: {
+          some: {
+            id: {
+              in: userTopics.map(topic => topic.id),
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        image: true,
+        title: true,
+        description: true,
+        upvotes: true,
+        visibility: true,
+        ownerId: true,
+        updatedAt: true,
+        createdAt: true,
+        topics: {
+          where: {
+            id: {
+              in: userTopics.map(topic => topic.id),
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          topics: {
+            _count: 'desc',
+          },
+        },
+        {
+          upvotes: {
+            _count: 'desc',
+          },
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
+      take: 30,
+    })
+
+    return decks.map(deck => ({
+      ...deck,
+      image: getS3ImageUrl(deck.image),
+      upvotes: deck.upvotes.length,
+      isUpvoted: user
+        ? deck.upvotes.some(upvote => upvote.userId === user.id)
         : false,
     }))
   }),

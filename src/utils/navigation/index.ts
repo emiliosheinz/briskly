@@ -8,4 +8,5 @@ export const routes = {
   userProfile: (id: string) => `/profile/${id}`,
   mostUpvotedDecks: () => '/decks/most-upvoted',
   profileSettings: () => '/profile/settings',
+  decksForYou: () => '/decks/for-you',
 }
