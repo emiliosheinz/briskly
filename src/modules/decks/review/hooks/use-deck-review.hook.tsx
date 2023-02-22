@@ -20,7 +20,7 @@ export function useDeckReview(deckId: string) {
   const {
     isLoading: isLoadingCards,
     isError: hasErrorLoadingCards,
-    data: { studySessionBoxes, deck } = {},
+    data: { studySessionBoxes, studySessionId, deck } = {},
   } = api.studySession.getReviewSession.useQuery({ deckId }, { cacheTime: 0 })
 
   const cards = studySessionBoxes?.flatMap(({ cards }) => cards)
@@ -31,8 +31,8 @@ export function useDeckReview(deckId: string) {
     reset: resetAnswerState,
   } = api.studySession.answerStudySessionCard.useMutation()
 
-  const { mutate: finishStudySession } =
-    api.studySession.finishStudySessionForBox.useMutation({
+  const { mutate: finishReviewSession } =
+    api.studySession.finishReviewSession.useMutation({
       onSuccess: () => {
         apiContext.decks.toBeReviewed.invalidate()
         apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
@@ -75,12 +75,19 @@ export function useDeckReview(deckId: string) {
   }, [cardAnswerStage, answerResult])
 
   useEffect(() => {
-    if (isLastCard && cardAnswerStage === 'validation' && studySessionBoxes) {
-      finishStudySession({
-        boxIds: studySessionBoxes.map(({ id }) => id),
+    if (isLastCard && cardAnswerStage === 'validation' && studySessionId) {
+      finishReviewSession({
+        studySessionId,
+        reviewedBoxIds: studySessionBoxes?.map(({ id }) => id) ?? [],
       })
     }
-  }, [cardAnswerStage, studySessionBoxes, isLastCard, finishStudySession])
+  }, [
+    isLastCard,
+    studySessionId,
+    cardAnswerStage,
+    studySessionBoxes,
+    finishReviewSession,
+  ])
 
   const goToNextCard = () => {
     if (!cards) return

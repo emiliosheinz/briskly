@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { STUDY_SESSION_BOXES } from '~/constants'
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
-import { addHours } from '~/utils/date-time'
+import { addHours, differenceInHours } from '~/utils/date-time'
 
 export const studySessionRouter = createTRPCRouter({
   create: protectedProcedure
@@ -289,36 +289,62 @@ export const studySessionRouter = createTRPCRouter({
 
       return { isRight: isAnswerRight, answer: card.answer }
     }),
-  finishStudySessionForBox: protectedProcedure
-    .input(z.object({ boxIds: z.array(z.string().min(1)) }))
-    .mutation(async ({ input, ctx }) => {
+  finishReviewSession: protectedProcedure
+    .input(
+      z.object({
+        studySessionId: z.string().min(1),
+        reviewedBoxIds: z.array(z.string().min(1)),
+      }),
+    )
+    .mutation(async ({ input: { studySessionId, reviewedBoxIds }, ctx }) => {
       const now = new Date()
-      const boxesReviewGapsInHours = await ctx.prisma.studySessionBox.findMany({
-        where: { id: { in: input.boxIds } },
-        select: { id: true, reviewGapInHours: true },
+      const userId = ctx.session.user.id
+
+      const isUserStudySessionOwner = await ctx.prisma.studySession.findFirst({
+        where: { id: studySessionId, userId },
       })
 
-      await ctx.prisma.$transaction(
-        input.boxIds.map(boxId => {
-          const boxReviewGapInHours = boxesReviewGapsInHours.find(
-            ({ id }) => id === boxId,
-          )?.reviewGapInHours
+      if (!isUserStudySessionOwner) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Este usuário não pode atualizar esta sessão de estudos',
+        })
+      }
 
-          if (!boxReviewGapInHours) {
-            throw new TRPCError({
-              code: 'NOT_FOUND',
-              message: 'Não foi possível executar esta ação',
-            })
-          }
+      const boxesWithExpiredNextReviewDate =
+        await ctx.prisma.studySessionBox.findMany({
+          where: {
+            studySession: {
+              userId,
+              id: studySessionId,
+            },
+            nextReview: { lte: now },
+          },
+        })
+
+      // Since nextReview is in the past it is the same as lastReview
+      const updateBoxesNextReview = boxesWithExpiredNextReviewDate.map(
+        ({ id, reviewGapInHours, nextReview: lastReview }) => {
+          const hoursSinceLastReview = differenceInHours(now, lastReview)
+          const gapsToSkip = Math.ceil(hoursSinceLastReview / reviewGapInHours)
+          const nextReview = addHours(lastReview, gapsToSkip * reviewGapInHours)
 
           return ctx.prisma.studySessionBox.update({
-            where: { id: boxId },
-            data: {
-              lastReview: now,
-              nextReview: addHours(now, boxReviewGapInHours),
-            },
+            where: { id },
+            data: { nextReview },
           })
-        }),
+        },
       )
+
+      const updateReviewedBoxesLastReview =
+        ctx.prisma.studySessionBox.updateMany({
+          where: { id: { in: reviewedBoxIds }, studySessionId },
+          data: { lastReview: now },
+        })
+
+      await ctx.prisma.$transaction([
+        updateReviewedBoxesLastReview,
+        ...updateBoxesNextReview,
+      ])
     }),
 })

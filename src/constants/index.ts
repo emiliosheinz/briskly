@@ -28,5 +28,5 @@ export const STUDY_SESSION_BOXES = [
   { reviewGapInHours: 24 * 3 },
   { reviewGapInHours: 24 * 7 },
   { reviewGapInHours: 24 * 15 },
-  { reviewGapInHours: 24 * 20 },
+  { reviewGapInHours: 24 * 30 },
 ]
