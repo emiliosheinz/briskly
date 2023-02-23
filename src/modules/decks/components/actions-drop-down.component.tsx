@@ -4,7 +4,6 @@ import { Menu, Transition } from '@headlessui/react'
 import {
   EllipsisVerticalIcon,
   PencilSquareIcon,
-  RectangleStackIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline'
 import { useSetAtom } from 'jotai'
@@ -37,12 +36,6 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
       apiContext.decks.toBeReviewed.invalidate()
     },
   })
-  const createStudySessionMutation = api.studySession.create.useMutation({
-    onSuccess: () => {
-      apiContext.decks.toBeReviewed.invalidate()
-      apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
-    },
-  })
 
   const { data: session } = useSession()
   const isAuthenticated = !!session?.user
@@ -67,25 +60,6 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
 
           notify.success('Deck excluído com sucesso!')
           router.back()
-        } catch (error) {
-          handleApiClientSideError({ error })
-        } finally {
-          setIsLoading(false)
-        }
-      },
-    },
-    {
-      label: 'Estudar com este Deck',
-      icon: RectangleStackIcon,
-      isEnabled: isAuthenticated,
-      onClick: async () => {
-        try {
-          setIsLoading(true)
-
-          await createStudySessionMutation.mutateAsync({ deckId })
-
-          notify.success('Sessão de estudo criada com sucesso!')
-          router.push(routes.reviewDeck(deckId))
         } catch (error) {
           handleApiClientSideError({ error })
         } finally {

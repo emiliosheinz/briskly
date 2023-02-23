@@ -4,7 +4,11 @@ import { compareTwoStrings } from 'string-similarity'
 import { z } from 'zod'
 
 import { STUDY_SESSION_BOXES } from '~/constants'
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc'
 import { addHours, differenceInHours } from '~/utils/date-time'
 
 export const studySessionRouter = createTRPCRouter({
@@ -72,9 +76,11 @@ export const studySessionRouter = createTRPCRouter({
         ),
       )
     }),
-  getStudySessionBasicInfo: protectedProcedure
+  getStudySessionBasicInfo: publicProcedure
     .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {
+      if (!ctx.session?.user) return null
+
       const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
         where: {
           studySession: {
