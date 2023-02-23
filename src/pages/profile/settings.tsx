@@ -206,7 +206,7 @@ const ProfileSettingsPage: WithAuthentication<
             {renderDisabledEmailInputWithTooltip(String(user.email))}
           </div>
           <TextArea
-            label='Descrição'
+            label='Descrição do Perfil'
             id='description'
             {...register('description')}
             error={formState.errors['description']?.message as string}
