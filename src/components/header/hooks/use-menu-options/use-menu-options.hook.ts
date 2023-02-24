@@ -28,15 +28,15 @@ export function useMenuOptions() {
       isAuthRequired: true,
     },
     {
-      label: 'Mais Votados',
+      label: 'Mais Favoritados',
       icon: StarIcon,
-      href: routes.mostUpvotedDecks(),
+      href: routes.mostFavoriteDecks(),
       isAuthRequired: false,
     },
     {
-      label: 'Para Você',
+      label: 'Meus Favoritos',
       icon: HeartIcon,
-      href: routes.decksForYou(),
+      href: routes.favorites(),
       isAuthRequired: true,
     },
     {

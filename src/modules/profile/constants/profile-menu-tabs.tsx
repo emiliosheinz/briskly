@@ -9,6 +9,12 @@ const UserDecks = dynamic(() =>
   import('../components/user-decks.component').then(module => module.UserDecks),
 )
 
+const UserFavoriteDecks = dynamic(() =>
+  import('~/components/deck-card-list').then(
+    module => module.UserFavoriteDecks,
+  ),
+)
+
 export const profileMenuTabs = [
   {
     name: 'Decks',
@@ -18,6 +24,11 @@ export const profileMenuTabs = [
   {
     name: 'Para Revisar',
     content: DecksToBeReviewed,
+    isProfileOwnerOnly: true,
+  },
+  {
+    name: 'Meus Favoritos',
+    content: UserFavoriteDecks,
     isProfileOwnerOnly: true,
   },
 ]

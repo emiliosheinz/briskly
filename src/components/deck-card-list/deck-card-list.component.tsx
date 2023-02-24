@@ -5,8 +5,8 @@ import { Image } from '~/components/image'
 import { routes } from '~/utils/navigation'
 
 import { Error } from './components/error.component'
+import { FavoriteButton } from './components/favorite-button.component'
 import { Loading } from './components/loading.component'
-import { UpvoteButton } from './components/upvote-button.component'
 import type { DeckCardListProps } from './types/deck-card-list.types'
 
 export function DeckCardList(props: DeckCardListProps) {
@@ -52,7 +52,7 @@ export function DeckCardList(props: DeckCardListProps) {
               <p className='mb-3 font-normal'>{deck.description}</p>
             </div>
           </Link>
-          <UpvoteButton deck={deck} />
+          <FavoriteButton deck={deck} />
         </div>
       ))}
     </div>

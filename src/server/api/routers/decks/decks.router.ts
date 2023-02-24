@@ -114,7 +114,7 @@ export const decksRouter = createTRPCRouter({
         take: ITEMS_PER_PAGE + 1, // get an extra item at the end which we'll use as next cursor
         cursor: cursor ? { id: cursor } : undefined,
         include: {
-          upvotes: true,
+          favorites: true,
         },
       })
 
@@ -126,9 +126,9 @@ export const decksRouter = createTRPCRouter({
         decks: decks.map(deck => ({
           ...deck,
           image: getS3ImageUrl(deck.image),
-          upvotes: deck.upvotes.length,
-          isUpvoted: user
-            ? deck.upvotes.some(upvote => upvote.userId === user.id)
+          favorites: deck.favorites.length,
+          isFavorite: user
+            ? deck.favorites.some(favorite => favorite.userId === user.id)
             : false,
         })),
       }
@@ -163,7 +163,7 @@ export const decksRouter = createTRPCRouter({
           },
         },
         include: {
-          upvotes: true,
+          favorites: true,
         },
       })
 
@@ -174,9 +174,9 @@ export const decksRouter = createTRPCRouter({
         decks: decks.map(deck => ({
           ...deck,
           image: getS3ImageUrl(deck.image),
-          upvotes: deck.upvotes.length,
-          isUpvoted: deck.upvotes
-            .map(upvote => upvote.userId)
+          favorites: deck.favorites.length,
+          isFavorite: deck.favorites
+            .map(favorite => favorite.userId)
             .includes(user.id),
         })),
         nextCursor,
@@ -196,58 +196,58 @@ export const decksRouter = createTRPCRouter({
         },
         orderBy: { createdAt: 'desc' },
         include: {
-          upvotes: true,
+          favorites: true,
         },
       })
 
       return decks.map(deck => ({
         ...deck,
         image: getS3ImageUrl(deck.image),
-        upvotes: deck.upvotes.length,
-        isUpvoted: deck.upvotes
-          .map(upvote => upvote.userId)
+        favorites: deck.favorites.length,
+        isFavorite: deck.favorites
+          .map(favorite => favorite.userId)
           .includes(signedInUser.id),
       }))
     }),
-  addUpvote: protectedProcedure
+  addFavorite: protectedProcedure
     .input(z.object({ deckId: z.string() }))
     .mutation(async ({ input: { deckId }, ctx }) => {
       const { user } = ctx.session
 
-      await ctx.prisma.upvote.create({
+      await ctx.prisma.favorite.create({
         data: {
           deckId,
           userId: user.id,
         },
       })
     }),
-  removeUpvote: protectedProcedure
+  removeFavorite: protectedProcedure
     .input(z.object({ deckId: z.string() }))
     .mutation(async ({ input: { deckId }, ctx }) => {
       const { user } = ctx.session
 
-      await ctx.prisma.upvote.deleteMany({
+      await ctx.prisma.favorite.deleteMany({
         where: { deckId, userId: user.id },
       })
     }),
-  getMostUpvotedDecks: publicProcedure.query(async ({ ctx }) => {
+  getMostFavoriteDecks: publicProcedure.query(async ({ ctx }) => {
     const user = ctx.session?.user
 
     const decks = await ctx.prisma.deck.findMany({
-      where: { visibility: Visibility.Public, upvotes: { some: {} } },
-      orderBy: { upvotes: { _count: 'desc' } },
+      where: { visibility: Visibility.Public, favorites: { some: {} } },
+      orderBy: { favorites: { _count: 'desc' } },
       take: 10,
       include: {
-        upvotes: true,
+        favorites: true,
       },
     })
 
     return decks.map(deck => ({
       ...deck,
       image: getS3ImageUrl(deck.image),
-      upvotes: deck.upvotes.length,
-      isUpvoted: user
-        ? deck.upvotes.some(upvote => upvote.userId === user.id)
+      favorites: deck.favorites.length,
+      isFavorite: user
+        ? deck.favorites.some(favorite => favorite.userId === user.id)
         : false,
     }))
   }),
@@ -278,7 +278,7 @@ export const decksRouter = createTRPCRouter({
         image: true,
         title: true,
         description: true,
-        upvotes: true,
+        favorites: true,
         visibility: true,
         ownerId: true,
         updatedAt: true,
@@ -298,7 +298,7 @@ export const decksRouter = createTRPCRouter({
           },
         },
         {
-          upvotes: {
+          favorites: {
             _count: 'desc',
           },
         },
@@ -312,10 +312,54 @@ export const decksRouter = createTRPCRouter({
     return decks.map(deck => ({
       ...deck,
       image: getS3ImageUrl(deck.image),
-      upvotes: deck.upvotes.length,
-      isUpvoted: user
-        ? deck.upvotes.some(upvote => upvote.userId === user.id)
+      favorites: deck.favorites.length,
+      isFavorite: user
+        ? deck.favorites.some(favorite => favorite.userId === user.id)
         : false,
     }))
   }),
+  favorites: protectedProcedure
+    .input(
+      z.object({
+        cursor: z.string().nullish(),
+      }),
+    )
+    .query(async ({ input: { cursor }, ctx }) => {
+      const { user } = ctx.session
+
+      const favorites = await ctx.prisma.favorite.findMany({
+        where: {
+          userId: user.id,
+        },
+        include: {
+          deck: {
+            include: {
+              favorites: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: ITEMS_PER_PAGE + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
+      })
+
+      const hasNextCursor = favorites.length > ITEMS_PER_PAGE
+      const nextCursor = hasNextCursor ? favorites.pop()!.id : undefined
+
+      return {
+        nextCursor,
+        decks: favorites
+          .map(({ deck }) => deck)
+          .map(deck => ({
+            ...deck,
+            image: getS3ImageUrl(deck.image),
+            favorites: deck.favorites.length,
+            isFavorite: user
+              ? deck.favorites.some(favorite => favorite.userId === user.id)
+              : false,
+          })),
+      }
+    }),
 })

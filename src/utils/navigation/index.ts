@@ -6,7 +6,8 @@ export const routes = {
   reviewDeck: (id: string) => `/decks/review/${id}`,
   toBeReviewed: () => '/decks/review',
   userProfile: (id: string) => `/profile/${id}`,
-  mostUpvotedDecks: () => '/decks/most-upvoted',
+  mostFavoriteDecks: () => '/decks/most-favorite',
   profileSettings: () => '/profile/settings',
   decksForYou: () => '/decks/for-you',
+  favorites: () => '/decks/favorites',
 }
