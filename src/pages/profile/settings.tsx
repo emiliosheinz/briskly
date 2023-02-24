@@ -94,6 +94,8 @@ const ProfileSettingsPage: WithAuthentication<
     },
     onSuccess: () => {
       apiContext.user.getUser.invalidate()
+      apiContext.decks.forYou.invalidate()
+
       notify.success('Perfil atualizado com sucesso!')
       router.push(routes.userProfile(user!.id))
     },

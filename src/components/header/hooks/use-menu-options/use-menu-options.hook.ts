@@ -5,6 +5,7 @@ import {
   PlusCircleIcon,
   UserCircleIcon,
   WrenchIcon,
+  FireIcon,
 } from '@heroicons/react/24/outline'
 import { useSession } from 'next-auth/react'
 
@@ -37,6 +38,12 @@ export function useMenuOptions() {
       label: 'Meus Favoritos',
       icon: HeartIcon,
       href: routes.favorites(),
+      isAuthRequired: true,
+    },
+    {
+      label: 'Recomendados',
+      icon: FireIcon,
+      href: routes.decksForYou(),
       isAuthRequired: true,
     },
     {
