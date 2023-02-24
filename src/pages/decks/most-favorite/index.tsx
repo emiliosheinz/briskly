@@ -3,13 +3,13 @@ import { type NextPage } from 'next'
 import { DeckCardList } from '~/components/deck-card-list'
 import { api } from '~/utils/api'
 
-const MostUpvotedDecksPage: NextPage = () => {
+const MostFavoriteDecksPage: NextPage = () => {
   const {
     data: decks,
     isError,
     refetch,
     isLoading,
-  } = api.decks.getMostUpvotedDecks.useQuery()
+  } = api.decks.getMostFavoriteDecks.useQuery()
 
   const renderContent = () => {
     if (isLoading) return <DeckCardList.Loading />
@@ -24,4 +24,4 @@ const MostUpvotedDecksPage: NextPage = () => {
   return <div className='flex flex-col items-center'>{renderContent()}</div>
 }
 
-export default MostUpvotedDecksPage
+export default MostFavoriteDecksPage

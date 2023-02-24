@@ -3,7 +3,6 @@ import { Fragment } from 'react'
 import { Visibility } from '@prisma/client'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
-import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
@@ -92,9 +91,6 @@ const DeckDetailsPage: NextPage<
 > = props => {
   const { deck } = props
 
-  const { data: session } = useSession()
-  const isAuthenticated = !!session?.user
-
   const renderTopics = () => {
     if (deck.topics.length === 0) return null
 
@@ -113,8 +109,6 @@ const DeckDetailsPage: NextPage<
   }
 
   const renderCurrentStudySessionCard = () => {
-    if (!isAuthenticated) return null
-
     return <StudySessionCard deckId={deck.id} />
   }
 

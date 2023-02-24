@@ -4,19 +4,15 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
 
-import { useDebounce } from '~/hooks/use-debounce'
-import { useRouteChangeLoader } from '~/hooks/use-route-change-loader'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
 
 import { Loader } from '../loader'
 
 export function FullScreenLoader() {
   const isLoading = useAtomValue(fullScreenLoaderAtom)
-  const debouncedIsLoading = useDebounce(isLoading, 200)
-  useRouteChangeLoader()
 
   return (
-    <Transition appear show={debouncedIsLoading} as={Fragment}>
+    <Transition appear show={isLoading} as={Fragment}>
       <Dialog as='div' className='relative z-40' onClose={noop}>
         <Transition.Child
           as={Fragment}

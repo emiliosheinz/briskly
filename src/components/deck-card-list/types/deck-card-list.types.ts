@@ -1,13 +1,13 @@
 import type { Deck } from '@prisma/client'
 
 export type DeckCardListProps = {
-  decks: Array<Deck & { isUpvoted: boolean; upvotes: number }>
+  decks: Array<Deck & { isFavorite: boolean; favorites: number }>
 }
 
 export type ErrorProps = {
   onRetryPress: () => void
 }
 
-export type UpvoteButtonProps = {
+export type FavoriteButtonProps = {
   deck: DeckCardListProps['decks'][number]
 }

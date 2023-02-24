@@ -15,3 +15,7 @@ export function addHours(dateTime: Date, hours: number) {
   copiedDate.setTime(copiedDate.getTime() + hours * 60 * 60 * 1000)
   return copiedDate
 }
+
+export function differenceInHours(future: Date, past: Date) {
+  return Math.abs(future.getTime() - past.getTime()) / 36e5
+}

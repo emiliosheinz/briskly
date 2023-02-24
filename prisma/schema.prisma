@@ -43,7 +43,7 @@ model User {
   sessions      Session[]
   decks         Deck[]
   studySessions StudySession[]
-  upvotes       Upvote[]
+  favorites     Favorite[]
   description   String?
   topics        Topic[]
 }
@@ -75,7 +75,7 @@ model Deck {
   topics        Topic[]
   cards         Card[]
   studySessions StudySession[]
-  upvotes       Upvote[]
+  favorites     Favorite[]
 }
 
 model Topic {
@@ -144,7 +144,7 @@ model StudySessionAttempt {
   studySessionBoxCard   StudySessionBoxCard @relation(fields: [studySessionBoxCardId], references: [id], onDelete: Cascade)
 }
 
-model Upvote {
+model Favorite {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

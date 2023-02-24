@@ -94,6 +94,8 @@ const ProfileSettingsPage: WithAuthentication<
     },
     onSuccess: () => {
       apiContext.user.getUser.invalidate()
+      apiContext.decks.forYou.invalidate()
+
       notify.success('Perfil atualizado com sucesso!')
       router.push(routes.userProfile(user!.id))
     },
@@ -206,7 +208,7 @@ const ProfileSettingsPage: WithAuthentication<
             {renderDisabledEmailInputWithTooltip(String(user.email))}
           </div>
           <TextArea
-            label='Descrição'
+            label='Descrição do Perfil'
             id='description'
             {...register('description')}
             error={formState.errors['description']?.message as string}
