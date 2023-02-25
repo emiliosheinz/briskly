@@ -108,10 +108,6 @@ const DeckDetailsPage: NextPage<
     )
   }
 
-  const renderCurrentStudySessionCard = () => {
-    return <StudySessionCard deckId={deck.id} />
-  }
-
   return (
     <>
       <Head>
@@ -141,7 +137,7 @@ const DeckDetailsPage: NextPage<
             {renderTopics()}
           </div>
         </div>
-        {renderCurrentStudySessionCard()}
+        <StudySessionCard deckId={deck.id} />
         <h2 className='text-xl font-medium text-primary-900'>Cards:</h2>
         <ul className='flex w-full flex-wrap gap-5'>
           {deck.cards.map(card => (

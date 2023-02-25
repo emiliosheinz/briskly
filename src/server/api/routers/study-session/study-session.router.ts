@@ -81,7 +81,7 @@ export const studySessionRouter = createTRPCRouter({
     .query(async ({ input: { deckId }, ctx }) => {
       if (!ctx.session?.user) return null
 
-      const studySessionBoxes = await ctx.prisma.studySessionBox.findMany({
+      const findNextReviewBox = ctx.prisma.studySessionBox.findFirst({
         where: {
           studySession: {
             deckId,
@@ -95,22 +95,42 @@ export const studySessionRouter = createTRPCRouter({
           {
             nextReview: 'asc',
           },
+        ],
+        select: {
+          nextReview: true,
+        },
+      })
+
+      const findLastReviewBox = ctx.prisma.studySessionBox.findFirst({
+        where: {
+          studySession: {
+            deckId,
+            userId: ctx.session.user.id,
+          },
+          lastReview: {
+            not: null,
+          },
+        },
+        orderBy: [
           {
             lastReview: 'desc',
           },
         ],
         select: {
           lastReview: true,
-          nextReview: true,
         },
       })
 
-      if (studySessionBoxes.length === 0) return null
+      const [nextReviewBox, lastReviewBox] = await ctx.prisma.$transaction([
+        findNextReviewBox,
+        findLastReviewBox,
+      ])
+
+      if (!nextReviewBox) return null
 
       return {
-        nextReviewDate: studySessionBoxes[0]?.nextReview,
-        lastReviewDate: studySessionBoxes.find(box => !!box.lastReview)
-          ?.lastReview,
+        nextReviewDate: nextReviewBox.nextReview,
+        lastReviewDate: lastReviewBox?.lastReview,
       }
     }),
   getReviewSession: protectedProcedure
