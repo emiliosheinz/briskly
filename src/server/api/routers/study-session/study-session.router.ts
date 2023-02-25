@@ -1,15 +1,15 @@
 import { Visibility } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { compareTwoStrings } from 'string-similarity'
 import { z } from 'zod'
 
-import { STUDY_SESSION_BOXES } from '~/constants'
+import { MINIMUM_ACCEPTED_SIMILARITY, STUDY_SESSION_BOXES } from '~/constants'
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc'
 import { addHours, differenceInHours } from '~/utils/date-time'
+import { verifyStringsSimilarity } from '~/utils/openai'
 
 export const studySessionRouter = createTRPCRouter({
   create: protectedProcedure
@@ -138,7 +138,7 @@ export const studySessionRouter = createTRPCRouter({
     .query(async ({ input: { deckId }, ctx }) => {
       const now = new Date()
 
-      const currentStudySession = await ctx.prisma.studySession.findFirst({
+      const findCurrentStudySession = ctx.prisma.studySession.findFirst({
         where: { deckId, userId: ctx.session.user.id },
         include: {
           deck: {
@@ -158,7 +158,6 @@ export const studySessionRouter = createTRPCRouter({
             },
             select: {
               id: true,
-              lastReview: true,
               createdAt: true,
               studySessionBoxCards: {
                 select: {
@@ -177,6 +176,32 @@ export const studySessionRouter = createTRPCRouter({
         },
       })
 
+      const findLastReviewBox = ctx.prisma.studySessionBox.findFirst({
+        where: {
+          studySession: {
+            deckId,
+            userId: ctx.session.user.id,
+          },
+          lastReview: {
+            not: null,
+          },
+        },
+        orderBy: [
+          {
+            lastReview: 'desc',
+          },
+        ],
+        select: {
+          lastReview: true,
+        },
+      })
+
+      const [currentStudySession, lastReviewBox] =
+        await ctx.prisma.$transaction([
+          findCurrentStudySession,
+          findLastReviewBox,
+        ])
+
       if (!currentStudySession) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -184,11 +209,13 @@ export const studySessionRouter = createTRPCRouter({
         })
       }
 
+      const lastReview = lastReviewBox?.lastReview
+
       return {
         deck: currentStudySession.deck,
         studySessionId: currentStudySession.id,
         studySessionBoxes: currentStudySession.studySessionBoxes.map(
-          ({ studySessionBoxCards, id, lastReview }) => ({
+          ({ studySessionBoxCards, id }) => ({
             id,
             cards: studySessionBoxCards
               .filter(boxCard => {
@@ -272,7 +299,8 @@ export const studySessionRouter = createTRPCRouter({
         return { isRight: false, answer: card.answer }
       }
 
-      const isAnswerRight = compareTwoStrings(answer, card.answer) > 0.8
+      const similarity = await verifyStringsSimilarity(card.answer, answer)
+      const isAnswerRight = similarity > MINIMUM_ACCEPTED_SIMILARITY
 
       let updateBoxCard
       const addNewAttempt = ctx.prisma.studySessionAttempt.create({

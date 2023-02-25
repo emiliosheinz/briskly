@@ -31,6 +31,7 @@ export const serverSchema = z.object({
   AWS_S3_SECRET_ACCESS_KEY: z.string(),
   AWS_S3_BUCKET: z.string(),
   AWS_CLOUD_FRONT_URL: z.string().url(),
+  OPENAI_API_KEY: z.string(),
 })
 
 /**
