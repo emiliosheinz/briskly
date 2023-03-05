@@ -62,7 +62,7 @@ export async function generateFlashCards({
   const joinedTopics = topics.map(({ title }) => title).join(', ')
 
   /** Build prompt asking OpenAI to generate a csv string */
-  const prompt = `Gere um csv com ${amountOfCards} perguntas e respostas curtas sobre: ${joinedTopics}.`
+  const prompt = `Gere um csv com ${amountOfCards} perguntas e respostas curtas sobre: ${joinedTopics}. Siga a seguinte estrutura CSV: pergunta;resposta`
 
   const response = await openai.createCompletion({
     n: 1,
@@ -79,9 +79,8 @@ export async function generateFlashCards({
   }
 
   /** Get CSV lines and remove first line which is the CSV header */
-  const separator = ','
-  const lines = generatedText.split('\n').filter(Boolean)
-  const questionsAndAnswers = lines.slice(1, lines.length)
+  const separator = ';'
+  const questionsAndAnswers = generatedText.split('\n').filter(Boolean)
 
   const cards: Array<CardInput> = questionsAndAnswers.map(content => {
     const [question = '', answer = ''] = content.split(separator)
