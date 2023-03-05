@@ -22,7 +22,8 @@ const createEmbedding = (str: string) =>
     input: str.replace('\n', ' '),
   })
 
-const trimAndRemoveDoubleQuotes = (str: string) => str.trim().replace('"', '')
+const trimAndRemoveDoubleQuotes = (str: string) =>
+  str.trim().replace(/^"(.+(?="$))"$/, '$1')
 
 /**
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
