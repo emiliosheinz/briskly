@@ -39,6 +39,8 @@ export type CreateNewDeckContextProviderProps = {
   deck?: DeckWithCardsAndTopics | null
 }
 
+export type GenerateAiPoweredCardsParams = { topics: Array<TopicInput> }
+
 export type CreateNewDeckContextState = {
   createNewDeckForm?: UseFormReturn<FormInputValues>
   submitDeck: (values: FormInputValues) => Promise<void>
@@ -55,6 +57,10 @@ export type CreateNewDeckContextState = {
   visibilityOptions: Array<Option<Visibility>>
   visibility?: Option<Visibility>
   setVisibility: Dispatch<SetStateAction<Option<Visibility> | undefined>>
+
+  generateAiPoweredCards: (params: GenerateAiPoweredCardsParams) => void
+  isGeneratingAiPoweredCards: boolean
+  hasErrorGeneratingAiPoweredCards: boolean
 }
 
 export const initialState: CreateNewDeckContextState = {
@@ -72,4 +78,8 @@ export const initialState: CreateNewDeckContextState = {
   visibilityOptions: DECK_VISIBILITY_OPTIONS,
   visibility: DECK_VISIBILITY_OPTIONS[0],
   setVisibility: noop,
+
+  generateAiPoweredCards: noop,
+  isGeneratingAiPoweredCards: false,
+  hasErrorGeneratingAiPoweredCards: false,
 }

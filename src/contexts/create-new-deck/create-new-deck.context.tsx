@@ -19,6 +19,7 @@ import type {
   CreateNewDeckContextState,
   DeckWithCardsAndTopics,
   FormInputValues,
+  GenerateAiPoweredCardsParams,
   TopicInput,
 } from './create-new-deck.types'
 import { DeckInputFormSchema } from './create-new-deck.types'
@@ -73,6 +74,20 @@ export function CreateNewDeckContextProvider(
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
 
+  const {
+    mutate: generateAiPoweredCardsMutation,
+    isLoading: isGeneratingAiPoweredCards,
+    isError: hasErrorGeneratingAiPoweredCards,
+  } = api.cards.generateAiPoweredCards.useMutation({
+    onSuccess: aiPoweredCards => {
+      setCards(prevCards => [...prevCards, ...aiPoweredCards])
+      notify.success('Bip Bop, cards gerados com sucesso. Aproveite 🤖')
+    },
+    onError: () => {
+      notify.error('Ocorreu um erro ao gerar os cards. Tente novamente!')
+    },
+  })
+
   /**
    * Shared states between creation and edit
    */
@@ -92,6 +107,8 @@ export function CreateNewDeckContextProvider(
   const [deletedTopics, setDeletedTopics] = useState<Array<TopicInput>>([])
   const [deletedCards, setDeletedCards] = useState<Array<CardInput>>([])
   const [editedCards, setEditedCards] = useState<Array<CardInput>>([])
+
+  const hasDeckAiPoweredCards = cards.some(card => card.isAiPowered)
 
   const createNewDeckForm = useForm<FormInputValues>({
     resolver: zodResolver(DeckInputFormSchema),
@@ -246,6 +263,26 @@ export function CreateNewDeckContextProvider(
       }
     }
 
+  const generateAiPoweredCards = (params: GenerateAiPoweredCardsParams) => {
+    const { topics } = params
+
+    if (isGeneratingAiPoweredCards) return
+
+    if (topics.length === 0) {
+      notify.warning(
+        'Você precisa cadastrar ao menos 1 tópico para gerar Cards de forma automática',
+      )
+      return
+    }
+
+    if (hasDeckAiPoweredCards) {
+      notify.error('Este Deck já possui Cards gerados por uma IA')
+      return
+    }
+
+    generateAiPoweredCardsMutation({ topics })
+  }
+
   /**
    * If isEditingDeck uses update function (currying) else uses the creation function
    */
@@ -270,6 +307,10 @@ export function CreateNewDeckContextProvider(
 
     visibility,
     setVisibility,
+
+    generateAiPoweredCards,
+    isGeneratingAiPoweredCards,
+    hasErrorGeneratingAiPoweredCards,
   }
 
   return (

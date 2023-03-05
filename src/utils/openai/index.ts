@@ -4,10 +4,11 @@
 import calculateSimilarity from 'compute-cosine-similarity'
 import { Configuration, OpenAIApi } from 'openai'
 
-import type { TopicInput } from '~/contexts/create-new-deck/create-new-deck.types'
+import type {
+  CardInput,
+  TopicInput,
+} from '~/contexts/create-new-deck/create-new-deck.types'
 import { env } from '~/env/server.mjs'
-
-import { sanitize } from '../string'
 
 const configuration = new Configuration({
   apiKey: env.OPENAI_API_KEY,
@@ -20,6 +21,8 @@ const createEmbedding = (str: string) =>
     model: 'text-embedding-ada-002',
     input: str.replace('\n', ' '),
   })
+
+const trimAndRemoveDoubleQuotes = (str: string) => str.trim().replace('"', '')
 
 /**
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
@@ -47,7 +50,9 @@ type GenerateFlashCardsParam = {
   topics: Array<TopicInput>
 }
 
-export async function generateFlashCards({ topics }: GenerateFlashCardsParam) {
+export async function generateFlashCards({
+  topics,
+}: GenerateFlashCardsParam): Promise<Array<CardInput>> {
   /** Created to possibly use as params in the future */
   const amountOfCards = 3
   const tokensPerCard = 40
@@ -77,12 +82,13 @@ export async function generateFlashCards({ topics }: GenerateFlashCardsParam) {
   const lines = generatedText.split('\n').filter(Boolean)
   const questionsAndAnswers = lines.slice(1, lines.length)
 
-  const cards = questionsAndAnswers.map(content => {
+  const cards: Array<CardInput> = questionsAndAnswers.map(content => {
     const [question = '', answer = ''] = content.split(separator)
 
     return {
-      question: sanitize(question),
-      answer: sanitize(answer),
+      question: trimAndRemoveDoubleQuotes(question),
+      answer: trimAndRemoveDoubleQuotes(answer),
+      isAiPowered: true,
     }
   })
 

@@ -32,7 +32,11 @@ function _Tooltip(props: TooltipProps) {
   return (
     <>
       {renderTooltipTrigger()}
-      <ReactTooltip anchorId={tooltipId} className='max-w-xs' variant='dark'>
+      <ReactTooltip
+        anchorId={tooltipId}
+        className='z-50 max-w-xs'
+        variant='dark'
+      >
         <p className='text-left text-xs text-primary-50'>{hint}</p>
       </ReactTooltip>
     </>

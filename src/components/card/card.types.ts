@@ -8,4 +8,5 @@ export type CardProps = {
   onClick?: () => void
   as?: ReactTag
   fullWidth?: boolean
+  isAiPowered?: boolean
 }

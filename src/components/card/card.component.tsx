@@ -4,17 +4,19 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 import { classNames } from '~/utils/css'
 
+import { Tooltip } from '../tooltip'
 import type { CardProps } from './card.types'
 
 export function _Card(props: CardProps) {
   const {
-    children,
-    isEditable,
-    onDeletePress,
-    onEditPress,
-    onClick,
     as,
+    onClick,
+    children,
     fullWidth,
+    isEditable,
+    isAiPowered,
+    onEditPress,
+    onDeletePress,
   } = props
 
   const renderEditButtons = () => {
@@ -32,6 +34,18 @@ export function _Card(props: CardProps) {
     )
   }
 
+  const renderAiPoweredTag = () => {
+    if (!isAiPowered) return null
+
+    return (
+      <Tooltip hint='Este card foi gerado por uma Inteligência Artificial'>
+        <span className='absolute right-0 bottom-0 p-2 text-lg hover:cursor-pointer'>
+          🤖
+        </span>
+      </Tooltip>
+    )
+  }
+
   const Container = as || 'div'
 
   return (
@@ -45,6 +59,7 @@ export function _Card(props: CardProps) {
     >
       {children}
       {renderEditButtons()}
+      {renderAiPoweredTag()}
     </Container>
   )
 }

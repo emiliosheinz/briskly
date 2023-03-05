@@ -6,7 +6,7 @@ import { generateFlashCards } from '~/utils/openai'
 import { TopicInputSchema } from '~/utils/validators/topic'
 
 export const cardsRouter = createTRPCRouter({
-  generateCards: protectedProcedure
+  generateAiPoweredCards: protectedProcedure
     .input(
       z.object({
         topics: z
