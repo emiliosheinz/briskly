@@ -56,7 +56,7 @@ export async function generateFlashCards({
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
   /** Created to possibly use as params in the future */
   const amountOfCards = 3
-  const tokensPerCard = 40
+  const tokensPerCard = 50
 
   /** Build topics strings */
   const joinedTopics = topics.map(({ title }) => title).join(', ')
