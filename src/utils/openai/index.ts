@@ -23,7 +23,7 @@ const createEmbedding = (str: string) =>
   })
 
 const trimAndRemoveDoubleQuotes = (str: string) =>
-  str.trim().replace(/^"(.+(?="$))"$/, '$1')
+  str.trim().replaceAll('"', '')
 
 /**
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
@@ -49,27 +49,32 @@ export async function verifyStringsSimilarity(str1: string, str2: string) {
 
 type GenerateFlashCardsParam = {
   topics: Array<TopicInput>
+  title: string
 }
 
 export async function generateFlashCards({
   topics,
+  title,
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
-  /** Created to possibly use as params in the future */
   const amountOfCards = 3
-  const tokensPerCard = 40
+  const charactersPerSentence = 65
 
   /** Build topics strings */
   const joinedTopics = topics.map(({ title }) => title).join(', ')
 
   /** Build prompt asking OpenAI to generate a csv string */
-  const prompt = `Gere um csv com ${amountOfCards} perguntas e respostas curtas sobre: ${joinedTopics}. Siga a seguinte estrutura CSV: pergunta;resposta`
+  const prompt = `Levando em conta o contexto ${title}, gere ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. Siga a seguinte estrutura como output: "pergunta";"resposta"`
 
   const response = await openai.createCompletion({
     n: 1,
     prompt,
     temperature: 0.8,
     model: 'text-davinci-003',
-    max_tokens: amountOfCards * tokensPerCard,
+    /**
+     * For some reason when trying to correctly calculate the amount of tokens
+     * the API returns some strange results.
+     */
+    max_tokens: amountOfCards * charactersPerSentence,
   })
 
   const generatedText = response.data.choices[0]?.text

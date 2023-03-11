@@ -28,12 +28,9 @@ export const DeckInputSchema = z.object({
       invalid_type_error: 'Imagem do Deck inválida',
     })
     .min(1, { message: 'A imagem do Deck é obrigatória' }),
-  topics: z
-    .array(TopicInputSchema)
-    .max(MAX_TOPICS_PER_DECK_AND_USER, {
-      message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK_AND_USER}`,
-    })
-    .optional(),
+  topics: z.array(TopicInputSchema).max(MAX_TOPICS_PER_DECK_AND_USER, {
+    message: `O número máximo de tópicos por Deck é ${MAX_TOPICS_PER_DECK_AND_USER}`,
+  }),
   cards: z
     .array(CardInputSchema)
     .min(1, { message: 'Um deck deve ter ao menos 1 Card' }),

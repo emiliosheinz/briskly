@@ -19,7 +19,6 @@ import type {
   CreateNewDeckContextState,
   DeckWithCardsAndTopics,
   FormInputValues,
-  GenerateAiPoweredCardsParams,
   TopicInput,
 } from './create-new-deck.types'
 import { DeckInputFormSchema } from './create-new-deck.types'
@@ -263,14 +262,14 @@ export function CreateNewDeckContextProvider(
       }
     }
 
-  const generateAiPoweredCards = (params: GenerateAiPoweredCardsParams) => {
-    const { topics } = params
-
+  const generateAiPoweredCards = () => {
     if (isGeneratingAiPoweredCards) return
 
-    if (topics.length === 0) {
+    const { title } = createNewDeckForm.getValues()
+
+    if (topics.length === 0 || !title) {
       notify.warning(
-        'Você precisa cadastrar ao menos 1 tópico para gerar Cards de forma automática',
+        'Você precisa cadastrar ao menos 1 tópico e um título para gerar Cards de forma automática',
       )
       return
     }
@@ -280,7 +279,7 @@ export function CreateNewDeckContextProvider(
       return
     }
 
-    generateAiPoweredCardsMutation({ topics })
+    generateAiPoweredCardsMutation({ topics, title })
   }
 
   /**

@@ -20,7 +20,6 @@ export const Cards = () => {
     addCard,
     deleteCard,
     editCard,
-    topics,
     generateAiPoweredCards,
     isGeneratingAiPoweredCards,
     hasErrorGeneratingAiPoweredCards,
@@ -65,7 +64,7 @@ export const Cards = () => {
     )
 
     return (
-      <Card onClick={() => generateAiPoweredCards({ topics })}>
+      <Card onClick={generateAiPoweredCards}>
         {hasErrorGeneratingAiPoweredCards ? errorContent : successContent}
         <div className='absolute right-0 top-0 p-3'>
           <Tooltip
