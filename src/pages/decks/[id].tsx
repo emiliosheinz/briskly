@@ -32,7 +32,7 @@ async function getDeckFromDatabase(deckId: string) {
   return await prisma.deck.findFirst({
     where: { id: deckId },
     include: {
-      cards: { select: { id: true, question: true } },
+      cards: { select: { id: true, question: true, isAiPowered: true } },
       topics: true,
     },
   })
@@ -108,10 +108,6 @@ const DeckDetailsPage: NextPage<
     )
   }
 
-  const renderCurrentStudySessionCard = () => {
-    return <StudySessionCard deckId={deck.id} />
-  }
-
   return (
     <>
       <Head>
@@ -141,11 +137,11 @@ const DeckDetailsPage: NextPage<
             {renderTopics()}
           </div>
         </div>
-        {renderCurrentStudySessionCard()}
+        <StudySessionCard deckId={deck.id} />
         <h2 className='text-xl font-medium text-primary-900'>Cards:</h2>
         <ul className='flex w-full flex-wrap gap-5'>
           {deck.cards.map(card => (
-            <Card as='li' key={card.id}>
+            <Card as='li' key={card.id} isAiPowered={card.isAiPowered}>
               {card.question}
             </Card>
           ))}

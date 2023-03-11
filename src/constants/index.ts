@@ -2,6 +2,7 @@ import { Visibility } from '@prisma/client'
 
 import type { Option } from '~/components/radio-group'
 
+export const MINIMUM_ACCEPTED_SIMILARITY = 0.9
 export const MAX_TOPICS_PER_DECK_AND_USER = 5
 export const ITEMS_PER_PAGE = 30
 

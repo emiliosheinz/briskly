@@ -75,7 +75,9 @@ export function useDeckReview(deckId: string) {
   }, [cardAnswerStage, answerResult])
 
   useEffect(() => {
-    if (isLastCard && cardAnswerStage === 'validation' && studySessionId) {
+    const isLastCardValidation = isLastCard && cardAnswerStage === 'validation'
+
+    if (isLastCardValidation && studySessionId) {
       finishReviewSession({
         studySessionId,
         reviewedBoxIds: studySessionBoxes?.map(({ id }) => id) ?? [],
