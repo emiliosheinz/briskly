@@ -59,7 +59,7 @@ export const Cards = () => {
     )
 
     const errorContent = (
-      <span className='text-4xl'>
+      <span className='text-lg text-error-700'>
         Houve um erro ao gerar os Cards. Clique aqui para tentar novamente!
       </span>
     )
