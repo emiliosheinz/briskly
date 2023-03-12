@@ -17,13 +17,18 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 const createEmbedding = (str: string) =>
-  openai.createEmbedding({
-    model: 'text-embedding-ada-002',
-    input: str.replace('\n', ' '),
-  })
+  openai.createEmbedding(
+    {
+      model: 'text-embedding-ada-002',
+      input: str.replace('\n', ' '),
+    },
+    {
+      timeout: 15_000,
+    },
+  )
 
 const trimAndRemoveDoubleQuotes = (str: string) =>
-  str.trim().replace(/^"(.+(?="$))"$/, '$1')
+  str.trim().replaceAll('"', '')
 
 /**
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
@@ -49,48 +54,48 @@ export async function verifyStringsSimilarity(str1: string, str2: string) {
 
 type GenerateFlashCardsParam = {
   topics: Array<TopicInput>
+  title: string
 }
 
 export async function generateFlashCards({
   topics,
+  title,
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
-  /** Created to possibly use as params in the future */
   const amountOfCards = 3
-  const tokensPerCard = 40
+  const charactersPerSentence = 65
 
   /** Build topics strings */
   const joinedTopics = topics.map(({ title }) => title).join(', ')
 
   /** Build prompt asking OpenAI to generate a csv string */
-  const prompt = `Gere um csv com ${amountOfCards} perguntas e respostas curtas sobre: ${joinedTopics}. Siga a seguinte estrutura CSV: pergunta;resposta`
+  const prompt = `Levando em conta o contexto ${title}, gere um Array JSON com ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
 
-  const response = await openai.createCompletion({
-    n: 1,
-    prompt,
-    temperature: 0.8,
-    model: 'text-davinci-003',
-    max_tokens: amountOfCards * tokensPerCard,
-  })
+  const response = await openai.createChatCompletion(
+    {
+      n: 1,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.8,
+      model: 'gpt-3.5-turbo',
+      max_tokens: amountOfCards * charactersPerSentence,
+    },
+    { timeout: 15_000 },
+  )
 
-  const generatedText = response.data.choices[0]?.text
+  const generatedJsonString = response.data.choices[0]?.message?.content
 
-  if (!generatedText) {
-    throw new Error('Could not generate questions and answers')
+  if (!generatedJsonString) {
+    throw new Error('Não foi possível gerar as perguntas e respostas.')
   }
 
-  /** Get CSV lines and remove first line which is the CSV header */
-  const separator = ';'
-  const questionsAndAnswers = generatedText.split('\n').filter(Boolean)
+  const generatedJson = JSON.parse(generatedJsonString)
 
-  const cards: Array<CardInput> = questionsAndAnswers.map(content => {
-    const [question = '', answer = ''] = content.split(separator)
-
-    return {
+  const cards: Array<CardInput> = generatedJson.map(
+    ({ question, answer }: { question: string; answer: string }) => ({
       question: trimAndRemoveDoubleQuotes(question),
       answer: trimAndRemoveDoubleQuotes(answer),
       isAiPowered: true,
-    }
-  })
+    }),
+  )
 
   return cards
 }
