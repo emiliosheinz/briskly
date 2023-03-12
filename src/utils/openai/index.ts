@@ -85,7 +85,6 @@ export async function generateFlashCards({
     { timeout: 15_000 },
   )
 
-  console.log(response.data.choices[0]?.message?.content)
   const generatedJson = JSON.parse(
     response.data.choices[0]?.message?.content ?? '[]',
   )
