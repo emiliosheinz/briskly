@@ -61,41 +61,49 @@ export async function generateFlashCards({
   topics,
   title,
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
-  const amountOfCards = 3
-  const charactersPerSentence = 65
+  try {
+    const amountOfCards = 3
+    const charactersPerSentence = 65
 
-  /** Build topics strings */
-  const joinedTopics = topics.map(({ title }) => title).join(', ')
+    /** Build topics strings */
+    const joinedTopics = topics.map(({ title }) => title).join(', ')
 
-  /** Build prompt asking OpenAI to generate a csv string */
-  const prompt = `Levando em conta o contexto ${title}, gere um Array JSON com ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
+    /** Build prompt asking OpenAI to generate a csv string */
+    const prompt = `Levando em conta o contexto ${title}, gere um Array JSON com ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
 
-  const response = await openai.createChatCompletion(
-    {
-      n: 1,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.8,
-      model: 'gpt-3.5-turbo',
-      max_tokens: amountOfCards * charactersPerSentence,
-    },
-    { timeout: 15_000 },
-  )
+    const response = await openai.createChatCompletion(
+      {
+        n: 1,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8,
+        model: 'gpt-3.5-turbo',
+        max_tokens: amountOfCards * charactersPerSentence,
+      },
+      { timeout: 15_000 },
+    )
 
-  const generatedJsonString = response.data.choices[0]?.message?.content
+    const generatedJsonString = response.data.choices[0]?.message?.content
 
-  if (!generatedJsonString) {
-    throw new Error('Não foi possível gerar as perguntas e respostas.')
+    if (!generatedJsonString) {
+      throw new Error('Não foi possível gerar as perguntas e respostas.')
+    }
+
+    const generatedJson = JSON.parse(generatedJsonString)
+
+    const cards: Array<CardInput> = generatedJson.map(
+      ({ question, answer }: { question: string; answer: string }) => ({
+        question: trimAndRemoveDoubleQuotes(question),
+        answer: trimAndRemoveDoubleQuotes(answer),
+        isAiPowered: true,
+      }),
+    )
+
+    return cards
+  } catch (error) {
+    /**
+     * Added to improve error tracking on log monitoring tools
+     */
+    console.error(error)
+    throw error
   }
-
-  const generatedJson = JSON.parse(generatedJsonString)
-
-  const cards: Array<CardInput> = generatedJson.map(
-    ({ question, answer }: { question: string; answer: string }) => ({
-      question: trimAndRemoveDoubleQuotes(question),
-      answer: trimAndRemoveDoubleQuotes(answer),
-      isAiPowered: true,
-    }),
-  )
-
-  return cards
 }
