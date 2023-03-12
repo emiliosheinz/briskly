@@ -68,7 +68,7 @@ export const Cards = () => {
         {hasErrorGeneratingAiPoweredCards ? errorContent : successContent}
         <div className='absolute right-0 top-0 p-3'>
           <Tooltip
-            hint={`Além de criar seus próprios Flashcards manualmente você pode deixar que a nossa Inteligência Artificial os gere para você se baseando nos tópicos previamente cadastrados acima. Lembre-se, a quantidade de Cards criados pode variar de acordo com o tamanho das perguntas e respostas geradas mas deve girar em torno de 3.`}
+            hint={`Além de criar seus próprios Flashcards manualmente você pode deixar que a nossa Inteligência Artificial os gere para você se baseando nos tópicos e título previamente cadastrados acima. Caso ocorra um erro ao gerar os Cards, você pode apenas tentar novamente!`}
           />
         </div>
       </Card>

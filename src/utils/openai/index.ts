@@ -23,7 +23,7 @@ const createEmbedding = (str: string) =>
       input: str.replace('\n', ' '),
     },
     {
-      timeout: 10_000,
+      timeout: 15_000,
     },
   )
 
@@ -82,7 +82,7 @@ export async function generateFlashCards({
        */
       max_tokens: amountOfCards * charactersPerSentence,
     },
-    { timeout: 10_000 },
+    { timeout: 15_000 },
   )
 
   console.log(response.data.choices[0]?.message?.content)
