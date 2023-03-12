@@ -76,10 +76,6 @@ export async function generateFlashCards({
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.8,
       model: 'gpt-3.5-turbo',
-      /**
-       * For some reason when trying to correctly calculate the amount of tokens
-       * the API returns some strange results.
-       */
       max_tokens: amountOfCards * charactersPerSentence,
     },
     { timeout: 15_000 },
