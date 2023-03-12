@@ -85,9 +85,13 @@ export async function generateFlashCards({
     { timeout: 15_000 },
   )
 
-  const generatedJson = JSON.parse(
-    response.data.choices[0]?.message?.content ?? '[]',
-  )
+  const generatedJsonString = response.data.choices[0]?.message?.content
+
+  if (!generatedJsonString) {
+    throw new Error('Não foi possível gerar as perguntas e respostas.')
+  }
+
+  const generatedJson = JSON.parse(generatedJsonString)
 
   const cards: Array<CardInput> = generatedJson.map(
     ({ question, answer }: { question: string; answer: string }) => ({
