@@ -65,11 +65,11 @@ export async function generateFlashCards({
   /** Build prompt asking OpenAI to generate a csv string */
   const prompt = `Levando em conta o contexto ${title}, gere ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. Siga a seguinte estrutura como output: "pergunta";"resposta"`
 
-  const response = await openai.createCompletion({
+  const response = await openai.createChatCompletion({
     n: 1,
-    prompt,
+    messages: [{ role: 'user', content: prompt }],
     temperature: 0.8,
-    model: 'text-davinci-003',
+    model: 'gpt-3.5-turbo',
     /**
      * For some reason when trying to correctly calculate the amount of tokens
      * the API returns some strange results.
@@ -77,7 +77,7 @@ export async function generateFlashCards({
     max_tokens: amountOfCards * charactersPerSentence,
   })
 
-  const generatedText = response.data.choices[0]?.text
+  const generatedText = response.data.choices[0]?.message?.content
 
   if (!generatedText) {
     throw new Error('Could not generate questions and answers')
@@ -85,17 +85,24 @@ export async function generateFlashCards({
 
   /** Get CSV lines and remove first line which is the CSV header */
   const separator = ';'
-  const questionsAndAnswers = generatedText.split('\n').filter(Boolean)
+  const questionsAndAnswers = generatedText.split('\n')
 
-  const cards: Array<CardInput> = questionsAndAnswers.map(content => {
-    const [question = '', answer = ''] = content.split(separator)
+  const cards: Array<CardInput | null> = questionsAndAnswers.map(content => {
+    const data = content.split(separator)
+
+    const question = trimAndRemoveDoubleQuotes(data[0] ?? '')
+    const answer = trimAndRemoveDoubleQuotes(data[1] ?? '')
+
+    if (!question && !answer) {
+      return null
+    }
 
     return {
-      question: trimAndRemoveDoubleQuotes(question),
-      answer: trimAndRemoveDoubleQuotes(answer),
+      question,
+      answer,
       isAiPowered: true,
     }
   })
 
-  return cards
+  return cards.filter(Boolean) as Array<CardInput>
 }
