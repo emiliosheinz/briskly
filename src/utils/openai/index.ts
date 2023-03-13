@@ -61,6 +61,8 @@ export async function generateFlashCards({
   topics,
   title,
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
+  let generatedJsonString: string | undefined
+
   try {
     const amountOfCards = 3
     const charactersPerSentence = 65
@@ -82,7 +84,7 @@ export async function generateFlashCards({
       { timeout: 15_000 },
     )
 
-    const generatedJsonString = response.data.choices[0]?.message?.content
+    generatedJsonString = response.data.choices[0]?.message?.content
 
     if (!generatedJsonString) {
       throw new Error('Não foi possível gerar as perguntas e respostas.')
@@ -103,7 +105,7 @@ export async function generateFlashCards({
     /**
      * Added to improve error tracking on log monitoring tools
      */
-    console.error(error)
+    console.error(error, generatedJsonString)
     throw error
   }
 }
