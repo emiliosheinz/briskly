@@ -23,7 +23,7 @@ const createEmbedding = (str: string) =>
       input: str.replace('\n', ' '),
     },
     {
-      timeout: 15_000,
+      timeout: 10_000,
     },
   )
 
@@ -81,7 +81,7 @@ export async function generateFlashCards({
         model: 'gpt-3.5-turbo',
         max_tokens: amountOfCards * charactersPerSentence,
       },
-      { timeout: 15_000 },
+      { timeout: 30_000 },
     )
 
     generatedJsonString = response.data.choices[0]?.message?.content
