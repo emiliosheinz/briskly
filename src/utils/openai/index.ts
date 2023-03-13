@@ -68,10 +68,10 @@ export async function generateFlashCards({
     const charactersPerSentence = 65
 
     /** Build topics strings */
-    const joinedTopics = topics.map(({ title }) => title).join(', ')
+    const joinedTopics = topics.map(({ title }) => title).join(' ou ')
 
     /** Build prompt asking OpenAI to generate a csv string */
-    const prompt = `Levando em conta o contexto ${title}, gere um Array JSON com ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
+    const prompt = `Levando em conta o contexto ${title}, gere um Array JSON de tamanho ${amountOfCards} com perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
 
     const response = await openai.createChatCompletion(
       {
