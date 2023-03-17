@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form'
 
 import { Button } from '~/components/button'
 import { TextArea } from '~/components/text-area'
+import { api } from '~/utils/api'
 import { withoutPropagation } from '~/utils/forms'
+import { notify } from '~/utils/toast'
 
 import { BaseModal } from '../base/base-modal.component'
 import type { ReportAnswerValidationModalProps } from './report-answer-validation.types'
@@ -11,7 +13,10 @@ import type { ReportAnswerValidationModalProps } from './report-answer-validatio
 export function ReportAnswerValidationModal(
   props: ReportAnswerValidationModalProps,
 ) {
-  const { isOpen, setIsOpen, answer } = props
+  const { isOpen, setIsOpen, answer, cardId } = props
+
+  const { mutate: sendReport } =
+    api.answerValidationReports.reportAnswerValidation.useMutation()
 
   const { handleSubmit, reset, register } = useForm({
     defaultValues: useMemo(() => ({ answer }), [answer]),
@@ -27,8 +32,16 @@ export function ReportAnswerValidationModal(
   }
 
   const handleSubmitWithoutPropagation = withoutPropagation(
-    handleSubmit(() => {
+    handleSubmit(values => {
+      sendReport({
+        ...values,
+        cardId,
+      })
       close()
+
+      setTimeout(() => {
+        notify.success('Solicitação enviada com sucesso!')
+      }, 500)
     }),
   )
 

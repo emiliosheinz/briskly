@@ -239,6 +239,7 @@ const ReviewDeckPage: WithAuthentication<
         isOpen={isReportAnswerValidationModalOpen}
         setIsOpen={setIsReportAnswerValidationModalOpen}
         answer={userLastAnswer}
+        cardId={currentCard?.id ?? ''}
       />
     )
   }

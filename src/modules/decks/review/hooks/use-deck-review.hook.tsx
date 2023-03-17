@@ -103,11 +103,11 @@ export function useDeckReview(deckId: string) {
 
   const submitCardAnswer = async (params: { answer?: string }) => {
     try {
-      if (!currentCard?.id) throw new Error('Card not found')
+      if (!currentCard?.boxCardId) throw new Error('Card not found')
 
       setCardAnswerStage('loading')
       await answer({
-        boxCardId: currentCard.id,
+        boxCardId: currentCard.boxCardId,
         answer: params.answer,
       })
       setCardAnswerStage('answered')

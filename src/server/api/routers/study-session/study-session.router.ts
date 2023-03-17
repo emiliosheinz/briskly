@@ -163,7 +163,7 @@ export const studySessionRouter = createTRPCRouter({
                 select: {
                   id: true,
                   card: {
-                    select: { question: true },
+                    select: { question: true, id: true },
                   },
                   studySessionAttempts: {
                     orderBy: { createdAt: 'desc' },
@@ -223,7 +223,8 @@ export const studySessionRouter = createTRPCRouter({
                 return !lastAttempt || !lastReview || lastAttempt < lastReview
               })
               .map(boxCard => ({
-                id: boxCard.id,
+                id: boxCard.card.id,
+                boxCardId: boxCard.id,
                 question: boxCard.card.question,
               })),
           }),

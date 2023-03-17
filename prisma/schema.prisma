@@ -34,18 +34,19 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String?        @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  decks         Deck[]
-  studySessions StudySession[]
-  favorites     Favorite[]
-  description   String?
-  topics        Topic[]
+  id                      String                   @id @default(cuid())
+  name                    String?
+  email                   String?                  @unique
+  emailVerified           DateTime?
+  image                   String?
+  accounts                Account[]
+  sessions                Session[]
+  decks                   Deck[]
+  studySessions           StudySession[]
+  favorites               Favorite[]
+  description             String?
+  topics                  Topic[]
+  answerValidationReports AnswerValidationReport[]
 }
 
 model VerificationToken {
@@ -88,15 +89,27 @@ model Topic {
 }
 
 model Card {
-  id                   String                @id @default(cuid())
-  question             String
-  validAnswers         String[]
-  deckId               String
-  deck                 Deck                  @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @default(now()) @updatedAt
-  studySessionBoxCards StudySessionBoxCard[]
-  isAiPowered          Boolean               @default(false)
+  id                      String                   @id @default(cuid())
+  question                String
+  validAnswers            String[]
+  deckId                  String
+  deck                    Deck                     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @default(now()) @updatedAt
+  studySessionBoxCards    StudySessionBoxCard[]
+  isAiPowered             Boolean                  @default(false)
+  answerValidationReports AnswerValidationReport[]
+}
+
+model AnswerValidationReport {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model StudySession {
