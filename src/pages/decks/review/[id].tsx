@@ -1,3 +1,6 @@
+import { useState } from 'react'
+
+import { HandThumbDownIcon } from '@heroicons/react/24/outline'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
 import Head from 'next/head'
@@ -7,6 +10,7 @@ import { Button } from '~/components/button'
 import { Card } from '~/components/card'
 import { Feedback } from '~/components/feedback'
 import { Loader } from '~/components/loader'
+import { Modal } from '~/components/modal'
 import { TextArea } from '~/components/text-area'
 import { Tooltip } from '~/components/tooltip'
 import { useDeckReview } from '~/modules/decks/review/hooks/use-deck-review.hook'
@@ -34,6 +38,10 @@ const ReviewDeckPage: WithAuthentication<
   const { deckId } = props
 
   const router = useRouter()
+  const [
+    isReportAnswerValidationModalOpen,
+    setIsReportAnswerValidationModalOpen,
+  ] = useState(false)
 
   const {
     form,
@@ -52,6 +60,7 @@ const ReviewDeckPage: WithAuthentication<
 
   const isLoadingAnswer = cardAnswerStage === 'loading'
   const shouldDisableButtonsAndInputs = isLoadingAnswer || !!answerResult
+  const [userLastAnswer] = form.watch(['answer'])
 
   const okButton = {
     buttonLabel: 'Ok',
@@ -114,6 +123,20 @@ const ReviewDeckPage: WithAuthentication<
           Responder
         </Button>
       </>
+    )
+  }
+
+  const renderReportButton = () => {
+    if (answerResult?.isRight || !userLastAnswer) return null
+
+    return (
+      <button
+        className='absolute bottom-0 right-0 p-5'
+        type='button'
+        onClick={() => setIsReportAnswerValidationModalOpen(true)}
+      >
+        <HandThumbDownIcon className='h-8 w-8' />
+      </button>
     )
   }
 
@@ -188,6 +211,7 @@ const ReviewDeckPage: WithAuthentication<
                 <span className='text-base md:text-2xl'>
                   {answerResult?.answer || 'Resposta não foi encontrada'}
                 </span>
+                {renderReportButton()}
               </Card>
             </div>
           </div>
@@ -209,6 +233,16 @@ const ReviewDeckPage: WithAuthentication<
     )
   }
 
+  const renderModal = () => {
+    return (
+      <Modal.ReportAnswerValidation
+        isOpen={isReportAnswerValidationModalOpen}
+        setIsOpen={setIsReportAnswerValidationModalOpen}
+        answer={userLastAnswer}
+      />
+    )
+  }
+
   return (
     <>
       <Head>
@@ -218,6 +252,7 @@ const ReviewDeckPage: WithAuthentication<
       <div className='mx-auto flex w-full max-w-3xl justify-center'>
         {renderContent()}
       </div>
+      {renderModal()}
     </>
   )
 }
