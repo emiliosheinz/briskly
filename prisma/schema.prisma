@@ -90,7 +90,7 @@ model Topic {
 model Card {
   id                   String                @id @default(cuid())
   question             String
-  answer               String
+  validAnswers         String[]
   deckId               String
   deck                 Deck                  @relation(fields: [deckId], references: [id], onDelete: Cascade)
   createdAt            DateTime              @default(now())

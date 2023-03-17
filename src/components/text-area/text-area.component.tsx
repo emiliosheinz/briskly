@@ -2,11 +2,20 @@ import React from 'react'
 
 import { classNames } from '~/utils/css'
 
+import { Tooltip } from '../tooltip'
 import type { TextAreaProps } from './text-area.types'
 
 export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   function TextArea(props, ref) {
-    const { label, error, id, disabled, rows = 5, ...otherProps } = props
+    const {
+      label,
+      error,
+      id,
+      disabled,
+      rows = 5,
+      tooltip,
+      ...otherProps
+    } = props
 
     const errorClassNames = error
       ? 'border-error-700 focus:border-error-700 focus:ring-error-700'
@@ -17,12 +26,15 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         aria-disabled={disabled}
         className={classNames('w-full', disabled ? 'opacity-50' : '')}
       >
-        <label
-          htmlFor={id}
-          className='block text-sm font-medium capitalize text-primary-800'
-        >
-          {label}
-        </label>
+        <span className='flex'>
+          <label
+            htmlFor={id}
+            className='block text-sm font-medium capitalize text-primary-800'
+          >
+            {label}
+          </label>
+          {tooltip ? <Tooltip hint={tooltip} /> : null}
+        </span>
         <div className='mt-1 rounded-md shadow-sm'>
           <textarea
             id={id}
