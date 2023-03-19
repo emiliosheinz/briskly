@@ -1,3 +1,4 @@
+import { answerValidationReportsRouter } from './routers/answer-validation-reports'
 import { cardsRouter } from './routers/cards'
 import { decksRouter } from './routers/decks'
 import { filesRouter } from './routers/files'
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   studySession: studySessionRouter,
   user: userRouter,
   cards: cardsRouter,
+  answerValidationReports: answerValidationReportsRouter,
 })
 
 export type AppRouter = typeof appRouter

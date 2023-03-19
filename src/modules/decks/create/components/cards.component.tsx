@@ -32,7 +32,7 @@ export const Cards = () => {
   const isCreatingNewCard = newCardModalState.cardIdx === undefined
 
   const modalFieldsValues = isCreatingNewCard
-    ? { answer: '', question: '' }
+    ? { validAnswers: '', question: '' }
     : cards[newCardModalState.cardIdx!]
 
   const handleNewCardFormSubmit = (values: CardFormInputValues) => {
@@ -83,7 +83,7 @@ export const Cards = () => {
           <Card
             isEditable
             isAiPowered={card.isAiPowered}
-            key={`${card.question}-${card.answer}`}
+            key={`${card.question}-${card.validAnswers}`}
             onDeletePress={() => deleteCard(idx)}
             onEditPress={() => {
               setNewCardModalState({ isOpen: true, cardIdx: idx })

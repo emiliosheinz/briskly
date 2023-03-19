@@ -2,14 +2,14 @@ import { Visibility } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { MINIMUM_ACCEPTED_SIMILARITY, STUDY_SESSION_BOXES } from '~/constants'
+import { STUDY_SESSION_BOXES } from '~/constants'
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc'
 import { addHours, differenceInHours } from '~/utils/date-time'
-import { verifyStringsSimilarity } from '~/utils/openai'
+import { verifyIfAnswerIsRight } from '~/utils/openai'
 
 export const studySessionRouter = createTRPCRouter({
   create: protectedProcedure
@@ -163,7 +163,7 @@ export const studySessionRouter = createTRPCRouter({
                 select: {
                   id: true,
                   card: {
-                    select: { question: true },
+                    select: { question: true, id: true },
                   },
                   studySessionAttempts: {
                     orderBy: { createdAt: 'desc' },
@@ -223,7 +223,8 @@ export const studySessionRouter = createTRPCRouter({
                 return !lastAttempt || !lastReview || lastAttempt < lastReview
               })
               .map(boxCard => ({
-                id: boxCard.id,
+                id: boxCard.card.id,
+                boxCardId: boxCard.id,
                 question: boxCard.card.question,
               })),
           }),
@@ -296,11 +297,13 @@ export const studySessionRouter = createTRPCRouter({
           data: { studySessionBoxId: firstStudySessionBox.id },
         })
 
-        return { isRight: false, answer: card.answer }
+        return { isRight: false, answer: card.validAnswers.join('; ') }
       }
 
-      const similarity = await verifyStringsSimilarity(card.answer, answer)
-      const isAnswerRight = similarity > MINIMUM_ACCEPTED_SIMILARITY
+      const isAnswerRight = await verifyIfAnswerIsRight(
+        answer,
+        card.validAnswers,
+      )
 
       let updateBoxCard
       const addNewAttempt = ctx.prisma.studySessionAttempt.create({
@@ -341,7 +344,7 @@ export const studySessionRouter = createTRPCRouter({
 
       await Promise.all([addNewAttempt, updateBoxCard])
 
-      return { isRight: isAnswerRight, answer: card.answer }
+      return { isRight: isAnswerRight, answer: card.validAnswers.join('; ') }
     }),
   finishReviewSession: protectedProcedure
     .input(

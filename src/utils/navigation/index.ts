@@ -10,4 +10,5 @@ export const routes = {
   profileSettings: () => '/profile/settings',
   decksForYou: () => '/decks/for-you',
   favorites: () => '/decks/favorites',
+  answerValidationReports: (id: string) => `/decks/reports/${id}`,
 }

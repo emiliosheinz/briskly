@@ -52,8 +52,9 @@ export function NewCardModal(props: NewCardModalProps) {
         <TextArea
           id='answer'
           label='Resposta'
-          {...register('answer')}
-          error={formState.errors['answer']?.message as string}
+          {...register('validAnswers')}
+          error={formState.errors['validAnswers']?.message as string}
+          tooltip='Você pode adicionar mais de uma resposta válida separando-as por ponto e vírgula (;) sem nenhum tipo de espaço. Ex.: Resposta 1;Resposta 2;Resposta 3'
         />
         <div className='flex flex-row justify-end gap-5'>
           <Button type='button' variant='bad' onClick={close}>
