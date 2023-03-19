@@ -124,7 +124,7 @@ const ReviewDeckPage: WithAuthentication<
         <h1 className='mb-4 text-2xl font-bold text-primary-900'>
           Solicitações
         </h1>
-        <p className='mb-5 max-w-2xl'>
+        <p className='mb-5'>
           Aqui você pode visualizar todas as solicitações de revisão das
           respostas dos cards do seu Deck. Atenção: Ao aceitar uma solicitação
           ela passará a ser considerada como uma resposta correta para aquela
