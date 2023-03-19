@@ -28,7 +28,12 @@ export const decksRouter = createTRPCRouter({
               }
             }),
           },
-          cards: { create: cards },
+          cards: {
+            create: cards.map(card => ({
+              ...card,
+              validAnswers: card.validAnswers.split(';'),
+            })),
+          },
         },
       })
     }),
@@ -63,6 +68,7 @@ export const decksRouter = createTRPCRouter({
               delete: deletedCards?.map(({ id }) => ({ id })),
               create: newCards?.map(card => ({
                 ...card,
+                validAnswers: card.validAnswers.split(';'),
                 studySessionBoxCards: {
                   create: studySessionBoxes.map(box => ({
                     studySessionBoxId: box.id,
@@ -71,7 +77,10 @@ export const decksRouter = createTRPCRouter({
               })),
               update: editedCards?.map(({ id, ...card }) => ({
                 where: { id },
-                data: card,
+                data: {
+                  ...card,
+                  validAnswers: card.validAnswers.split(';'),
+                },
               })),
             },
             topics: {

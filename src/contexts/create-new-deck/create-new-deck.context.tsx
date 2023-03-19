@@ -92,7 +92,10 @@ export function CreateNewDeckContextProvider(
    */
   const [topics, setTopics] = useState<Array<TopicInput>>(deck?.topics || [])
   const [cards, setCards] = useState<Array<CardInput>>(
-    deck?.cards.map(card => card) || [],
+    (deck?.cards ?? []).map(card => ({
+      ...card,
+      validAnswers: card.validAnswers.join(';'),
+    })),
   )
   const [visibility, setVisibility] = useState(
     DECK_VISIBILITY_OPTIONS.find(option => option.value === deck?.visibility) ||

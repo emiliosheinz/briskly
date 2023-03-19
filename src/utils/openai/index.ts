@@ -4,6 +4,7 @@
 import calculateSimilarity from 'compute-cosine-similarity'
 import { Configuration, OpenAIApi } from 'openai'
 
+import { MINIMUM_ACCEPTED_SIMILARITY } from '~/constants'
 import type {
   CardInput,
   TopicInput,
@@ -23,7 +24,7 @@ const createEmbedding = (str: string) =>
       input: str.replace('\n', ' '),
     },
     {
-      timeout: 15_000,
+      timeout: 10_000,
     },
   )
 
@@ -34,22 +35,34 @@ const trimAndRemoveDoubleQuotes = (str: string) =>
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
  * Reference: https://platform.openai.com/docs/guides/embeddings/limitations-risks
  */
-export async function verifyStringsSimilarity(str1: string, str2: string) {
-  const [firstStringResponse, secondStringResponse] = await Promise.all([
-    createEmbedding(str1),
-    createEmbedding(str2),
+export async function verifyIfAnswerIsRight(
+  actualAnswer: string,
+  validAnswers: Array<string>,
+) {
+  const [embedActualAnswer, ...validAnswersEmbeddings] = await Promise.all([
+    createEmbedding(actualAnswer),
+    ...validAnswers.map(answer => createEmbedding(answer)),
   ])
 
-  const firstResult = firstStringResponse.data.data[0]?.embedding
-  const secondResult = secondStringResponse.data.data[0]?.embedding
+  const actualAnswerResult = embedActualAnswer.data.data[0]?.embedding
+  const validAnswersResults = validAnswersEmbeddings
+    .map(({ data }) => data.data[0]?.embedding)
+    .filter(Boolean)
 
-  if (!firstResult || !secondResult) {
+  if (!actualAnswerResult || validAnswersResults.length === 0) {
     throw new Error('Could not calculate similarity. No results where found.')
   }
 
-  const similarity = calculateSimilarity(firstResult, secondResult)
+  const isRight = validAnswersResults.some(validAnswerResult => {
+    const similarity = calculateSimilarity(
+      actualAnswerResult,
+      validAnswerResult || [],
+    )
 
-  return similarity
+    return similarity > MINIMUM_ACCEPTED_SIMILARITY
+  })
+
+  return isRight
 }
 
 type GenerateFlashCardsParam = {
@@ -61,41 +74,51 @@ export async function generateFlashCards({
   topics,
   title,
 }: GenerateFlashCardsParam): Promise<Array<CardInput>> {
-  const amountOfCards = 3
-  const charactersPerSentence = 65
+  let generatedJsonString: string | undefined
 
-  /** Build topics strings */
-  const joinedTopics = topics.map(({ title }) => title).join(', ')
+  try {
+    const amountOfCards = 3
+    const charactersPerSentence = 65
 
-  /** Build prompt asking OpenAI to generate a csv string */
-  const prompt = `Levando em conta o contexto ${title}, gere um Array JSON com ${amountOfCards} perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
+    /** Build topics strings */
+    const joinedTopics = topics.map(({ title }) => title).join(' ou ')
 
-  const response = await openai.createChatCompletion(
-    {
-      n: 1,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.8,
-      model: 'gpt-3.5-turbo',
-      max_tokens: amountOfCards * charactersPerSentence,
-    },
-    { timeout: 15_000 },
-  )
+    /** Build prompt asking OpenAI to generate a csv string */
+    const prompt = `Levando em conta o contexto ${title}, gere um Array JSON de tamanho ${amountOfCards} com perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
 
-  const generatedJsonString = response.data.choices[0]?.message?.content
+    const response = await openai.createChatCompletion(
+      {
+        n: 1,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8,
+        model: 'gpt-3.5-turbo',
+        max_tokens: amountOfCards * charactersPerSentence,
+      },
+      { timeout: 30_000 },
+    )
 
-  if (!generatedJsonString) {
-    throw new Error('Não foi possível gerar as perguntas e respostas.')
+    generatedJsonString = response.data.choices[0]?.message?.content
+
+    if (!generatedJsonString) {
+      throw new Error('Não foi possível gerar as perguntas e respostas.')
+    }
+
+    const generatedJson = JSON.parse(generatedJsonString)
+
+    const cards: Array<CardInput> = generatedJson.map(
+      ({ question, answer }: { question: string; answer: string }) => ({
+        question: trimAndRemoveDoubleQuotes(question),
+        validAnswers: trimAndRemoveDoubleQuotes(answer),
+        isAiPowered: true,
+      }),
+    )
+
+    return cards
+  } catch (error) {
+    /**
+     * Added to improve error tracking on log monitoring tools
+     */
+    console.error(error, generatedJsonString)
+    throw error
   }
-
-  const generatedJson = JSON.parse(generatedJsonString)
-
-  const cards: Array<CardInput> = generatedJson.map(
-    ({ question, answer }: { question: string; answer: string }) => ({
-      question: trimAndRemoveDoubleQuotes(question),
-      answer: trimAndRemoveDoubleQuotes(answer),
-      isAiPowered: true,
-    }),
-  )
-
-  return cards
 }

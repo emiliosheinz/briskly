@@ -20,11 +20,13 @@ module.exports = {
         700: '#B91C1C',
         500: '#ef4444',
         300: '#FCA5A5',
+        100: '#fee2e2',
         50: '#fef2f2',
       },
       success: {
         700: '#15803D',
         300: '#86EFAC',
+        100: '#dcfce7',
       },
       warning: {
         500: '#EAB308',

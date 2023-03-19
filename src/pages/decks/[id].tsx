@@ -3,11 +3,13 @@ import { Fragment } from 'react'
 import { Visibility } from '@prisma/client'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
+import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
 import { Card } from '~/components/card'
 import { Image } from '~/components/image'
+import { AnswerValidationReportsCard } from '~/modules/decks/components/answer-validation-report-card.component'
 import { getServerAuthSession } from '~/server/common/auth'
 import { prisma } from '~/server/common/db'
 import { getS3ImageUrl } from '~/server/common/s3'
@@ -91,6 +93,8 @@ const DeckDetailsPage: NextPage<
 > = props => {
   const { deck } = props
 
+  const { data: session } = useSession()
+
   const renderTopics = () => {
     if (deck.topics.length === 0) return null
 
@@ -106,6 +110,14 @@ const DeckDetailsPage: NextPage<
         </ul>
       </>
     )
+  }
+
+  const renderAnswerValidationReportsCard = () => {
+    const isUserDeckOwner = session?.user?.id === deck.ownerId
+
+    if (!isUserDeckOwner) return null
+
+    return <AnswerValidationReportsCard deckId={deck.id} />
   }
 
   return (
@@ -139,6 +151,7 @@ const DeckDetailsPage: NextPage<
         </div>
         <StudySessionCard deckId={deck.id} />
         <h2 className='text-xl font-medium text-primary-900'>Cards:</h2>
+        {renderAnswerValidationReportsCard()}
         <ul className='flex w-full flex-wrap gap-5'>
           {deck.cards.map(card => (
             <Card as='li' key={card.id} isAiPowered={card.isAiPowered}>
