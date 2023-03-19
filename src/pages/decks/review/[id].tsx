@@ -80,23 +80,23 @@ const ReviewDeckPage: WithAuthentication<
     }
 
     if (cardAnswerStage === 'question') {
-      return <p className='text-base md:text-2xl'>{currentCard?.question}</p>
+      return <p className='text-base md:text-xl'>{currentCard?.question}</p>
     }
 
     if (cardAnswerStage === 'error')
       return (
         <Tooltip hint='Se o erro persistir você pode passar este Card pressionando o botão "Passar". Dessa forma você poderá tentar responder este Card novamente na sua próxima revisão.'>
-          <span className='max-w-xs text-base text-error-700 md:text-2xl'>
+          <span className='max-w-xs text-base text-error-700 md:text-xl'>
             Houve um erro ao validar a sua resposta. Tente novamente mais tarde!
           </span>
         </Tooltip>
       )
 
     if (!answerResult?.isRight) {
-      return <span className='text-5xl sm:text-8xl'>😪</span>
+      return <span className='text-5xl sm:text-6xl'>😪</span>
     }
 
-    return <span className='text-5xl sm:text-8xl'>🎉</span>
+    return <span className='text-5xl sm:text-6xl'>🎉</span>
   }
 
   const renderButtons = () => {
@@ -145,8 +145,8 @@ const ReviewDeckPage: WithAuthentication<
       return (
         <div className='flex w-full animate-pulse flex-col gap-5'>
           <span className='aspect-video w-full rounded-md bg-primary-200' />
-          <span className='h-40 w-full rounded-md bg-primary-200 sm:h-56' />
-          <span className='h-16 w-full rounded-md bg-primary-200' />
+          <span className='h-40 w-full rounded-md bg-primary-200 sm:h-44' />
+          <span className='h-14 w-full rounded-md bg-primary-200' />
         </div>
       )
     }
@@ -208,7 +208,7 @@ const ReviewDeckPage: WithAuthentication<
             </div>
             <div className='absolute w-full [transform:rotateY(180deg)] [backface-visibility:hidden]'>
               <Card fullWidth>
-                <span className='text-base md:text-2xl'>
+                <span className='text-base md:text-xl'>
                   {answerResult?.answer || 'Resposta não foi encontrada'}
                 </span>
                 {renderReportButton()}
@@ -250,7 +250,7 @@ const ReviewDeckPage: WithAuthentication<
         <title>{`Revisando ${deck?.title ?? 'Carregando...'}`}</title>
         <meta name='description' content={deck?.description ?? ''} />
       </Head>
-      <div className='mx-auto flex w-full max-w-3xl justify-center'>
+      <div className='mx-auto flex w-full max-w-xl justify-center'>
         {renderContent()}
       </div>
       {renderModal()}
