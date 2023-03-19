@@ -5,7 +5,7 @@ import { type NextPage } from 'next'
 import Head from 'next/head'
 
 import { Feedback } from '~/components/feedback'
-import { AnswerValidationReportItem } from '~/modules/decks/reports/components/answer-validation-report-item'
+import { AnswerValidationReportItem } from '~/modules/decks/reports/components/answer-validation-report-item.component'
 import { getServerAuthSession } from '~/server/common/auth'
 import { prisma } from '~/server/common/db'
 import type { WithAuthentication } from '~/types/auth'

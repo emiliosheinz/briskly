@@ -72,7 +72,6 @@ export const answerValidationReportsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input: { answerValidationReportId, status }, ctx }) => {
-      await new Promise(r => setTimeout(r, 3000))
       const answerValidationReport =
         await ctx.prisma.answerValidationReport.findFirst({
           where: { id: answerValidationReportId },
@@ -134,5 +133,17 @@ export const answerValidationReportsRouter = createTRPCRouter({
       } else {
         await updateReport()
       }
+    }),
+  hasDeckPendingAnswerValidationReports: protectedProcedure
+    .input(z.object({ deckId: z.string().min(1) }))
+    .query(async ({ input: { deckId }, ctx }) => {
+      const count = await ctx.prisma.answerValidationReport.count({
+        where: {
+          card: { deckId },
+          status: AnswerValidationReportStatus.Pending,
+        },
+      })
+
+      return count > 0
     }),
 })

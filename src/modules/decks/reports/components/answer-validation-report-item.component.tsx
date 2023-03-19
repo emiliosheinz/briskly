@@ -38,6 +38,9 @@ export function AnswerValidationReportItem(
           notify.success(successMessage)
         }
 
+        apiContext.answerValidationReports.hasDeckPendingAnswerValidationReports.invalidate(
+          { deckId },
+        )
         apiContext.answerValidationReports.getCardsWithAnswerValidationReports.setData(
           { deckId },
           data => {
