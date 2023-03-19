@@ -63,6 +63,12 @@ enum Visibility {
   WithLink
 }
 
+enum AnswerValidationReportStatus {
+  Pending
+  Accepted
+  Rejected
+}
+
 model Deck {
   id            String         @id @default(cuid())
   title         String
@@ -102,14 +108,15 @@ model Card {
 }
 
 model AnswerValidationReport {
-  id        String   @id @default(cuid())
+  id        String                       @id @default(cuid())
   cardId    String
-  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  card      Card                         @relation(fields: [cardId], references: [id], onDelete: Cascade)
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?                        @relation(fields: [userId], references: [id], onDelete: SetNull)
   answer    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @default(now()) @updatedAt
+  status    AnswerValidationReportStatus @default(Pending)
 }
 
 model StudySession {
