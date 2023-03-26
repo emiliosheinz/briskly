@@ -1,6 +1,6 @@
 export type InputProps = {
   error?: string
-  label: string
+  label?: string
   id: string
 } & Omit<
   React.DetailedHTMLProps<

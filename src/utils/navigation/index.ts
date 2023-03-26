@@ -11,4 +11,5 @@ export const routes = {
   decksForYou: () => '/decks/for-you',
   favorites: () => '/decks/favorites',
   answerValidationReports: (id: string) => `/decks/reports/${id}`,
+  search: (term: string) => `/search/${term}`,
 }

@@ -371,4 +371,49 @@ export const decksRouter = createTRPCRouter({
           })),
       }
     }),
+  searchByTerm: publicProcedure
+    .input(z.object({ term: z.string(), cursor: z.string().nullish() }))
+    .query(async ({ input: { term, cursor }, ctx }) => {
+      const user = ctx.session?.user
+
+      const decks = await ctx.prisma.deck.findMany({
+        where: {
+          OR: [
+            {
+              title: { contains: term, mode: 'insensitive' },
+            },
+            {
+              description: { contains: term, mode: 'insensitive' },
+            },
+            {
+              topics: {
+                some: { title: { contains: term, mode: 'insensitive' } },
+              },
+            },
+          ],
+          visibility: Visibility.Public,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: ITEMS_PER_PAGE + 1, // get an extra item at the end which we'll use as next cursor
+        cursor: cursor ? { id: cursor } : undefined,
+        include: {
+          favorites: true,
+        },
+      })
+
+      const hasNextCursor = decks.length > ITEMS_PER_PAGE
+      const nextCursor = hasNextCursor ? decks.pop()!.id : undefined
+
+      return {
+        nextCursor,
+        decks: decks.map(deck => ({
+          ...deck,
+          image: getS3ImageUrl(deck.image),
+          favorites: deck.favorites.length,
+          isFavorite: user
+            ? deck.favorites.some(favorite => favorite.userId === user.id)
+            : false,
+        })),
+      }
+    }),
 })
