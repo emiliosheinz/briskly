@@ -86,11 +86,11 @@ const ProfilePage: WithAuthentication<
       <Head>
         <title>{user?.name || 'Carregando...'}</title>
       </Head>
-      <div className='flex flex-col gap-5 md:flex-row'>
+      <div className='flex flex-col gap-5'>
         <section className='flex flex-col gap-5 md:flex-[2]'>
-          <div className='flex flex-row items-center gap-3 md:flex-col'>
+          <div className='flex flex-row items-center gap-3'>
             {renderUserImage()}
-            <div className='flex flex-col items-start md:items-center'>
+            <div className='flex flex-col items-start'>
               <p className='text-center text-xl text-primary-900 md:text-2xl'>
                 {user?.name}
               </p>

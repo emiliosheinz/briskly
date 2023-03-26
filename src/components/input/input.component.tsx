@@ -12,17 +12,25 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ? 'border-error-700 focus:border-error-700 focus:ring-error-700'
       : 'border-primary-500 focus:border-primary-900 focus:ring-primary-900'
 
-    return (
-      <div
-        aria-disabled={disabled}
-        className={classNames('w-full', disabled ? 'opacity-50' : '')}
-      >
+    const renderLabel = () => {
+      if (!label) return null
+
+      return (
         <label
           htmlFor={id}
           className='block text-sm font-medium capitalize text-primary-800'
         >
           {label}
         </label>
+      )
+    }
+
+    return (
+      <div
+        aria-disabled={disabled}
+        className={classNames('w-full', disabled ? 'opacity-50' : '')}
+      >
+        {renderLabel()}
         <div className='mt-1 rounded-md shadow-sm'>
           <input
             id={id}

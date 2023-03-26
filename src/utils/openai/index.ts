@@ -2,6 +2,8 @@
  * !DO NO USE THIS FILE IN THE CLIENT SIDE
  */
 import calculateSimilarity from 'compute-cosine-similarity'
+import random from 'lodash/random'
+import shuffle from 'lodash/shuffle'
 import { Configuration, OpenAIApi } from 'openai'
 
 import { MINIMUM_ACCEPTED_SIMILARITY } from '~/constants'
@@ -80,8 +82,14 @@ export async function generateFlashCards({
     const amountOfCards = 3
     const charactersPerSentence = 65
 
-    /** Build topics strings */
-    const joinedTopics = topics.map(({ title }) => title).join(' ou ')
+    /**
+     * Selects between 1 and 3 random topics from the array of topics
+     * and build a string with the topics separated by 'ou'
+     */
+    const joinedTopics = shuffle(topics)
+      .map(({ title }) => title)
+      .slice(0, random(1, 3))
+      .join(' ou ')
 
     /** Build prompt asking OpenAI to generate a csv string */
     const prompt = `Levando em conta o contexto ${title}, gere um Array JSON de tamanho ${amountOfCards} com perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
