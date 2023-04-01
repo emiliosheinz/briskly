@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Visibility } from '@prisma/client'
+import type { QueryFunctionContext } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 
@@ -39,6 +41,22 @@ const uploadImage = async (uploadUrl: string, image?: File) => {
   })
 }
 
+const fetchAiPoweredCards = async (
+  context: QueryFunctionContext,
+): Promise<Array<CardInput>> => {
+  const [title, ...topics] = context.queryKey as [string]
+
+  const params = new URLSearchParams({ title })
+  for (const topic of topics) params.append('topics', topic)
+
+  // TODO emiliosheinz: move to env variables
+  const url = `https://flashcards-api.briskly.app/ai-powered-flashcards?${params}`
+
+  const response = await fetch(url)
+
+  return response.json()
+}
+
 const isEditingDeck = (
   deck?: DeckWithCardsAndTopics | null,
 ): deck is DeckWithCardsAndTopics => !!deck
@@ -73,20 +91,6 @@ export function CreateNewDeckContextProvider(
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
 
-  const {
-    mutate: generateAiPoweredCardsMutation,
-    isLoading: isGeneratingAiPoweredCards,
-    isError: hasErrorGeneratingAiPoweredCards,
-  } = api.cards.generateAiPoweredCards.useMutation({
-    onSuccess: aiPoweredCards => {
-      setCards(prevCards => [...prevCards, ...aiPoweredCards])
-      notify.success('Bip Bop, cards gerados com sucesso. Aproveite 🤖')
-    },
-    onError: () => {
-      notify.error('Ocorreu um erro ao gerar os cards. Tente novamente!')
-    },
-  })
-
   /**
    * Shared states between creation and edit
    */
@@ -120,6 +124,25 @@ export function CreateNewDeckContextProvider(
       image: deck?.image,
     },
   })
+
+  const {
+    refetch: generateAiPoweredCardsMutation,
+    isFetching: isGeneratingAiPoweredCards,
+    isError: hasErrorGeneratingAiPoweredCards,
+  } = useQuery(
+    [createNewDeckForm.getValues().title, ...topics.map(({ title }) => title)],
+    fetchAiPoweredCards,
+    {
+      enabled: false,
+      onSuccess: aiPoweredCards => {
+        setCards(prevCards => [...prevCards, ...aiPoweredCards])
+        notify.success('Bip Bop, cards gerados com sucesso. Aproveite 🤖')
+      },
+      onError: () => {
+        notify.error('Ocorreu um erro ao gerar os cards. Tente novamente!')
+      },
+    },
+  )
 
   const addTopic = (topic: string) => {
     setTopics(topics => [
@@ -282,7 +305,7 @@ export function CreateNewDeckContextProvider(
       return
     }
 
-    generateAiPoweredCardsMutation({ topics, title })
+    generateAiPoweredCardsMutation()
   }
 
   /**

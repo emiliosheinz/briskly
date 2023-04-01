@@ -2,15 +2,9 @@
  * !DO NO USE THIS FILE IN THE CLIENT SIDE
  */
 import calculateSimilarity from 'compute-cosine-similarity'
-import random from 'lodash/random'
-import shuffle from 'lodash/shuffle'
 import { Configuration, OpenAIApi } from 'openai'
 
 import { MINIMUM_ACCEPTED_SIMILARITY } from '~/constants'
-import type {
-  CardInput,
-  TopicInput,
-} from '~/contexts/create-new-deck/create-new-deck.types'
 import { env } from '~/env/server.mjs'
 
 const configuration = new Configuration({
@@ -29,9 +23,6 @@ const createEmbedding = (str: string) =>
       timeout: 10_000,
     },
   )
-
-const trimAndRemoveDoubleQuotes = (str: string) =>
-  str.trim().replaceAll('"', '')
 
 /**
  * Embed both strings with text-embedding-ada-002 and calculate their distance with cosine similarity
@@ -65,68 +56,4 @@ export async function verifyIfAnswerIsRight(
   })
 
   return isRight
-}
-
-type GenerateFlashCardsParam = {
-  topics: Array<TopicInput>
-  title: string
-}
-
-export async function generateFlashCards({
-  topics,
-  title,
-}: GenerateFlashCardsParam): Promise<Array<CardInput>> {
-  let generatedJsonString: string | undefined
-
-  try {
-    const amountOfCards = 3
-    const charactersPerSentence = 65
-
-    /**
-     * Selects between 1 and 3 random topics from the array of topics
-     * and build a string with the topics separated by 'ou'
-     */
-    const joinedTopics = shuffle(topics)
-      .map(({ title }) => title)
-      .slice(0, random(1, 3))
-      .join(' ou ')
-
-    /** Build prompt asking OpenAI to generate a csv string */
-    const prompt = `Levando em conta o contexto ${title}, gere um Array JSON de tamanho ${amountOfCards} com perguntas e respostas curtas e diretas, de no máximo ${charactersPerSentence} caracteres, sobre ${joinedTopics}. [{question: "pergunta", answer: "resposta"}, ...]`
-
-    const response = await openai.createChatCompletion(
-      {
-        n: 1,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.8,
-        model: 'gpt-3.5-turbo',
-        max_tokens: amountOfCards * charactersPerSentence,
-      },
-      { timeout: 30_000 },
-    )
-
-    generatedJsonString = response.data.choices[0]?.message?.content
-
-    if (!generatedJsonString) {
-      throw new Error('Não foi possível gerar as perguntas e respostas.')
-    }
-
-    const generatedJson = JSON.parse(generatedJsonString)
-
-    const cards: Array<CardInput> = generatedJson.map(
-      ({ question, answer }: { question: string; answer: string }) => ({
-        question: trimAndRemoveDoubleQuotes(question),
-        validAnswers: trimAndRemoveDoubleQuotes(answer),
-        isAiPowered: true,
-      }),
-    )
-
-    return cards
-  } catch (error) {
-    /**
-     * Added to improve error tracking on log monitoring tools
-     */
-    console.error(error, generatedJsonString)
-    throw error
-  }
 }
