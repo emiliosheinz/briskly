@@ -9,6 +9,7 @@ import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 
 import { DECK_VISIBILITY_OPTIONS } from '~/constants'
+import { env } from '~/env/client.mjs'
 import { api, handleApiClientSideError } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
 import { compress } from '~/utils/image'
@@ -49,10 +50,13 @@ const fetchAiPoweredCards = async (
   const params = new URLSearchParams({ title })
   for (const topic of topics) params.append('topics', topic)
 
-  // TODO emiliosheinz: move to env variables
-  const url = `https://flashcards-api.briskly.app/ai-powered-flashcards?${params}`
+  const url = `${env.NEXT_PUBLIC_BRISKLY_GENERATE_FLASH_CARDS_API_URL}/ai-powered-flashcards?${params}`
 
   const response = await fetch(url)
+
+  if (!response.ok) {
+    throw response
+  }
 
   return response.json()
 }
@@ -133,6 +137,7 @@ export function CreateNewDeckContextProvider(
     [createNewDeckForm.getValues().title, ...topics.map(({ title }) => title)],
     fetchAiPoweredCards,
     {
+      retry: false,
       enabled: false,
       onSuccess: aiPoweredCards => {
         setCards(prevCards => [...prevCards, ...aiPoweredCards])
