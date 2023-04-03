@@ -21,7 +21,7 @@ export const CardInputSchema = z.object({
     .refine(
       (answers: string) =>
         answers.split(';').length <= MAX_VALID_ANSWERS_PER_CARD,
-      `Um Card não pode ter mais que ${10} respostas válidas`,
+      `Um Card não pode ter mais que ${MAX_VALID_ANSWERS_PER_CARD} respostas válidas`,
     )
     .refine(
       (answers: string) =>

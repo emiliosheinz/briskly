@@ -3,10 +3,13 @@ import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Visibility } from '@prisma/client'
+import type { QueryFunctionContext } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 
 import { DECK_VISIBILITY_OPTIONS } from '~/constants'
+import { env } from '~/env/client.mjs'
 import { api, handleApiClientSideError } from '~/utils/api'
 import { fullScreenLoaderAtom } from '~/utils/atoms'
 import { compress } from '~/utils/image'
@@ -37,6 +40,25 @@ const uploadImage = async (uploadUrl: string, image?: File) => {
     },
     body: image,
   })
+}
+
+const fetchAiPoweredCards = async (
+  context: QueryFunctionContext,
+): Promise<Array<CardInput>> => {
+  const [title, ...topics] = context.queryKey as [string]
+
+  const params = new URLSearchParams({ title })
+  for (const topic of topics) params.append('topics', topic)
+
+  const url = `${env.NEXT_PUBLIC_BRISKLY_GENERATE_FLASH_CARDS_API_URL}/ai-powered-flashcards?${params}`
+
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw response
+  }
+
+  return response.json()
 }
 
 const isEditingDeck = (
@@ -73,20 +95,6 @@ export function CreateNewDeckContextProvider(
   const getFileUploadConfigMutation =
     api.files.getFileUploadConfig.useMutation()
 
-  const {
-    mutate: generateAiPoweredCardsMutation,
-    isLoading: isGeneratingAiPoweredCards,
-    isError: hasErrorGeneratingAiPoweredCards,
-  } = api.cards.generateAiPoweredCards.useMutation({
-    onSuccess: aiPoweredCards => {
-      setCards(prevCards => [...prevCards, ...aiPoweredCards])
-      notify.success('Bip Bop, cards gerados com sucesso. Aproveite 🤖')
-    },
-    onError: () => {
-      notify.error('Ocorreu um erro ao gerar os cards. Tente novamente!')
-    },
-  })
-
   /**
    * Shared states between creation and edit
    */
@@ -120,6 +128,26 @@ export function CreateNewDeckContextProvider(
       image: deck?.image,
     },
   })
+
+  const {
+    refetch: generateAiPoweredCardsMutation,
+    isFetching: isGeneratingAiPoweredCards,
+    isError: hasErrorGeneratingAiPoweredCards,
+  } = useQuery(
+    [createNewDeckForm.getValues().title, ...topics.map(({ title }) => title)],
+    fetchAiPoweredCards,
+    {
+      retry: false,
+      enabled: false,
+      onSuccess: aiPoweredCards => {
+        setCards(prevCards => [...prevCards, ...aiPoweredCards])
+        notify.success('Bip Bop, cards gerados com sucesso. Aproveite 🤖')
+      },
+      onError: () => {
+        notify.error('Ocorreu um erro ao gerar os cards. Tente novamente!')
+      },
+    },
+  )
 
   const addTopic = (topic: string) => {
     setTopics(topics => [
@@ -282,7 +310,7 @@ export function CreateNewDeckContextProvider(
       return
     }
 
-    generateAiPoweredCardsMutation({ topics, title })
+    generateAiPoweredCardsMutation()
   }
 
   /**
