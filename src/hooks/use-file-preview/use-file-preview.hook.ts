@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export function useFilePreview(file?: File) {
+export function useFilePreview(file?: File | null) {
   const [preview, setPreview] = useState('')
 
   useEffect(() => {
