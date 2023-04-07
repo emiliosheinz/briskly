@@ -32,7 +32,7 @@ export function Button(props: ButtonProps) {
     return (
       <div
         data-testid='button-loader'
-        className='absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        className='absolute bottom-1 left-1/2 -translate-x-1/2 -translate-y-1/2'
       >
         <Loader variant={variant} />
       </div>
@@ -46,7 +46,7 @@ export function Button(props: ButtonProps) {
         aria-disabled={isDisabled}
         data-testid='briskly-custom-button'
         className={classNames(
-          'flex flex-row gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50',
+          'flex flex-row items-center gap-2 rounded-md px-6 py-2 text-base font-normal capitalize tracking-wide ring-2 transition-colors duration-150 ease-in-out hover:shadow-md disabled:opacity-50',
           variantBasedClassNames[variant],
           fullWidth ? fullWidthClassNames : '',
           className ?? '',
