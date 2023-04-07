@@ -23,7 +23,7 @@ export function Loader(props: LoaderProps) {
         <span
           key={index}
           className={classNames(
-            'inline-flex h-3 w-3 animate-bounce rounded-full md:h-4 md:w-4',
+            'inline-flex h-3 w-3 animate-bounce rounded-full',
             animationDelay[index] || '',
             variantBasedClassName[variant],
           )}
