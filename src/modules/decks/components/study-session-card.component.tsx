@@ -1,4 +1,4 @@
-import { RectangleStackIcon } from '@heroicons/react/24/outline'
+import { RectangleStackIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { useSetAtom } from 'jotai'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
@@ -27,6 +27,13 @@ export const StudySessionCard = (props: { deckId: string }) => {
     onSuccess: () => {
       apiContext.decks.toBeReviewed.invalidate()
       apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
+    },
+  })
+  const deleteStudySessionMutation = api.studySession.delete.useMutation({
+    onSuccess: () => {
+      apiContext.decks.toBeReviewed.invalidate()
+      apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
+      notify.success('Sessão de estudo deletada com sucesso!')
     },
   })
 
@@ -116,15 +123,33 @@ export const StudySessionCard = (props: { deckId: string }) => {
     )
   }
 
+  const renderDeleteButton = (params?: { fullWidth: boolean }) => {
+    if (!hasActiveStudySession) return null
+
+    return (
+      <Button
+        variant='bad'
+        fullWidth={params?.fullWidth ?? false}
+        onClick={() => deleteStudySessionMutation.mutate({ deckId })}
+        isLoading={deleteStudySessionMutation.isLoading}
+      >
+        <TrashIcon className='h-5 w-5 text-error-700' />
+        Apagar Sessão
+      </Button>
+    )
+  }
+
   const renderButtons = () => {
     return (
       <>
-        <div className='hidden h-0 sm:flex sm:h-auto sm:items-end'>
+        <div className='hidden h-0 gap-5 md:flex md:h-auto md:items-end'>
+          {renderDeleteButton()}
           <Button disabled={shouldDisableButton} onClick={handleButtonClick}>
             {renderButtonLabel()}
           </Button>
         </div>
-        <div className='block sm:hidden sm:w-0'>
+        <div className='block space-y-5 md:hidden md:w-0'>
+          {renderDeleteButton({ fullWidth: true })}
           <Button
             fullWidth
             disabled={shouldDisableButton}
@@ -149,7 +174,7 @@ export const StudySessionCard = (props: { deckId: string }) => {
   }
 
   return (
-    <div className='relative flex flex-col gap-5 rounded-md bg-primary-50 p-5 shadow-md shadow-primary-200 ring-1 ring-primary-900 sm:flex-row'>
+    <div className='relative flex flex-col gap-5 rounded-md bg-primary-50 p-5 shadow-md shadow-primary-200 ring-1 ring-primary-900 md:flex-row'>
       <div className='flex flex-1 items-center gap-5'>
         <RectangleStackIcon className='h-16 w-16 text-primary-900' />
         {renderMainContent()}
