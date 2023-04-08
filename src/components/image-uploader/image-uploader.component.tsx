@@ -13,10 +13,13 @@ export const ImageUploader = React.forwardRef<
   HTMLInputElement,
   ImageUploaderProps
 >(function ImageUploader(props, ref) {
-  const { id, onChange, error, defaultValue, ...otherProps } = props
+  const { id, onChange, error: errorProp, defaultValue, ...otherProps } = props
 
-  const [image, setImage] = useState<File>()
+  const [image, setImage] = useState<File | null>()
+  const [innerError, setInnerError] = useState<string>('')
   const previewImage = useFilePreview(image) || defaultValue
+
+  const error = errorProp || innerError
 
   const renderIconAndImageTypes = () => {
     if (!!previewImage) return null
@@ -28,8 +31,9 @@ export const ImageUploader = React.forwardRef<
       >
         <DocumentPlusIcon className='h-10 w-10' />
         <p className='text-center text-xs'>
-          PNG, JPG, JPEG
+          PNG, JPG ou JPEG
           <br />
+          preferencialmente quadrada
         </p>
       </div>
     )
@@ -50,7 +54,16 @@ export const ImageUploader = React.forwardRef<
   }
 
   const customOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInnerError('')
+    setImage(null)
+
     const result = await compress(e.target.files?.[0])
+
+    if (result && result.size * 0.001 > 80) {
+      setInnerError('A imagem não pode ter mais que 80KB')
+      return
+    }
+
     setImage(result)
     onChange?.(e)
   }

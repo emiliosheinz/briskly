@@ -6,12 +6,11 @@ export async function compress(file?: File): Promise<File | undefined> {
   const compressorPromise = new Promise<File | Blob>((resolve, reject) => {
     new Compressor(file, {
       quality: 0.8,
-      width: 768,
-      height: 768,
+      maxHeight: 768,
+      maxWidth: 768,
       resize: 'cover',
       success: resolve,
       error: reject,
-      mimeType: 'image/jpg',
     })
   })
 

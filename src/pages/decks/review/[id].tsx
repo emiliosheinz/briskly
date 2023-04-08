@@ -42,6 +42,7 @@ const ReviewDeckPage: WithAuthentication<
     isReportAnswerValidationModalOpen,
     setIsReportAnswerValidationModalOpen,
   ] = useState(false)
+  const [reportedCards, setReportedCards] = useState<string[]>([])
 
   const {
     form,
@@ -127,7 +128,17 @@ const ReviewDeckPage: WithAuthentication<
   }
 
   const renderReportButton = () => {
-    if (answerResult?.isRight || !userLastAnswer) return null
+    const isCurrentCardAlreadyReported = reportedCards.includes(
+      currentCard?.id ?? '',
+    )
+
+    if (
+      answerResult?.isRight ||
+      !userLastAnswer ||
+      isCurrentCardAlreadyReported
+    ) {
+      return null
+    }
 
     return (
       <button
@@ -240,6 +251,9 @@ const ReviewDeckPage: WithAuthentication<
         setIsOpen={setIsReportAnswerValidationModalOpen}
         answer={userLastAnswer}
         cardId={currentCard?.id ?? ''}
+        onReportSuccess={reportedCardId => {
+          setReportedCards(prev => [...prev, reportedCardId])
+        }}
       />
     )
   }

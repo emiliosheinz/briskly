@@ -76,6 +76,18 @@ export const studySessionRouter = createTRPCRouter({
         ),
       )
     }),
+  delete: protectedProcedure
+    .input(z.object({ deckId: z.string().min(1) }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.studySession.delete({
+        where: {
+          userId_deckId: {
+            deckId: input.deckId,
+            userId: ctx.session.user.id,
+          },
+        },
+      })
+    }),
   getStudySessionBasicInfo: publicProcedure
     .input(z.object({ deckId: z.string().min(1) }))
     .query(async ({ input: { deckId }, ctx }) => {

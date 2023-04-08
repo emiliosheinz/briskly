@@ -13,10 +13,18 @@ import type { ReportAnswerValidationModalProps } from './report-answer-validatio
 export function ReportAnswerValidationModal(
   props: ReportAnswerValidationModalProps,
 ) {
-  const { isOpen, setIsOpen, answer, cardId } = props
+  const { isOpen, setIsOpen, answer, cardId, onReportSuccess } = props
 
   const { mutate: sendReport } =
-    api.answerValidationReports.reportAnswerValidation.useMutation()
+    api.answerValidationReports.reportAnswerValidation.useMutation({
+      onSuccess: ({ cardId }) => {
+        close()
+        onReportSuccess(cardId)
+        setTimeout(() => {
+          notify.success('Solicitação enviada com sucesso!')
+        }, 500)
+      },
+    })
 
   const { handleSubmit, reset, register } = useForm({
     defaultValues: useMemo(() => ({ answer }), [answer]),
@@ -37,11 +45,6 @@ export function ReportAnswerValidationModal(
         ...values,
         cardId,
       })
-      close()
-
-      setTimeout(() => {
-        notify.success('Solicitação enviada com sucesso!')
-      }, 500)
     }),
   )
 
