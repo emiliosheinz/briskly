@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 
@@ -12,6 +12,33 @@ import { useCreateNewDeckContext } from '~/contexts/create-new-deck'
 type NewCardModalState = {
   isOpen: boolean
   cardIdx?: number
+}
+
+const loadingSteps = [
+  'Coletando informações',
+  'Analisando o contexto',
+  'Gerando os cards',
+]
+
+const CYCLE_INTERVAL = 3500
+
+export const AiPoweredFlashCardsLoader = () => {
+  const [currentLoadingStep, setCurrentLoadingStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentLoadingStep(state => (state + 1) % loadingSteps.length)
+    }, CYCLE_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className='flex flex-col items-center justify-center gap-3'>
+      <Loader />
+      <p>{loadingSteps[currentLoadingStep]}</p>
+    </div>
+  )
 }
 
 export const Cards = () => {
@@ -52,7 +79,7 @@ export const Cards = () => {
 
   const renderAiCardsButton = () => {
     const successContent = isGeneratingAiPoweredCards ? (
-      <Loader />
+      <AiPoweredFlashCardsLoader />
     ) : (
       <span className='text-4xl'>🤖</span>
     )
@@ -67,9 +94,7 @@ export const Cards = () => {
       <Card onClick={generateAiPoweredCards}>
         {hasErrorGeneratingAiPoweredCards ? errorContent : successContent}
         <div className='absolute right-0 top-0 p-3'>
-          <Tooltip
-            hint={`Além de criar seus próprios Flashcards manualmente você pode deixar que a nossa Inteligência Artificial os gere para você se baseando nos tópicos e título previamente cadastrados acima. Caso ocorra um erro ao gerar os Cards, você pode apenas tentar novamente!`}
-          />
+          <Tooltip hint='Além de criar seus próprios Flashcards manualmente você pode deixar que a nossa Inteligência Artificial os gere para você se baseando nos tópicos e título previamente cadastrados acima.' />
         </div>
       </Card>
     )

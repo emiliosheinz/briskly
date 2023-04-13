@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -148,6 +148,13 @@ export function CreateNewDeckContextProvider(
       },
     },
   )
+
+  /**
+   * Healthcheck to wake up the server
+   */
+  useEffect(() => {
+    fetch(`${env.NEXT_PUBLIC_BRISKLY_GENERATE_FLASH_CARDS_API_URL}/healthcheck`)
+  }, [])
 
   const addTopic = (topic: string) => {
     setTopics(topics => [
