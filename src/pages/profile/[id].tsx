@@ -111,13 +111,13 @@ const ProfilePage: WithAuthentication<
 
         <section className='flex flex-col md:flex-[8]'>
           <Tab.Group>
-            <Tab.List className='flex space-x-1 p-1'>
+            <Tab.List className='flex space-x-1 overflow-x-auto p-1'>
               {tabs.map(tab => (
                 <Tab
                   key={tab.name}
                   className={({ selected }) =>
                     classNames(
-                      'border-b-2 py-2 px-5 text-base font-medium leading-5 text-primary-900 ring-primary-50 ring-opacity-60 ring-offset-2 ring-offset-primary-500 focus:outline-none focus:ring-2',
+                      'min-w-max border-b-2 py-2 px-5 text-base font-medium leading-5 text-primary-900 ring-primary-50 ring-opacity-60 ring-offset-2 ring-offset-primary-500 focus:outline-none focus:ring-2',
                       selected ? 'border-primary-900' : 'border-primary-50',
                     )
                   }

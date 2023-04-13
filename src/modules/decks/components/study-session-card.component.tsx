@@ -26,12 +26,14 @@ export const StudySessionCard = (props: { deckId: string }) => {
   const createStudySessionMutation = api.studySession.create.useMutation({
     onSuccess: () => {
       apiContext.decks.toBeReviewed.invalidate()
+      apiContext.decks.withStudySession.invalidate()
       apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
     },
   })
   const deleteStudySessionMutation = api.studySession.delete.useMutation({
     onSuccess: () => {
       apiContext.decks.toBeReviewed.invalidate()
+      apiContext.decks.withStudySession.invalidate()
       apiContext.studySession.getStudySessionBasicInfo.invalidate({ deckId })
       notify.success('Sessão de estudo deletada com sucesso!')
     },
