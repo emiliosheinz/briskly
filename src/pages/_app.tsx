@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Analytics } from '@vercel/analytics/react'
@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
 import { Header } from '~/components/header'
+import { env } from '~/env/client.mjs'
 import type { WithAuthentication } from '~/types/auth'
 import { api } from '~/utils/api'
 
@@ -45,6 +46,13 @@ const MyApp: AppType<{ session: Session | null }> = props => {
   const OptionalAuthGuard = Component.requiresAuthentication
     ? AuthGuard
     : Fragment
+
+  /**
+   * Healthcheck to wake up the generate flash cards API
+   */
+  useEffect(() => {
+    fetch(`${env.NEXT_PUBLIC_BRISKLY_GENERATE_FLASH_CARDS_API_URL}/healthcheck`)
+  }, [])
 
   return (
     <JotaiProvider>
