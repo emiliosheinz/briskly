@@ -191,6 +191,32 @@ export const decksRouter = createTRPCRouter({
         nextCursor,
       }
     }),
+  withStudySession: protectedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx.session
+
+    const decks = await ctx.prisma.deck.findMany({
+      where: {
+        studySessions: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        favorites: true,
+      },
+    })
+
+    return decks.map(deck => ({
+      ...deck,
+      image: getS3ImageUrl(deck.image),
+      favorites: deck.favorites.length,
+      isFavorite: deck.favorites
+        .map(favorite => favorite.userId)
+        .includes(user.id),
+    }))
+  }),
   byUser: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input: { userId }, ctx }) => {
@@ -218,6 +244,7 @@ export const decksRouter = createTRPCRouter({
           .includes(signedInUser.id),
       }))
     }),
+
   addFavorite: protectedProcedure
     .input(z.object({ deckId: z.string() }))
     .mutation(async ({ input: { deckId }, ctx }) => {

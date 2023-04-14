@@ -15,11 +15,22 @@ const UserFavoriteDecks = dynamic(() =>
   ),
 )
 
+const DecksWithStudySession = dynamic(() =>
+  import('../components/decks-with-study-session.component').then(
+    module => module.DecksWithStudySession,
+  ),
+)
+
 export const profileMenuTabs = [
   {
     name: 'Decks',
     content: UserDecks,
     isProfileOwnerOnly: false,
+  },
+  {
+    name: 'Meus Estudos',
+    content: DecksWithStudySession,
+    isProfileOwnerOnly: true,
   },
   {
     name: 'Para Revisar',
