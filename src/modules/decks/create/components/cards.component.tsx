@@ -20,7 +20,7 @@ const loadingSteps = [
   'Gerando os cards',
 ]
 
-const CYCLE_INTERVAL = 3500
+const CYCLE_INTERVAL = 3000
 
 export const AiPoweredFlashCardsLoader = () => {
   const [currentLoadingStep, setCurrentLoadingStep] = useState(0)
