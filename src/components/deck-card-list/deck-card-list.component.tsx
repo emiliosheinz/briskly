@@ -23,7 +23,7 @@ export function DeckCardList(props: DeckCardListProps) {
   }
 
   return (
-    <div className='flex-w grid grid-cols-1 gap-5 sm:grid-cols-2'>
+    <div className='grid w-full grid-cols-1 gap-5 sm:grid-cols-2'>
       {decks.map((deck, idx) => (
         <div
           key={deck.id}

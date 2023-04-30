@@ -11,13 +11,14 @@ import { useMenuOptions } from '../../hooks/use-menu-options'
 export function MobileHamburgerMenu() {
   const menuOptions = useMenuOptions()
 
-  const renderMenuOptions = () =>
+  const renderMenuOptions = ({ close }: { close: () => void }) =>
     menuOptions.mobile.map(option => {
       return (
         <Link
           href={option.href}
           key={option.label}
           className='flex items-center space-x-1 text-primary-900'
+          onClick={close}
         >
           <>
             <option.icon className='h-6 w-6' />
@@ -29,7 +30,7 @@ export function MobileHamburgerMenu() {
 
   return (
     <Popover data-testid='mobile-hamburger-menu' as='div' className='md:hidden'>
-      {({ open: isOpen }) => {
+      {({ open: isOpen, close }) => {
         const Icon = isOpen ? XMarkIcon : Bars3Icon
         const srOnlyPrefix = isOpen ? 'Close' : 'Open'
 
@@ -57,7 +58,7 @@ export function MobileHamburgerMenu() {
               >
                 <div className='rounded-3xl px-5 pt-5 pb-6 shadow-lg'>
                   <nav className='flex flex-col items-start justify-start gap-5'>
-                    {renderMenuOptions()}
+                    {renderMenuOptions({ close })}
                     <AuthButton />
                   </nav>
                 </div>
