@@ -31,7 +31,7 @@ export const ImageUploader = React.forwardRef<
       >
         <DocumentPlusIcon className='h-10 w-10' />
         <p className='text-center text-xs'>
-          PNG, JPG ou JPEG
+          PNG, JPG, JPEG ou WEBP
           <br />
           preferencialmente quadrada
         </p>
@@ -88,7 +88,7 @@ export const ImageUploader = React.forwardRef<
           type='file'
           onChange={customOnChange}
           data-testid='img-uploader-input'
-          accept='image/png, image/jpeg, image/jpg'
+          accept='.png, .jpeg, .jpg, .webp'
           {...otherProps}
         />
       </label>
