@@ -41,40 +41,45 @@ export function DesktopSecondaryMenu() {
       as='div'
       className='relative hidden md:block'
     >
-      <Popover.Button
-        data-testid='popover-button'
-        className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'
-      >
-        {renderImage()}
-      </Popover.Button>
-      <Transition
-        as={Fragment}
-        enter='transition ease-out duration-100'
-        enterFrom='transform opacity-0 scale-95'
-        enterTo='transform opacity-100 scale-100'
-        leave='transition ease-in duration-75'
-        leaveFrom='transform opacity-100 scale-100'
-        leaveTo='transform opacity-0 scale-95'
-      >
-        <Popover.Panel
-          data-testid='popover-panel'
-          className='absolute right-0 z-30 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
-        >
-          {menuOptions.desktop.secondary.map(option => (
-            <Link
-              href={option.href}
-              key={option.label}
-              className='flex items-center gap-2 whitespace-nowrap text-primary-900'
+      {({ close }) => (
+        <>
+          <Popover.Button
+            data-testid='popover-button'
+            className='inline-flex items-center justify-center bg-primary-50 p-1 text-primary-900'
+          >
+            {renderImage()}
+          </Popover.Button>
+          <Transition
+            as={Fragment}
+            enter='transition ease-out duration-100'
+            enterFrom='transform opacity-0 scale-95'
+            enterTo='transform opacity-100 scale-100'
+            leave='transition ease-in duration-75'
+            leaveFrom='transform opacity-100 scale-100'
+            leaveTo='transform opacity-0 scale-95'
+          >
+            <Popover.Panel
+              data-testid='popover-panel'
+              className='absolute right-0 z-30 mt-0 flex w-60 origin-top-right flex-col gap-3 rounded-md bg-primary-50 p-4 shadow-lg ring-1 ring-primary-900 ring-opacity-5'
             >
-              <>
-                <option.icon className='h-6 w-6' />
-                {option.label}
-              </>
-            </Link>
-          ))}
-          <AuthButton />
-        </Popover.Panel>
-      </Transition>
+              {menuOptions.desktop.secondary.map(option => (
+                <Link
+                  href={option.href}
+                  key={option.label}
+                  onClick={close}
+                  className='flex items-center gap-2 whitespace-nowrap text-primary-900'
+                >
+                  <>
+                    <option.icon className='h-6 w-6' />
+                    {option.label}
+                  </>
+                </Link>
+              ))}
+              <AuthButton />
+            </Popover.Panel>
+          </Transition>
+        </>
+      )}
     </Popover>
   )
 }

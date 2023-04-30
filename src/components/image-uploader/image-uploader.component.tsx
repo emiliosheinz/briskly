@@ -31,7 +31,7 @@ export const ImageUploader = React.forwardRef<
       >
         <DocumentPlusIcon className='h-10 w-10' />
         <p className='text-center text-xs'>
-          PNG, JPG ou JPEG
+          PNG, JPG, JPEG ou WEBP
           <br />
           preferencialmente quadrada
         </p>
@@ -59,8 +59,8 @@ export const ImageUploader = React.forwardRef<
 
     const result = await compress(e.target.files?.[0])
 
-    if (result && result.size * 0.001 > 80) {
-      setInnerError('A imagem não pode ter mais que 80KB')
+    if (result && result.size * 0.001 > 250) {
+      setInnerError('A imagem não pode ter mais que 250KB')
       return
     }
 
@@ -82,13 +82,13 @@ export const ImageUploader = React.forwardRef<
         {renderIconAndImageTypes()}
         {renderPreviewImage()}
         <input
+          hidden
           id={id}
           ref={ref}
           type='file'
-          className='hidden'
           onChange={customOnChange}
           data-testid='img-uploader-input'
-          accept='image/png, image/jpeg, image/jpg'
+          accept='.png, .jpeg, .jpg, .webp'
           {...otherProps}
         />
       </label>
