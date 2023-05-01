@@ -159,6 +159,8 @@ model StudySessionAttempt {
   id                    String              @id @default(cuid())
   answer                String
   isRight               Boolean
+  similarity            Float
+  mostSimilarAnswer     String
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @default(now()) @updatedAt
   studySessionBoxCardId String

@@ -46,14 +46,22 @@ export async function verifyIfAnswerIsRight(
     throw new Error('Could not calculate similarity. No results where found.')
   }
 
-  const isRight = validAnswersResults.some(validAnswerResult => {
+  let highestSimilarity = 0
+  let mostSimilarAnswer = ''
+
+  const isRight = validAnswersResults.some((validAnswerResult, index) => {
     const similarity = calculateSimilarity(
       actualAnswerResult,
       validAnswerResult || [],
     )
 
+    if (similarity > highestSimilarity) {
+      highestSimilarity = similarity
+      mostSimilarAnswer = validAnswers[index]!
+    }
+
     return similarity > MINIMUM_ACCEPTED_SIMILARITY
   })
 
-  return isRight
+  return { isRight, highestSimilarity, mostSimilarAnswer }
 }

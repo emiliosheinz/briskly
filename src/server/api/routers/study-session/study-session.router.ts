@@ -312,16 +312,16 @@ export const studySessionRouter = createTRPCRouter({
         return { isRight: false, answer: card.validAnswers.join('; ') }
       }
 
-      const isAnswerRight = await verifyIfAnswerIsRight(
-        answer,
-        card.validAnswers,
-      )
+      const { isRight, highestSimilarity, mostSimilarAnswer } =
+        await verifyIfAnswerIsRight(answer, card.validAnswers)
 
       let updateBoxCard
       const addNewAttempt = ctx.prisma.studySessionAttempt.create({
         data: {
           answer,
-          isRight: isAnswerRight,
+          isRight,
+          mostSimilarAnswer,
+          similarity: highestSimilarity,
           studySessionBoxCardId: boxCardId,
         },
       })
@@ -333,7 +333,7 @@ export const studySessionRouter = createTRPCRouter({
 
       const isInTheLastBox = currentBoxIdx === lastBoxIdx
 
-      if (isAnswerRight && !isInTheLastBox) {
+      if (isRight && !isInTheLastBox) {
         const nextStudySessionBox = studySessionBoxes[currentBoxIdx + 1]
 
         if (!nextStudySessionBox) {
@@ -356,7 +356,7 @@ export const studySessionRouter = createTRPCRouter({
 
       await Promise.all([addNewAttempt, updateBoxCard])
 
-      return { isRight: isAnswerRight, answer: card.validAnswers.join('; ') }
+      return { isRight, answer: mostSimilarAnswer }
     }),
   finishReviewSession: protectedProcedure
     .input(
