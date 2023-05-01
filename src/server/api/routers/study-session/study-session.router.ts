@@ -232,7 +232,11 @@ export const studySessionRouter = createTRPCRouter({
             cards: studySessionBoxCards
               .filter(boxCard => {
                 const lastAttempt = boxCard.studySessionAttempts[0]?.createdAt
-                return !lastAttempt || !lastReview || lastAttempt < lastReview
+
+                if (!lastAttempt) return true
+                if (!lastReview) return false
+
+                return lastAttempt < lastReview
               })
               .map(boxCard => ({
                 id: boxCard.card.id,
