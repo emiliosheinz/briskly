@@ -26,6 +26,7 @@ export const MainInfo = () => {
             id='title'
             {...register?.('title')}
             error={formState?.errors['title']?.message as string}
+            data-testid='deck-name'
           />
           <TextArea
             label='Descrição'
@@ -33,6 +34,7 @@ export const MainInfo = () => {
             rows={8}
             {...register?.('description')}
             error={formState?.errors['description']?.message as string}
+            data-testid='deck-description'
           />
         </div>
       </div>

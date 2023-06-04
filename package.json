@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "test:e2e": "npx cypress run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.245.0",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
+    "@testing-library/cypress": "^9.0.0",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.0.0",
     "@types/prettier": "^2.7.1",
@@ -61,6 +63,8 @@
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "autoprefixer": "^10.4.7",
+    "cypress": "^12.13.0",
+    "cypress-social-logins": "^1.14.1",
     "eslint": "^8.26.0",
     "eslint-config-next": "13.0.2",
     "eslint-config-prettier": "^8.5.0",

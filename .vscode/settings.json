@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["healthcheck", "Healthcheck", "superjson", "trpc", "TRPC"]
+  "cSpell.words": [
+    "healthcheck",
+    "Healthcheck",
+    "superjson",
+    "testid",
+    "trpc",
+    "TRPC"
+  ]
 }
