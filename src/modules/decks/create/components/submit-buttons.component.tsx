@@ -10,7 +10,9 @@ export const SubmitButtons = () => {
       <Button variant='bad' type='button' onClick={() => router.back()}>
         Cancelar
       </Button>
-      <Button type='submit'>Salvar</Button>
+      <Button type='submit' data-testid='submit-deck-button'>
+        Salvar
+      </Button>
     </footer>
   )
 }

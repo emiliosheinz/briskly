@@ -60,7 +60,12 @@ export function ReportAnswerValidationModal(
         className='mt-5 flex flex-col'
         onSubmit={handleSubmitWithoutPropagation}
       >
-        <TextArea id='answer' label='Resposta' {...register('answer')} />
+        <TextArea
+          id='answer'
+          label='Resposta'
+          {...register('answer')}
+          data-testid='answer-textarea'
+        />
         <div className='mt-2 flex flex-col justify-end gap-5 md:flex-row'>
           <Button fullWidth type='button' variant='bad' onClick={close}>
             Cancelar

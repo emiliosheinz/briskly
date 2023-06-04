@@ -75,7 +75,10 @@ export const ActionsDropDown = (props: ActionsDropDownProps) => {
     <div className={className}>
       <Menu as='div' className='relative inline-block text-left'>
         <div>
-          <Menu.Button className='m-2 rounded-sm bg-primary-50'>
+          <Menu.Button
+            className='m-2 rounded-sm bg-primary-50'
+            data-testid='actions-dropdown-button'
+          >
             <EllipsisVerticalIcon
               className='hover:text-violet-100 h-8 w-8 text-primary-900'
               aria-hidden='true'

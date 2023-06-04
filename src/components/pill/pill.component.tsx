@@ -8,7 +8,7 @@ import { Button } from '../button'
 import type { PillProps } from './pill.types'
 
 export function _Pill(props: PillProps) {
-  const { children, onClick, isDeletable, isDisabled } = props
+  const { children, onClick, isDeletable, isDisabled, ...otherProps } = props
 
   return (
     <Button
@@ -21,6 +21,7 @@ export function _Pill(props: PillProps) {
       )}
       variant='secondary'
       onClick={onClick}
+      {...otherProps}
     >
       {children}
       {isDeletable ? <XMarkIcon className='w=4 h-4' /> : null}

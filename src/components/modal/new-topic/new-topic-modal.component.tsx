@@ -41,12 +41,13 @@ export function NewTopicModal(props: NewTopicModalProps) {
           label='Título'
           {...register('title')}
           error={formState.errors['title']?.message as string}
+          data-testid='topic-title-input'
         />
         <div className='flex flex-row justify-end gap-5'>
           <Button type='button' variant='bad' onClick={close}>
             Cancelar
           </Button>
-          <Button>Salvar</Button>
+          <Button data-testid='topic-save-button'>Salvar</Button>
         </div>
       </form>
     </BaseModal>

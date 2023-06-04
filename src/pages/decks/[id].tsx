@@ -102,9 +102,9 @@ const DeckDetailsPage: NextPage<
       <>
         <h2 className='text-xl font-medium text-primary-900'>Tópicos:</h2>
         <ul className='flex flex-wrap gap-3'>
-          {deck.topics.map(topic => (
+          {deck.topics.map((topic, idx) => (
             <li key={topic.id}>
-              <Pill>{topic.title}</Pill>
+              <Pill data-testid={`deck-topic-${idx}`}>{topic.title}</Pill>
             </li>
           ))}
         </ul>
@@ -140,10 +140,16 @@ const DeckDetailsPage: NextPage<
             />
           </div>
           <div className='flex w-full flex-col gap-5 lg:pr-40'>
-            <h1 className='text-2xl font-medium text-primary-900'>
+            <h1
+              className='text-2xl font-medium text-primary-900'
+              data-testid='deck-title'
+            >
               {deck.title}
             </h1>
-            <p className='flex-1 text-base text-primary-900'>
+            <p
+              className='flex-1 text-base text-primary-900'
+              data-testid='deck-description'
+            >
               {deck.description}
             </p>
             {renderTopics()}
@@ -152,7 +158,7 @@ const DeckDetailsPage: NextPage<
         <StudySessionCard deckId={deck.id} />
         <h2 className='text-xl font-medium text-primary-900'>Cards:</h2>
         {renderAnswerValidationReportsCard()}
-        <ul className='flex w-full flex-wrap gap-5'>
+        <ul className='flex w-full flex-wrap gap-5' data-testid='deck-cards'>
           {deck.cards.map(card => (
             <Card as='li' key={card.id} isAiPowered={card.isAiPowered}>
               {card.question}

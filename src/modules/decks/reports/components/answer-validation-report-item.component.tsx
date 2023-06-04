@@ -100,6 +100,7 @@ export function AnswerValidationReportItem(
                 status: AnswerValidationReportStatus.Accepted,
               })
             }}
+            data-testid='accept-answer-button'
           >
             <CheckIcon className='h-5 w-5' />
           </button>

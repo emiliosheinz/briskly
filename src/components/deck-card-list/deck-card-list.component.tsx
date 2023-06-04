@@ -32,6 +32,7 @@ export function DeckCardList(props: DeckCardListProps) {
           <Link
             href={routes.deckDetails(deck.id)}
             className='flex flex-col lg:h-64 lg:flex-row'
+            data-testid='deck-card-link'
           >
             <div className='relative flex aspect-square w-full lg:w-2/5'>
               <Image

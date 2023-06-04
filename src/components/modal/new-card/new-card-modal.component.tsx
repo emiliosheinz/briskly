@@ -55,9 +55,15 @@ export function NewCardModal(props: NewCardModalProps) {
           {...register('validAnswers')}
           error={formState.errors['validAnswers']?.message as string}
           tooltip='Você pode adicionar mais de uma resposta válida separando-as por ponto e vírgula (;) sem nenhum tipo de espaço. Ex.: Resposta 1;Resposta 2;Resposta 3'
+          data-testid='card-answer-input'
         />
         <div className='flex flex-row justify-end gap-5'>
-          <Button type='button' variant='bad' onClick={close}>
+          <Button
+            type='button'
+            variant='bad'
+            onClick={close}
+            data-testid='close-modal-button'
+          >
             Cancelar
           </Button>
           <Button>Salvar</Button>

@@ -67,11 +67,14 @@ const ReviewDeckPage: WithAuthentication<
       )
     }
 
-    return visibleCards.map(card => (
+    return visibleCards.map((card, index) => (
       <Disclosure key={card.question}>
         {({ open }) => (
           <>
-            <Disclosure.Button className='my-2 flex w-full items-center justify-between rounded-md bg-primary-800 px-5 py-4 text-left text-base font-medium text-primary-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-75'>
+            <Disclosure.Button
+              className='my-2 flex w-full items-center justify-between rounded-md bg-primary-800 px-5 py-4 text-left text-base font-medium text-primary-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-75'
+              data-testid={`card-requests-${index}`}
+            >
               <span className='flex flex-1'>{card.question}</span>
               <ChevronUpIcon
                 className={classNames(

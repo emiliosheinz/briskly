@@ -91,7 +91,10 @@ export const Cards = () => {
     )
 
     return (
-      <Card onClick={generateAiPoweredCards}>
+      <Card
+        onClick={generateAiPoweredCards}
+        data-testid='ai-powered-flashcards-card'
+      >
         {hasErrorGeneratingAiPoweredCards ? errorContent : successContent}
         <div className='absolute right-0 top-0 p-3'>
           <Tooltip hint='Além de criar seus próprios Flashcards manualmente você pode deixar que a nossa Inteligência Artificial os gere para você se baseando nos tópicos e título previamente cadastrados acima.' />

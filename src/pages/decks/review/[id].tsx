@@ -145,6 +145,7 @@ const ReviewDeckPage: WithAuthentication<
         className='absolute bottom-0 right-0 p-5'
         type='button'
         onClick={() => setIsReportAnswerValidationModalOpen(true)}
+        data-testid='report-button'
       >
         <HandThumbDownIcon className='h-8 w-8' />
       </button>
@@ -237,6 +238,7 @@ const ReviewDeckPage: WithAuthentication<
             {...form.register('answer')}
             disabled={shouldDisableButtonsAndInputs}
             error={form.formState?.errors['answer']?.message as string}
+            data-testid='answer-input'
           />
           <div className='flex gap-5'>{renderButtons()}</div>
         </form>

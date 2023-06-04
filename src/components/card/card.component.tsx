@@ -17,6 +17,7 @@ export function _Card(props: CardProps) {
     isAiPowered,
     onEditPress,
     onDeletePress,
+    ...otherProps
   } = props
 
   const renderEditButtons = () => {
@@ -24,7 +25,11 @@ export function _Card(props: CardProps) {
 
     return (
       <div className='absolute right-0 top-0 flex gap-2 p-3'>
-        <button type='button' onClick={onEditPress}>
+        <button
+          type='button'
+          onClick={onEditPress}
+          data-testid='edit-card-button'
+        >
           <PencilSquareIcon className='w-5, h-5' />
         </button>
         <button type='button' onClick={onDeletePress}>
@@ -56,6 +61,7 @@ export function _Card(props: CardProps) {
         fullWidth ? 'w-full' : 'w-96',
       )}
       onClick={onClick}
+      {...otherProps}
     >
       {children}
       {renderEditButtons()}

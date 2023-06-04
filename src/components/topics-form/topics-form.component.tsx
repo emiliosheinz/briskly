@@ -29,6 +29,7 @@ export function TopicsForm(props: TopicsFormProps) {
         <Pill
           isDisabled={topics.length >= MAX_TOPICS_PER_DECK_AND_USER}
           onClick={() => setIsCreatingTopic(true)}
+          data-testid='new-topic-button'
         >
           <PlusCircleIcon className='w-6, h-6' />
         </Pill>
