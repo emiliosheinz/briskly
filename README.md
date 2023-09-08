@@ -1,4 +1,4 @@
-## 🤖 briskly
+# 🤖 Briskly
 ![Briskly! Your AI powered flashcards app.](/docs/images/banner.png)
 
 Briskly is a flashcard digitization app where I utilize Natural Language Generation and Processing to create flashcards based on context and validate user responses. This enhances the user's study autonomy and reduces friction and steps required for creating a new study deck.
