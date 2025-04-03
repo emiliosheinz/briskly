@@ -58,6 +58,4 @@ aws cloudfront list-distributions --query "DistributionList.Items[*].{ID:Id,Doma
 aws ssm get-parameter --name "/briskly/dev/AWS_S3_ACCESS_KEY_ID" --with-decryption --query "Parameter.Value" --output text
 
 aws ssm get-parameter --name "/briskly/dev/AWS_S3_SECRET_ACCESS_KEY" --with-decryption --query "Parameter.Value" --output text
-
-
 ```
