@@ -40,7 +40,7 @@ Briskly is a flashcard digitization app where I utilize Natural Language Generat
 ## Infra setup
 
 ```
-# Create the terrafrom backend bucket
+# Create the terraform backend bucket
 aws s3api create-bucket --bucket briskly-terraform-backend --region us-east-1 
 
 # Enable versioning (optional but recomended)
