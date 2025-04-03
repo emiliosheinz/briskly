@@ -1,5 +1,3 @@
-import { Fragment } from 'react'
-
 import { Visibility } from '@prisma/client'
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { type NextPage } from 'next'
@@ -160,7 +158,7 @@ const DeckDetailsPage: NextPage<
           ))}
         </ul>
         <ActionsDropDown
-          className='absolute top-0 right-0'
+          className='absolute right-0 top-0'
           deckId={deck.id}
           deckOwnerId={deck.ownerId}
         />
