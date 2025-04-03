@@ -3,7 +3,7 @@ resource "aws_iam_user" "s3_user" {
 }
 
 resource "aws_iam_policy" "s3_policy" {
-  name        = "BrisklyS3Policy"
+  name        = "BrisklyS3Policy-${var.env}"
   description = "Policy for S3 access in the Briskly project"
   
   policy = jsonencode({
