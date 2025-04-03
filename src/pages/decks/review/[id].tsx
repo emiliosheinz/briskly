@@ -217,7 +217,7 @@ const ReviewDeckPage: WithAuthentication<
             <div className='absolute w-full [backface-visibility:hidden]'>
               <Card fullWidth>{renderCardContent()}</Card>
             </div>
-            <div className='absolute w-full [transform:rotateY(180deg)] [backface-visibility:hidden]'>
+            <div className='absolute w-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
               <Card fullWidth>
                 <span className='text-base md:text-xl'>
                   {answerResult?.answer || 'Resposta não foi encontrada'}

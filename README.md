@@ -37,3 +37,25 @@ Briskly is a flashcard digitization app where I utilize Natural Language Generat
   ```
   yarn dev
   ```
+## Infra setup
+
+```
+# Create the terraform backend bucket
+aws s3api create-bucket --bucket briskly-terraform-backend --region us-east-1 
+
+# Enable versioning (optional but recommended)
+aws s3api put-bucket-versioning --bucket briskly-terraform-backend --versioning-configuration Status=Enabled
+
+# Plan
+terraform plan -var-file="dev.tfvars"
+
+# Apply
+terraform apply -var-file="dev.tfvars" -auto-approve
+
+# Get the relevant environment variables
+aws cloudfront list-distributions --query "DistributionList.Items[*].{ID:Id,Domain:DomainName}"
+
+aws ssm get-parameter --name "/briskly/dev/AWS_S3_ACCESS_KEY_ID" --with-decryption --query "Parameter.Value" --output text
+
+aws ssm get-parameter --name "/briskly/dev/AWS_S3_SECRET_ACCESS_KEY" --with-decryption --query "Parameter.Value" --output text
+```

@@ -79,5 +79,6 @@
   },
   "ct3aMetadata": {
     "initVersion": "6.11.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
