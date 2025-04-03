@@ -1,13 +1,9 @@
 name: Type Check
 
 on:  
-  push:
-    branches:
-      - develop
   pull_request:
     branches:
-      - master
-      - develop
+      - main 
 
 jobs:
   Type-Check:
