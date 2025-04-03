@@ -43,7 +43,7 @@ Briskly is a flashcard digitization app where I utilize Natural Language Generat
 # Create the terraform backend bucket
 aws s3api create-bucket --bucket briskly-terraform-backend --region us-east-1 
 
-# Enable versioning (optional but recomended)
+# Enable versioning (optional but recommended)
 aws s3api put-bucket-versioning --bucket briskly-terraform-backend --versioning-configuration Status=Enabled
 
 # Plan
