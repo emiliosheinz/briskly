@@ -114,3 +114,11 @@ After having at least the AWS infrastruture up and running, the Google OAuth cre
   yarn dev
   ```
 - Additionally, you need to make sure that the [Generate Flash Cards Service](https://github.com/emiliosheinz/briskly-generate-flash-cards) is running somewhere. It can be locally, on your machine, or deployed on a server.
+
+## Architectural overview
+
+![Briskly architecture](/docs/images/architectural-overview.png)
+
+## Database schema
+
+![Briskly database schema](/docs/images/db-schema.png)
