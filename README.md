@@ -3,8 +3,9 @@
 
 Briskly is a flashcard digitization app where I utilize Natural Language Generation and Processing to create flashcards based on context and validate user responses. This enhances the user's study autonomy and reduces friction and steps required for creating a new study deck.
 
-## Preview
-<img width="1470" alt="Screenshot 2023-09-08 at 10 09 24" src="https://github.com/emiliosheinz/briskly/assets/103655828/01260835-d475-4aee-b8b7-6ea9659efacb">
+- [Preview](/docs/preview.md)
+- [Architectural Overview](/docs/architectural-overview.md)
+- [Database Schema](/docs/database-schema.md)
 
 ## Used technologies
 - Next.js
@@ -115,10 +116,3 @@ After having at least the AWS infrastruture up and running, the Google OAuth cre
   ```
 - Additionally, you need to make sure that the [Generate Flash Cards Service](https://github.com/emiliosheinz/briskly-generate-flash-cards) is running somewhere. It can be locally, on your machine, or deployed on a server.
 
-## Architectural overview
-
-![Briskly architecture](/docs/images/architectural-overview.png)
-
-## Database schema
-
-![Briskly database schema](/docs/images/db-schema.png)
