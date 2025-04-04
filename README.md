@@ -3,10 +3,10 @@
 
 Briskly is a flashcard digitization app where I utilize Natural Language Generation and Processing to create flashcards based on context and validate user responses. This enhances the user's study autonomy and reduces friction and steps required for creating a new study deck.
 
-## :computer: Preview
+## Preview
 <img width="1470" alt="Screenshot 2023-09-08 at 10 09 24" src="https://github.com/emiliosheinz/briskly/assets/103655828/01260835-d475-4aee-b8b7-6ea9659efacb">
 
-## :fire: Used technologies
+## Used technologies
 - Next.js
 - React.js
 - Tailwind CSS
@@ -92,7 +92,7 @@ aws ssm get-parameter --name "/briskly/dev/AWS_S3_ACCESS_KEY_ID" --with-decrypti
 - Configure Google OAuth credentials and add the client ID and secret to your `.env` file as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
 - Deploy the frontend. As this is a Next.js application I recommend using Vercel, but feel free to use any other hosting provider. Just make sure to add the environment variables from the `.env` file to it.
 
-## :wrench: Running locally
+## Running locally
 
 After having at least the AWS infrastruture up and running, the Google OAuth credentials and the OpenAI API key, you can run the application locally.
 
